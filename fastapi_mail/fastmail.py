@@ -33,7 +33,7 @@ class SendMail:
         email: str,
         password: str,
         port: str = "587",
-        service: str =" gmail",
+        service: str ="gmail",
         tls: bool = False,
         ssl: bool = False,
         custom: bool= False,
@@ -195,7 +195,7 @@ class SendMail:
 
             raise WrongFile(f"{err}", "is not a file, make sure you provide a file")
 
-        
+
     def __configure_connection(self):
 
         if not self.custom:
@@ -211,15 +211,12 @@ class SendMail:
         if self._ssl:
             try:
                 if not self.custom:
-                    print("salammm")
                     session = smtplib.SMTP_SSL(f"{self.__services.get(self._service)}:{self._port}")
                 
                 else:
-                    print("hello")
                     session = smtplib.SMTP_SSL(f"{self._service}:{self._port}")
 
                 if self._tls:
-                    print("tls")
 
                     session.starttls()
 
@@ -236,7 +233,6 @@ class SendMail:
         else:
             try:
                 if not self.custom:
-                    print("elss")
 
                     session = smtplib.SMTP(f"{self.__services.get(self._service)}:{self._port}")
 
@@ -245,11 +241,9 @@ class SendMail:
                     print(self._ssl)
                     print(f"{self._service}:{self._port}")
 
-                    print("heruuu")
                     session = smtplib.SMTP(f"{self._service}:{self._port}")
                     
                 if self._tls:
-                    print("uuu")
 
                     session.starttls()
                 
@@ -259,6 +253,6 @@ class SendMail:
                 # return True
                 return self.session
             except Exception as error:
-                print("theeeeeeeeee",error)
+                print("error",error)
 
                 raise ConnectionErrors(f"Exception rised {error} check connection") 
