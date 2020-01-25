@@ -9,9 +9,6 @@ from fastapi_mail.version import PY3
 from fastapi_mail.errors import TypeExecption, NotAvilableService, WrongPort, WrongFormat, WrongFile, ConnectionErrors
 
 
-
-PY3 = sys.version_info[0] == 3
-
 class SendMail: 
 
     __smtp_ports = ["587","465","25","2525"]
@@ -48,8 +45,7 @@ class SendMail:
         self._tls = tls
         self.custom = custom
         self.msgId = make_msgid()
-        message = MIMEMultipart()
-        self.message = message
+        self.message = MIMEMultipart()
 
 
         if not self.custom:
@@ -119,7 +115,6 @@ class SendMail:
         if file:
             await  self.__attach_file(file,self.message)
          
-        print("sada")
         return self.__send(recipient,self.message)
 
     def __send(self,recipient: str, message: str) -> bool:
@@ -199,3 +194,71 @@ class SendMail:
             print(err)
 
             raise WrongFile(f"{err}", "is not a file, make sure you provide a file")
+
+        
+    def __configure_connection(self):
+
+        if not self.custom:
+            for avaliable_services in self.__services.keys():
+                avaliable =  avaliable_services ==self._service
+                
+                if avaliable:
+                        break
+                        
+            if not avaliable:
+                raise NotAvilableService("error",f"The service {self._service} is not avalibale, Currently  only these {self.__services} services avalibale, if you require custom then make sure you do custom=True")
+
+        if self._ssl:
+            try:
+                if not self.custom:
+                    print("salammm")
+                    session = smtplib.SMTP_SSL(f"{self.__services.get(self._service)}:{self._port}")
+                
+                else:
+                    print("hello")
+                    session = smtplib.SMTP_SSL(f"{self._service}:{self._port}")
+
+                if self._tls:
+                    print("tls")
+
+                    session.starttls()
+
+                session.ehlo()
+                session.login(self._email, self._password)
+                self.session = session
+                return self.session
+
+            except Exception as error:
+                print(error)
+
+                raise ConnectionErrors(f"Exception rised {error} check connection") 
+
+        else:
+            try:
+                if not self.custom:
+                    print("elss")
+
+                    session = smtplib.SMTP(f"{self.__services.get(self._service)}:{self._port}")
+
+                else:
+                    print(self._tls)
+                    print(self._ssl)
+                    print(f"{self._service}:{self._port}")
+
+                    print("heruuu")
+                    session = smtplib.SMTP(f"{self._service}:{self._port}")
+                    
+                if self._tls:
+                    print("uuu")
+
+                    session.starttls()
+                
+                session.ehlo()
+                session.login(self._email, self._password)
+                self.session = session
+                # return True
+                return self.session
+            except Exception as error:
+                print("theeeeeeeeee",error)
+
+                raise ConnectionErrors(f"Exception rised {error} check connection") 
