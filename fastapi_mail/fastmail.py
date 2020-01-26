@@ -1,4 +1,4 @@
-import smtplib, os, time,sys
+import smtplib, os, time
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
@@ -19,8 +19,9 @@ class SendMail:
 
 
     def __enter__(self):
-        self.session = self.__configure_connection()
-        
+
+        return self
+    
 
     def __exit__(self, typ, value, tb):
         self.session.quit()
@@ -58,18 +59,13 @@ class SendMail:
                 
             if self._port not in self.__smtp_ports:
                 raise WrongPort("wrong port number",f"Port number should be one of these {self.__smtp_ports}")
+
         
         else:
             self._port = str(port)            
             self._service = kwrags.get("services")
 
-        try:
-            self.__configure_connection()
 
-
-        except Exception as error:
-            print(error)
-            raise ConnectionErrors(f"error rised {error} check connection")
  
     async def send_message(self,recipient: str, subject: str ,body: str ,text_format: str ="plain", Bcc: str = None, file: UploadFile = None, bulk: bool = False):
 
@@ -78,8 +74,8 @@ class SendMail:
        
         if text_format not in self.__text_format:
             raise WrongFormat(f"{text_format} not possible", f'avaliable ones are {self.__text_format}')
-        print("testst")
         if bulk:
+
             if isinstance(recipient, str):
                 raise TypeExecption(f"{recipient} argument must be a list")
             if len(recipient)==1:
@@ -89,7 +85,7 @@ class SendMail:
             if not file:
 
                 return await self.__send_bulk(recipient,subject,body,text_format)
-
+         
             return await self.__send_bulk(recipient,subject,body,text_format,file)
             
         
@@ -112,7 +108,8 @@ class SendMail:
         return self.__send(recipient,self.message)
 
     def __send(self,recipient: str, message: str) -> bool:
-        
+
+        self.__configure_connection()
         self.session.sendmail(self._email,recipient,message.as_string())
         self.session.quit()
         
@@ -120,8 +117,8 @@ class SendMail:
 
 
     async def __send_bulk(self,TO: str, subject: str, body: str, text_format: str, file: UploadFile=None):
-       
-        print(file)
+        
+
         if file:
             await self.__attach_file(file,self.message)
        
@@ -133,16 +130,16 @@ class SendMail:
 
         try:
             with self.__configure_connection() as conn:
-                for i in TO:
-                    email = i.split()
+                for recieptent in TO:
+                    email = recieptent.split()
                     del self.message['To']
                 
                     self.message["To"] = ", ".join(email)
 
-                    print("the too afterr prorsess!!",self.message["To"])
+                    print("Bulk mail sending to",self.message["To"])
 
-                    conn.sendmail(self._email,[i],self.message.as_string())
-
+                    conn.sendmail(self._email,[recieptent],self.message.as_string())
+                    
         except Exception as err:
             raise ConnectionErrors(f"Exception rised {err} check connection") 
 
@@ -181,7 +178,7 @@ class SendMail:
 
                 self.message.attach(f)
 
-            return True
+            return self.message.attach(f)
 
 
         except Exception as err:
@@ -218,10 +215,9 @@ class SendMail:
                 session.login(self._email, self._password)
                 self.session = session
                 
-                return True
+                return self.session
 
             except Exception as error:
-                print(error)
 
                 raise ConnectionErrors(f"Exception rised {error} check connection") 
 
@@ -244,7 +240,7 @@ class SendMail:
                 session.login(self._email, self._password)
                 self.session = session
                 
-                return True
+                return self.session
 
                 
             except Exception as error:
