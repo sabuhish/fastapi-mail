@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from starlette.responses import JSONResponse
 from fastapi_mail import FastMail
-from fastapi import UploadFile
 from starlette.background import BackgroundTask
 from test_examples.templates import  html, backgorund_task,bulkmail
 from fastapi import Header,File, Body,Query, UploadFile
