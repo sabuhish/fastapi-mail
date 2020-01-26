@@ -19,8 +19,7 @@ class SendMail:
 
 
     def __enter__(self):
-        session = self.__configure_connection()
-        self.session = session
+        self.session = self.__configure_connection()
         
 
     def __exit__(self, typ, value, tb):
@@ -60,18 +59,13 @@ class SendMail:
             if self._port not in self.__smtp_ports:
                 raise WrongPort("wrong port number",f"Port number should be one of these {self.__smtp_ports}")
         
-            if self._port:
-                
-                session = self.__configure_connection()
         else:
             self._port = str(port)            
             self._service = kwrags.get("services")
-            print("servoce0", self._service )
-            session = self.__configure_connection()
 
         try:
-            session.ehlo()
-            self.session = session
+            self.__configure_connection()
+
 
         except Exception as error:
             print(error)
@@ -125,7 +119,7 @@ class SendMail:
         return True
 
 
-    async def __send_bulk(self,TO: str, subject: str, body: str, text_format: str, file: UploadFile=None) -> bool:
+    async def __send_bulk(self,TO: str, subject: str, body: str, text_format: str, file: UploadFile=None):
        
         print(file)
         if file:
@@ -223,7 +217,8 @@ class SendMail:
                 session.ehlo()
                 session.login(self._email, self._password)
                 self.session = session
-                return self.session
+                
+                return True
 
             except Exception as error:
                 print(error)
@@ -237,8 +232,6 @@ class SendMail:
                     session = smtplib.SMTP(f"{self.__services.get(self._service)}:{self._port}")
 
                 else:
-                    print(self._tls)
-                    print(self._ssl)
                     print(f"{self._service}:{self._port}")
 
                     session = smtplib.SMTP(f"{self._service}:{self._port}")
@@ -250,8 +243,10 @@ class SendMail:
                 session.ehlo()
                 session.login(self._email, self._password)
                 self.session = session
-                # return True
-                return self.session
+                
+                return True
+
+                
             except Exception as error:
                 print("error",error)
 
