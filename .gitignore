@@ -60,7 +60,7 @@ coverage.xml
 .static_storage/
 .media/
 local_settings.py
-
+req.txt
 # Flask stuff:
 instance/
 .webassets-cache
