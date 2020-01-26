@@ -26,8 +26,10 @@ class SendMail:
     def __exit__(self, typ, value, tb):
         self.session.quit()
 
+
     def __str__(self):
         return self.message.as_string()
+        
 
     def __init__(self,
         email: str,
@@ -78,6 +80,7 @@ class SendMail:
 
             if isinstance(recipient, str):
                 raise TypeExecption(f"{recipient} argument must be a list")
+            
             if len(recipient)==1:
                 raise TypeExecption(f"if bulk is True,{recipient} cannot be 1. Should be more than one")
             

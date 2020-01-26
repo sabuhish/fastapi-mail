@@ -8,5 +8,5 @@ __author__ = "sabuhi.shukurov@gmail.com"
 FastMail = SendMail
 
 __all__ = [
-    "FastMail"
+    "FastMail", "VERSION"
 ]

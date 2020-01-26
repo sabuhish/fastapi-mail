@@ -1,4 +1,4 @@
-# fastapi-mail
+# Fastapi-mail
 
 Fastapi with fastapi-mail simple lightweight
 
@@ -6,7 +6,11 @@ Fastapi with fastapi-mail simple lightweight
 Fastapi mail system sending mails(individual, bulk) attachments(individual, bulk)
 
 
+### Installation ###
 
+```sh
+ $ pip install fastapi-mail
+```
 
 
 ### Email Send example

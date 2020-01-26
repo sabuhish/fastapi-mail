@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 
 setuptools.setup(
-    name="Sabuhi",
+    name="fastapi-mail",
     version=__import__("fastapi_mail").VERSION,
     author="Sabuhi Shukurov",
     author_email="sabuhi.shukurov@gmail.com",
