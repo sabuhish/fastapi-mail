@@ -16,8 +16,10 @@ Fastapi mail system sending mails(individual, bulk) attachments(individual, bulk
 
 
 
-### Email Send example (this based on sending emails with gmail account, if you want your customize your config see below the example)
-#### Before you dive in make sure you have already created  App password for more information;
+### Email Send example 
+###### (this based on sending emails with gmail account, if you want your customize your config see below the example)
+
+##### Before you dive in make sure you have already created  App password for more information;
 - [Gmail Account App Password](https://support.google.com/mail/answer/185833?hl=en)
 
 ```python
