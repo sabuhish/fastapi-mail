@@ -1,8 +1,4 @@
 
-
-Thanks to @tiangolo for creating awesome framework! 
-
-
 # Fastapi-mail
 
 Fastapi with fastapi-mail simple lightweight
