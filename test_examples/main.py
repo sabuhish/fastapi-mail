@@ -42,13 +42,13 @@ async def my_awesome_func_2(email: dict= Body(...)) -> JSONResponse:
 
 #this an example of sending bulk mails
 @app.post("/bulkemail")
-async def my_awesome_func_3() -> JSONResponse:
+async def my_awesome_func_3(email1: str=Body(...,embed=True),email2: str=Body(...,embed=True)) -> JSONResponse:
 
-    email = ["sabuhi.shukurov@gmail.com","sabus02@gmail.com"]
+    email = ["someaddress@gmail.com","address2@gmail.com"]
     mail = FastMail("your_account@gmail.com","*********",tls=True)
   
-    
-    task = BackgroundTask(mail.send_message, email,"Bulk mail from fastapi-mail with background task","Bulk mail Test",text_format="plain",bulk=True)
+   
+    task = BackgroundTask(mail.send_message, [email1,email2],"Bulk mail from fastapi-mail with background task","Bulk mail Test",text_format="plain",bulk=True)
 
     return JSONResponse(status_code=200, content={"message": f"email has been sent to these {email} addresses"}, background=task)
 
