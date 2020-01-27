@@ -6,6 +6,8 @@ Fastapi with fastapi-mail simple lightweight
 Fastapi mail system sending mails(individual, bulk) attachments(individual, bulk)
 
 
+Thanks to  for creating awesome framework! 
+
 ### Installation ###
 
 ```sh
