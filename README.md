@@ -1,10 +1,8 @@
 
 # Fastapi-mail
 
-Fastapi with fastapi-mail simple lightweight
 
-
-Fastapi mail system sending mails(individual, bulk) attachments(individual, bulk)
+Fastapi with fastapi-mail simple lightweight mail system, sending mails and attachments(individual && bulk)
 
 
 ### Installation ###
@@ -17,7 +15,7 @@ Fastapi mail system sending mails(individual, bulk) attachments(individual, bulk
 
 
 ### Email Send example 
-###### (this based on sending emails with gmail account, if you want your customize your config see below the example)
+#### (this based on sending emails with gmail account, if you want your customize your config see below the example)
 
 ##### Before you dive in make sure you have already created  App password for more information;
 - [Gmail Account App Password](https://support.google.com/mail/answer/185833?hl=en)
@@ -45,9 +43,9 @@ class EmailSchema(BaseModel):
 @app.post("/email")
 async def my_awesome_func_1(email: EmailSchema) -> JSONResponse:
 
-  
 
-    mail = FastMail("your_account@gmail.com","*********",tls=True)
+
+    mail = FastMail("******@gmail.com","******",tls=True)
 
     await  mail.send_message(email.email,"Test email from fastapi-mail", html, text_format="html")
 
@@ -58,9 +56,9 @@ async def my_awesome_func_1(email: EmailSchema) -> JSONResponse:
 @app.post("/emailbackground")
 async def my_awesome_func_2(email: dict = Body(...)) -> JSONResponse:
 
-    email = email.get("email")
+    email  = email.get("email")
+    mail = FastMail("******@gmail.com","******",tls=True)
 
-    mail = FastMail("your_account@gmail.com","*********",tls=True)
 
     task = BackgroundTask(mail.send_message, email,"Test email from fastapi-mail with background task",backgorund_task,text_format="html")
 
@@ -73,13 +71,12 @@ async def my_awesome_func_2(email: dict = Body(...)) -> JSONResponse:
 @app.post("/bulkemail")
 async def my_awesome_func_3(email1: str=Body(...,embed=True),email2: str=Body(...,embed=True)) -> JSONResponse:
 
-    email = ["someaddress@gmail.com","address2@gmail.com"]
     mail = FastMail("your_account@gmail.com","*********",tls=True)
-  
+
    
     task = BackgroundTask(mail.send_message, [email1,email2],"Bulk mail from fastapi-mail with background task","Bulk mail Test",text_format="plain",bulk=True)
 
-    return JSONResponse(status_code=200, content={"message": f"email has been sent to these {email} addresses"}, background=task)
+    return JSONResponse(status_code=200, content={"message": f"email has been sent to these {email1,email2} addresses"}, background=task)
 
 
 #an example of sending bulk mails attaching files 
@@ -93,6 +90,7 @@ async def my_awesome_func_4(file: UploadFile = File(...), file2: UploadFile = Fi
     task = BackgroundTask(mail.send_message, email,"Bulk mail from fastapi-mail with background task","Bulk mail Test",text_format="plain",bulk=True,file=[file,file2])
 
     return JSONResponse(status_code=200, content={"message": f"email has been sent to these {email} addresses"}, background=task)
+
 
 
 # uvicorn test_examples.main:app --reload  --port 8001
