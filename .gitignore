@@ -50,7 +50,7 @@ nosetests.xml
 coverage.xml
 *.cover
 .hypothesis/
-
+test.txt
 # Translations
 *.mo
 *.pot

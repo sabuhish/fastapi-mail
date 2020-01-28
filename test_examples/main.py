@@ -19,9 +19,9 @@ class EmailSchema(BaseModel):
 @app.post("/email")
 async def my_awesome_func_1(email: EmailSchema) -> JSONResponse:
 
-  
 
-    mail = FastMail("your_account@gmail.com","*********",tls=True)
+
+    mail = FastMail("******@gmail.com","******",tls=True)
 
     await  mail.send_message(email.email,"Test email from fastapi-mail", html, text_format="html")
 
@@ -32,9 +32,9 @@ async def my_awesome_func_1(email: EmailSchema) -> JSONResponse:
 @app.post("/emailbackground")
 async def my_awesome_func_2(email: dict = Body(...)) -> JSONResponse:
 
-    email = email.get("email")
+    email  = email.get("email")
+    mail = FastMail("******@gmail.com","******",tls=True)
 
-    mail = FastMail("your_account@gmail.com","*********",tls=True)
 
     task = BackgroundTask(mail.send_message, email,"Test email from fastapi-mail with background task",backgorund_task,text_format="html")
 
@@ -47,13 +47,12 @@ async def my_awesome_func_2(email: dict = Body(...)) -> JSONResponse:
 @app.post("/bulkemail")
 async def my_awesome_func_3(email1: str=Body(...,embed=True),email2: str=Body(...,embed=True)) -> JSONResponse:
 
-    email = ["someaddress@gmail.com","address2@gmail.com"]
     mail = FastMail("your_account@gmail.com","*********",tls=True)
-  
+
    
     task = BackgroundTask(mail.send_message, [email1,email2],"Bulk mail from fastapi-mail with background task","Bulk mail Test",text_format="plain",bulk=True)
 
-    return JSONResponse(status_code=200, content={"message": f"email has been sent to these {email} addresses"}, background=task)
+    return JSONResponse(status_code=200, content={"message": f"email has been sent to these {email1,email2} addresses"}, background=task)
 
 
 #an example of sending bulk mails attaching files 

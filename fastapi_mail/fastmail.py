@@ -36,8 +36,7 @@ class FastMail:
 
 
     def __enter__(self):
-
-        return self
+        self.__configure_connection()
     
 
     def __exit__(self, typ, value, tb):
@@ -46,7 +45,7 @@ class FastMail:
 
     def __str__(self):
         return self.message.as_string()
-        
+
 
     def __init__(self,
         email: str,
@@ -148,9 +147,9 @@ class FastMail:
         if file:
             await  self.__attach_file(file,self.message)
          
-        return self.__send(recipient,self.message)
+        return await self.__send(recipient,self.message)
 
-    def __send(self,recipient: str, message: str) -> bool:
+    async def __send(self,recipient: str, message: str) -> bool:
 
         self.__configure_connection()
         self.session.sendmail(self._email,recipient,message.as_string())
