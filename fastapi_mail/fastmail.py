@@ -9,7 +9,24 @@ from fastapi_mail.version import PY3
 from fastapi_mail.errors import TypeExecption, NotAvilableService, WrongPort, WrongFormat, WrongFile, ConnectionErrors
 
 
-class SendMail: 
+class FastMail: 
+
+    """
+        Fastapi mail system sending mails(individual, bulk) attachments(individual, bulk)
+
+        The class object holds session information necesseary to initilize object.
+        param :: email : email address to connect your mail server
+        type  :: email: str
+        param :: password : password of mail address 
+        type  :: password : str 
+        param :: port : port to be used in connection, read your mail-server documentation to know which port use, default to 587
+        type  :: port : str or int
+        param :: service : the service is mail domain to be used to establish connection
+        type  :: tls : bool
+        type  :: ssl : bool
+        param :: custom : if you set custom True, you need to pass port and services argument (**kwargs, see example) your mail domain 
+        type  :: custom : bool 
+    """
 
     __smtp_ports = ["587","465","25","2525"]
 
@@ -70,7 +87,30 @@ class SendMail:
 
  
     async def send_message(self,recipient: str, subject: str ,body: str ,text_format: str ="plain", Bcc: str = None, file: UploadFile = None, bulk: bool = False):
+        """ 
+            Sending mail
+            param :: recipient : receiver
+            type  :: recipient : str
 
+            param :: subject : subject for mail
+            type  :: subject : str
+
+            param :: body : body of the message
+            type  :: body : str
+
+            param :: text_format : text format of the mail content, default plain. HTML and plain available
+            type  :: text_format : str
+
+            param :: Bcc : Bcc of the mail
+            type  :: Bcc : str
+
+            param :: file : Bcc of the mail
+            type  :: file : byte
+
+            param :: bulk : bulk is default False, if you want send bulk mail set this True.(see example)
+            type  :: bulk : bool
+
+        """
         
         TO = recipient if type(recipient) is list else [recipient]
        

@@ -5,29 +5,34 @@ from starlette.background import BackgroundTask
 from test_examples.templates import  html, backgorund_task,bulkmail
 from fastapi import Header,File, Body,Query, UploadFile
 
+from pydantic import BaseModel
 app = FastAPI()
 
 
 
+class EmailSchema(BaseModel):
+    email: str
 
 
 
 #test email standart sending mail 
 @app.post("/email")
-async def my_awesome_func_1(email: dict= Body(...)) -> JSONResponse:
+async def my_awesome_func_1(email: EmailSchema) -> JSONResponse:
 
-    email = email.get("email")
+    # print(email)
+    # email = email.get("email")
+    mail = FastMail("sebuhi.sukurov.sh@gmail.com","jjhuacxnagzjeijm",tls=True)
 
-    mail = FastMail("your_account@gmail.com","*********",tls=True)
+    # mail = FastMail("your_account@gmail.com","*********",tls=True)
 
-    await  mail.send_message(email,"Test email from fastapi-mail", html, text_format="html")
+    await  mail.send_message(email.email,"Test email from fastapi-mail", html, text_format="html")
 
-    return JSONResponse(status_code=200, content={"message": f"email has been sent {email} address"})
+    return JSONResponse(status_code=200, content={"message": f"email has been sent {email.email} address"})
 
 
 #this mail sending using starlettes background tasks, faster than the above one
 @app.post("/emailbackground")
-async def my_awesome_func_2(email: dict= Body(...)) -> JSONResponse:
+async def my_awesome_func_2(email: dict = Body(...)) -> JSONResponse:
 
     email = email.get("email")
 
