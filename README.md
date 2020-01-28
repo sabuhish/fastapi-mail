@@ -29,30 +29,34 @@ from starlette.responses import JSONResponse
 from fastapi_mail import FastMail
 from starlette.background import BackgroundTask
 from test_examples.templates import  html, backgorund_task,bulkmail
-from fastapi import File, Body,Query, UploadFile
+from fastapi import Header,File, Body,Query, UploadFile
 
+from pydantic import BaseModel
 app = FastAPI()
 
-#test email standart sending mail 
+
+
+class EmailSchema(BaseModel):
+    email: str
 
 
 
 #test email standart sending mail 
 @app.post("/email")
-async def awesome_fastapi_1(email: dict= Body(...)) -> JSONResponse:
+async def my_awesome_func_1(email: EmailSchema) -> JSONResponse:
 
-    email = email.get("email")
+  
 
     mail = FastMail("your_account@gmail.com","*********",tls=True)
 
-    await  mail.send_message(email,"Test email from fastapi-mail", html, text_format="html")
+    await  mail.send_message(email.email,"Test email from fastapi-mail", html, text_format="html")
 
-    return JSONResponse(status_code=200, content={"message": f"email has been sent {email} address"})
+    return JSONResponse(status_code=200, content={"message": f"email has been sent {email.email} address"})
 
 
 #this mail sending using starlettes background tasks, faster than the above one
 @app.post("/emailbackground")
-async def awesome_fastapi_2(email: dict= Body(...)) -> JSONResponse:
+async def my_awesome_func_2(email: dict = Body(...)) -> JSONResponse:
 
     email = email.get("email")
 
@@ -67,7 +71,7 @@ async def awesome_fastapi_2(email: dict= Body(...)) -> JSONResponse:
 
 #this an example of sending bulk mails
 @app.post("/bulkemail")
-async def awesome_fastapi_3(email1: str=Body(...,embed=True),email2: str=Body(...,embed=True)) -> JSONResponse:
+async def my_awesome_func_3(email1: str=Body(...,embed=True),email2: str=Body(...,embed=True)) -> JSONResponse:
 
     email = ["someaddress@gmail.com","address2@gmail.com"]
     mail = FastMail("your_account@gmail.com","*********",tls=True)
@@ -80,7 +84,7 @@ async def awesome_fastapi_3(email1: str=Body(...,embed=True),email2: str=Body(..
 
 #an example of sending bulk mails attaching files 
 @app.post("/bulkfile")
-async def awesome_fastapi_4(file: UploadFile = File(...), file2: UploadFile = File(...)) -> JSONResponse:
+async def my_awesome_func_4(file: UploadFile = File(...), file2: UploadFile = File(...)) -> JSONResponse:
 
     email = ["someaddress@gmail.com","address2@gmail.com"]
     mail = FastMail("your_account@gmail.com","*********",tls=True)
@@ -91,20 +95,7 @@ async def awesome_fastapi_4(file: UploadFile = File(...), file2: UploadFile = Fi
     return JSONResponse(status_code=200, content={"message": f"email has been sent to these {email} addresses"}, background=task)
 
 
-
-
-#in order to use custom make sure you custom to True. Then  pass the  service name
-@app.post("/custom")
-async def awesome_fastapi_5(email: dict= Body(...)) -> JSONResponse:
-
-    email = email.get("email")
-
-    mail = FastMail("your_account","*********",tls=False,ssl=True,port="465",custom=True,services="your services")
-
-    await  mail.send_message(email,"Test email from fastapi-mail", html, text_format="html")
-
-    return JSONResponse(status_code=200, content={"message": f"email has been sent {email} address"})
-
+# uvicorn test_examples.main:app --reload  --port 8001
 ```
 
 # Contributing

@@ -19,11 +19,9 @@ class EmailSchema(BaseModel):
 @app.post("/email")
 async def my_awesome_func_1(email: EmailSchema) -> JSONResponse:
 
-    # print(email)
-    # email = email.get("email")
-    mail = FastMail("sebuhi.sukurov.sh@gmail.com","jjhuacxnagzjeijm",tls=True)
+  
 
-    # mail = FastMail("your_account@gmail.com","*********",tls=True)
+    mail = FastMail("your_account@gmail.com","*********",tls=True)
 
     await  mail.send_message(email.email,"Test email from fastapi-mail", html, text_format="html")
 
