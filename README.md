@@ -16,7 +16,7 @@ The fastapi-mail simple lightweight mail system, sending emails and attachments(
 - [The examples below based on gmail configuration, please read documentation for more information](https://support.google.com/mail/answer/185833?hl=en)
 - if you want to use your custom mail server, see the latest example below
 
-### In order to run the Application use comand below ####
+### In order to run the application use command below ####
 
 ```sh
 uvicorn test_examples.main:app --reload  --port 8001
@@ -41,9 +41,8 @@ app = FastAPI()
 html = """
 <html> 
 <body>
-<p>Hi This test mail,
+<p>Hi This test mail
 <br>Thanks for using Fastapi-mail</p> 
-<p> Feel free to <strong>let us</strong> know in case of bug</p> 
 </body> 
 </html>
 """
@@ -53,7 +52,6 @@ template = """
 <body>
 <p>Hi This test mail using BackgroundTasks
 <br>Thanks for using Fastapi-mail</p> 
-<p> Feel free to <strong>let us</strong> know in case of bug</p> 
 </body> 
 </html>
 """
@@ -91,6 +89,7 @@ async def awesome_fastapi_func_2(background_tasks: BackgroundTasks,email: str = 
         "email": "recipient@gmail.com"
     }
 
+    #for more information about background-tasks see the link below
     #https://fastapi.tiangolo.com/tutorial/background-tasks/
 
     mail = FastMail(email="your_account@gmail.com",password="your_pass",tls=True,port="587",service="gmail")
@@ -113,9 +112,8 @@ async def awesome_fastapi_func_2(background_tasks: BackgroundTasks,email: str = 
 @app.post("/bulkemail")
 async def awesome_fastapi_func_3(background_tasks: BackgroundTasks,emails: str=Body(...,embed=True)) -> JSONResponse:
     
-    #this an example of sending bulk mails
-    #Using Postman you can send post request, adding email in the body
-    #example below
+   #this an example of sending bulk emails 
+   ##Using Postman you can send post request, adding email in the body #example below
     {
         "emails": ["recipient1@gmail.com","recipient2@gmail.com"]
     }
@@ -137,7 +135,7 @@ async def awesome_fastapi_func_3(background_tasks: BackgroundTasks,emails: str=B
 @app.post("/bulkfile")
 async def awesome_fastapi_func_4(background_tasks: BackgroundTasks,request: Request) -> JSONResponse:
     
-    #this example of sending bulk email and sending multiple file
+    #this example of sending bulk email and sending multiple files
     mail = FastMail(email="your_account@gmail.com",password="your_pass",tls=True,port="587",service="gmail")
 
     temp = await  request.form()
@@ -166,7 +164,7 @@ async def awesome_fastapi_func_4(background_tasks: BackgroundTasks,request: Requ
 
 @app.post("/custom")
 async def awesome_fastapi_func_5(email: EmailSchema) -> JSONResponse:
-    #In order to use custom mail service, your require to send services as keyword and argument your mail server name and what mail server requires for connection
+    #In order to use custom mail service, you require to send services as keyword, and argument your mail server name. You must provide other information according to your mail server
     mail = FastMail(email="your_account@gmail.com",password="your_pass",tls=True,ssl=True,port="465",custom=True,services="info.v1.example.com")
 
     await  mail.send_message(recipient=email.email,subject="Test email from fastapi-mail", body=html, text_format="html")
