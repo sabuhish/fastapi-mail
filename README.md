@@ -74,7 +74,6 @@ async def awesome_fastapi_func_1(email: EmailSchema) -> JSONResponse:
 
         
 
-# uvicorn test_examples.main:app --reload  --port 8001
 ```
 
 ### Sending email as background task
