@@ -15,7 +15,7 @@ html = """
 
 
 
-backgorund_task = """
+template = """
 <html> 
 <body>
 <p>Hi This test mail using BackgroundTask,

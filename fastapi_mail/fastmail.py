@@ -85,7 +85,7 @@ class FastMail:
 
 
  
-    async def send_message(self,recipient: str, subject: str ,body: str ,text_format: str ="plain", Bcc: str = None, file: UploadFile = None, bulk: bool = False):
+    async def send_message(self,recipient: str, subject: str ,body: str ,text_format: str ="plain", Bcc: str = None,Cc: str=None, file: UploadFile = None, bulk: bool = False):
         """ 
             Sending mail
             param :: recipient : receiver
@@ -102,8 +102,11 @@ class FastMail:
 
             param :: Bcc : Bcc of the mail
             type  :: Bcc : str
+            
+            param :: Cc : Cc of the mail
+            type  :: Cc : str
 
-            param :: file : Bcc of the mail
+            param :: file : File to be sent in mail
             type  :: file : byte
 
             param :: bulk : bulk is default False, if you want send bulk mail set this True.(see example)
@@ -140,12 +143,17 @@ class FastMail:
 
         if Bcc:
             self.message["Bcc"] = Bcc 
+        
+        if Cc:
+            self.message['Cc'] = Cc
+
            
         message_form = MIMEText(body, text_format)
         self.message.attach(message_form)
  
         if file:
             await  self.__attach_file(file,self.message)
+        print(self.message.as_string())
          
         return await self.__send(recipient,self.message)
 

@@ -14,7 +14,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     license='MIT',
     url="https://github.com/sabuhish/fastapi-mail",
-    install_requires=["fastapi","python-multipart"],
+    install_requires=["fastapi","python-multipart","email-validator"],
     extras_require={
         "fastapi": ["fastapi"]
     },
