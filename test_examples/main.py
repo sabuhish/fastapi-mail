@@ -11,8 +11,7 @@ app = FastAPI()
 
 
 
-      # service = SendMail("sebuhi.sukurov.sh@gmail.com","jjhuacxnagzjeijm")
-
+    
 
 #test email standart sending mail 
 @app.post("/email")
@@ -62,7 +61,7 @@ async def awesome_fastapi_func_4(background_tasks: BackgroundTasks,request: Requ
     for  value in temp.values():
         files.append(value)
     
-       # service = SendMail("sebuhi.sukurov.sh@gmail.com","jjhuacxnagzjeijm")
+      
 
     email = ["account_1@gmail.com","account_2@gmail.com"]
     mail = FastMail("your_account@gmail.com","*********",tls=True)

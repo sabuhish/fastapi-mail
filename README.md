@@ -14,6 +14,7 @@ The fastapi-mail simple lightweight mail system, sending emails and attachments(
 
 ## notes
 - [The examples below based on gmail configuration, please read documentation for more information](https://support.google.com/mail/answer/185833?hl=en)
+- if you want to use your custom mail server, see the latest example below
 
 ### In order to run the Application use comand below ####
 
@@ -66,7 +67,7 @@ class EmailSchema(BaseModel):
 @app.post("/email")
 async def awesome_fastapi_func_1(email: EmailSchema) -> JSONResponse:
     #as gmail requires TLS connection, therefore you require to set tls to True
-    mail = FastMail(email="your_account@gmail.com",password="your_pass",tls=True,port="587")
+    mail = FastMail(email="your_account@gmail.com",password="your_pass",tls=True,port="587",service="gmail")
 
     await  mail.send_message(recipient=email.email,subject="Test email from fastapi-mail", body=html, text_format="html")
     
@@ -92,7 +93,7 @@ async def awesome_fastapi_func_2(background_tasks: BackgroundTasks,email: str = 
 
     #https://fastapi.tiangolo.com/tutorial/background-tasks/
 
-    mail = FastMail(email="your_account@gmail.com",password="your_pass",tls=True,port="587")
+    mail = FastMail(email="your_account@gmail.com",password="your_pass",tls=True,port="587",service="gmail")
 
 
     background_tasks.add_task(mail.send_message, recipient=email,subject="testing HTML",body=template,text_format="html")
@@ -118,7 +119,7 @@ async def awesome_fastapi_func_3(background_tasks: BackgroundTasks,emails: str=B
     {
         "emails": ["recipient1@gmail.com","recipient2@gmail.com"]
     }
-    mail = FastMail(email="your_account@gmail.com",password="your_pass",tls=True,port="587")
+    mail = FastMail(email="your_account@gmail.com",password="your_pass",tls=True,port="587",service="gmail")
 
     background_tasks.add_task(mail.send_message,recipient=[email1,email2],subject="Bulk mail from fastapi-mail with background task",body="Bulk mail Test",text_format="plain",bulk=True)
 
@@ -137,7 +138,7 @@ async def awesome_fastapi_func_3(background_tasks: BackgroundTasks,emails: str=B
 async def awesome_fastapi_func_4(background_tasks: BackgroundTasks,request: Request) -> JSONResponse:
     
     #this example of sending bulk email and sending multiple file
-    mail = FastMail(email="your_account@gmail.com",password="your_pass",tls=True,port="587")
+    mail = FastMail(email="your_account@gmail.com",password="your_pass",tls=True,port="587",service="gmail")
 
     temp = await  request.form()
     files= []
@@ -157,6 +158,22 @@ async def awesome_fastapi_func_4(background_tasks: BackgroundTasks,request: Requ
 
 ```
 
+
+### Custom  Mail server example ###
+
+```python
+
+
+@app.post("/custom")
+async def awesome_fastapi_func_5(email: EmailSchema) -> JSONResponse:
+    #In order to use custom mail service, your require to send services as keyword and argument your mail server name and what mail server requires for connection
+    mail = FastMail(email="your_account@gmail.com",password="your_pass",tls=True,ssl=True,port="465",custom=True,services="info.v1.example.com")
+
+    await  mail.send_message(recipient=email.email,subject="Test email from fastapi-mail", body=html, text_format="html")
+    
+    return JSONResponse(status_code=200, content={"message": f"email has been sent {email.email} address"})
+
+```
 
 # Contributing
 Fell free to open issue and send pull request.
