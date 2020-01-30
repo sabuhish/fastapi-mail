@@ -36,7 +36,6 @@ from pydantic import BaseModel,EmailStr
 
 app = FastAPI()
 
-mail = FastMail(email="your_account@gmail.com",password="your_pass",tls=True,port="587")
 
 html = """
 <html> 
@@ -67,7 +66,8 @@ class EmailSchema(BaseModel):
 @app.post("/email")
 async def awesome_fastapi_func_1(email: EmailSchema) -> JSONResponse:
     #as gmail requires TLS connection, therefore you require to set tls to True
-   
+    mail = FastMail(email="your_account@gmail.com",password="your_pass",tls=True,port="587")
+
     await  mail.send_message(recipient=email.email,subject="Test email from fastapi-mail", body=html, text_format="html")
     
     return JSONResponse(status_code=200, content={"message": f"email has been sent {email.email} address"})
@@ -92,7 +92,8 @@ async def awesome_fastapi_func_2(background_tasks: BackgroundTasks,email: str = 
 
     #https://fastapi.tiangolo.com/tutorial/background-tasks/
 
- 
+    mail = FastMail(email="your_account@gmail.com",password="your_pass",tls=True,port="587")
+
 
     background_tasks.add_task(mail.send_message, recipient=email,subject="testing HTML",body=template,text_format="html")
     
@@ -117,6 +118,7 @@ async def awesome_fastapi_func_3(background_tasks: BackgroundTasks,emails: str=B
     {
         "emails": ["recipient1@gmail.com","recipient2@gmail.com"]
     }
+    mail = FastMail(email="your_account@gmail.com",password="your_pass",tls=True,port="587")
 
     background_tasks.add_task(mail.send_message,recipient=[email1,email2],subject="Bulk mail from fastapi-mail with background task",body="Bulk mail Test",text_format="plain",bulk=True)
 
@@ -135,7 +137,8 @@ async def awesome_fastapi_func_3(background_tasks: BackgroundTasks,emails: str=B
 async def awesome_fastapi_func_4(background_tasks: BackgroundTasks,request: Request) -> JSONResponse:
     
     #this example of sending bulk email and sending multiple file
-    
+    mail = FastMail(email="your_account@gmail.com",password="your_pass",tls=True,port="587")
+
     temp = await  request.form()
     files= []
 
