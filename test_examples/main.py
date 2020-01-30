@@ -64,8 +64,8 @@ async def awesome_fastapi_func_4(background_tasks: BackgroundTasks,request: Requ
     
        # service = SendMail("sebuhi.sukurov.sh@gmail.com","jjhuacxnagzjeijm")
 
-    email = ["sabuhi.shukurov@gmail.com","sabus02@gmail.com"]
-    mail = FastMail("sebuhi.sukurov.sh@gmail.com","jjhuacxnagzjeijm",tls=True)
+    email = ["account_1@gmail.com","account_2@gmail.com"]
+    mail = FastMail("your_account@gmail.com","*********",tls=True)
     
     background_tasks.add_task(mail.send_message, email,"Bulk mail from fastapi-mail with background task","Bulk mail Test",text_format="plain",bulk=True,file=files)
 
