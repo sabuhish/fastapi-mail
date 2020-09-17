@@ -2,6 +2,8 @@ from typing import List, IO, Dict
 from pydantic import EmailStr
 from datetime import date
 import asyncio
+
+from email import encoders
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
@@ -43,18 +45,23 @@ class Message:
         """Creates a MIMEText object"""
         return MIMEText(text, _subtype=subtype, _charset=self.charset)
 
+
+    def attach_file(self, msg, attachment):
+        return msg.add_header(
+                'Content-Disposition', 
+                'attachment',
+                filename=attachment
+            )
+
         
     def _message(self):
         """Creates the email"""
         
-        if self.attachments:
-            msg = MIMEMultipart()
-            msg = self._mimetext(self.body)
-        else:
-            msg.attach(self._mimetext(self.body))
+        msg = MIMEMultipart()
+        msg.set_charset(self.charset)
 
         if self.subject:
-            msg["Subject"] = self.subject
+            msg["Subject"] = (self.subject)
 
         if self.sender:
             msg["From"] = self.sender
@@ -64,6 +71,19 @@ class Message:
 
         if self.cc:
             msg["Cc"] = ', '.join(list(self.cc))
+        
+        if self.bcc:
+            msg["Bcc"] = ', '.join(list(self.cc))
+
+        if self.body:
+            msg = self._mimetext(self.body)
+
+        if isinstance(self.attachments, list):
+            for attachment in self.attachments:
+                self.attach_file(msg, attachment)
+
+        if isinstance(self.attachments, str):
+            self.attach_file(msg, attachment)
 
         return msg
 
@@ -90,6 +110,7 @@ m = MessageSchema( sender="test@mail.ru",
 message = Message(
    **m.dict()
 )
+message._message()
 
 print(message.attachments)
 
