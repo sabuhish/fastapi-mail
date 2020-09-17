@@ -12,6 +12,8 @@ from  connection import Connection
 from message import MessageSchema
 from pydantic import BaseModel
 from attachments import AttachFile
+from message import Message
+
 
 class NewFastMail:
     '''
@@ -40,15 +42,15 @@ class NewFastMail:
          check documentaion :  #TODO link
          ''')
 
-
-
         msg = await  self.__preape_message(message)
 
 
     async def __preape_message(self, message):
-        pass
 
-    
+        Message(message)
+        
+
+
 
     async def send_message(self,recipient: str, subject: str ,body: str ,text_format: str ="plain", Bcc: str = None,Cc: str=None, file: UploadFile = None, bulk: bool = False):
 

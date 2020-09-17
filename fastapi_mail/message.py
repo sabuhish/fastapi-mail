@@ -2,15 +2,22 @@ from typing import List, IO, Dict
 from pydantic import EmailStr
 from datetime import date
 import asyncio
-
 from email import encoders
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from schemas import MessageSchema
+from email.utils import formatdate, make_msgid
+import time
+from fastapi import UploadFile
+from version import PY3
+from email.encoders import encode_base64
 
 class Message:
     """
+
+    Preaparation of class for email text
+    
     :param subject: email subject header
     :param recipients: list of email addresses
     :param body: plain text message
@@ -39,6 +46,7 @@ class Message:
         self.cc = cc
         self.bcc = bcc
         self.charset = charset
+        self.msgId = make_msgid()
 
 
     def _mimetext(self, text, subtype="plain"):
@@ -46,72 +54,118 @@ class Message:
         return MIMEText(text, _subtype=subtype, _charset=self.charset)
 
 
-    def attach_file(self, msg, attachment):
-        return msg.add_header(
-                'Content-Disposition', 
-                'attachment',
-                filename=attachment
-            )
+    async def attach_file(self, message, attachment):
 
+        print(attachment)
         
-    def _message(self):
-        """Creates the email"""
+        for file in attachment:
         
-        msg = MIMEMultipart()
-        msg.set_charset(self.charset)
+            print(file)
+            part = MIMEBase(*file.content_type.split('/'))
+                
+            part.set_payload(await file.read())
+            encode_base64(part)
 
-        if self.subject:
-            msg["Subject"] = (self.subject)
+            filename = file.filename
 
-        if self.sender:
-            msg["From"] = self.sender
-        
-        if self.receipients:
-            msg["To"] = ', '.join(list(self.receipients))
+            try:
+                filename and filename.encode('ascii')
+            except UnicodeEncodeError:
+                if not PY3:
+                    filename = filename.encode('utf8')
 
-        if self.cc:
-            msg["Cc"] = ', '.join(list(self.cc))
-        
-        if self.bcc:
-            msg["Bcc"] = ', '.join(list(self.cc))
+            filename = ('UTF8', '', filename)
+            
 
-        if self.body:
-            msg = self._mimetext(self.body)
+            part.add_header(
+                'Content-Disposition',
+                "attachment",
+                filename=filename)
+            
 
-        if isinstance(self.attachments, list):
-            for attachment in self.attachments:
-                self.attach_file(msg, attachment)
+            self.message.attach(part)
 
-        if isinstance(self.attachments, str):
-            self.attach_file(msg, attachment)
-
-        return msg
 
     
-    def as_string(self):
-        return self._message().as_string()
+    async def _message(self):
+        """Creates the email message"""
+            
+        self.message = MIMEMultipart()
+        self.message.set_charset(self.charset)
+
+        self.message['Date'] = formatdate(time.time(), localtime=True)
+        self.message['Message-ID'] = self.msgId
+        self.message["To"] = ', '.join(list(self.receipients))
+        self.message["From"] = "sabuhi.shukurov@gmail.com"
+
+
+
+        if self.subject:
+            self.message["Subject"] = (self.subject)
+           
+        if self.cc:
+            self.message["Cc"] = ', '.join(list(self.cc))
         
-    def as_bytes(self):
-        return self._message().as_bytes()
+        if self.bcc:
+            self.message["Bcc"] = ', '.join(list(self.cc))
 
-    def __str__(self):
-        return self.as_string()
-
-    def __bytes__(self):
-        return self.as_bytes()
+        if self.body:
+            self.message.attach(self._mimetext(self.body))
 
 
-m = MessageSchema( sender="test@mail.ru",
+        if self.attachments:
+            print()
+            await self.attach_file(self.message, self.attachments)
+            
+
+           
+            # AttachFile(self.message, self.attachments)
+
+        print(self.message)
+
+        return self.message
+
+    
+    async def as_string(self):
+        return await self._message().as_string()
+        
+    # def as_bytes(self):
+    #     return self._message().as_bytes()
+
+    # def __str__(self):
+    #     return self.as_string()
+
+    # def __bytes__(self):
+    #     return self.as_bytes()
+
+f = open("/home/sebuhi/Documents/fastapi-mail/README.md",mode="rb")
+
+u = UploadFile(f.name,f.read())
+f.close()
+
+m = MessageSchema(
+    sender="test@mail.ru",
     subject="",
     receipients=["test@mail.ru"],
     body="",
-    attachments=["Pipfile"])
+    attachments = [u,"/home/sebuhi/Documents/fastapi-mail/fastapi_mail/fastmail.py"],
+    html = '<span>Hello Outside<span>World</span>End'
+    )
+
+
+# m = MessageSchema( sender="test@mail.ru",
+#     subject="test subject",
+#     receipients=["test@mail.ru"],
+#     body="TEstst body",
+#     attachments=["/home/sebuhi/Documents/fastapi-mail/fastapi_mail/fastmail.py"])
     
 message = Message(
    **m.dict()
 )
-message._message()
 
-print(message.attachments)
+
+asyncio.run(message._message())
+
+# print(message.attachments)
 
 
