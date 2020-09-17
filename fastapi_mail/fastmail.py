@@ -191,7 +191,7 @@ class FastMail:
                     conn.sendmail(self._email,[recieptent],self.message.as_string())
                     
         except Exception as err:
-            raise ConnectionErrors(f"Exception rised {err} check connection") 
+            raise ConnectionErrors(f"Exception raised {err} check connection") 
 
         return True
           
@@ -269,7 +269,7 @@ class FastMail:
 
             except Exception as error:
 
-                raise ConnectionErrors(f"Exception rised {error} check connection") 
+                raise ConnectionErrors(f"Exception raised {error} check connection") 
 
         else:
             try:
@@ -296,4 +296,4 @@ class FastMail:
             except Exception as error:
                 print("error",error)
 
-                raise ConnectionErrors(f"Exception rised {error} check connection") 
+                raise ConnectionErrors(f"Exception raised {error} check connection") 
