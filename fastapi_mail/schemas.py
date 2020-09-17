@@ -4,7 +4,6 @@ from fastapi import UploadFile
 import  os
 
 class MessageSchema(BaseModel):
-    sender: EmailStr
     receipients: Union[List[EmailStr],EmailStr]
     attachments: List[Any] = []
     subject: str = ""
@@ -19,12 +18,13 @@ class MessageSchema(BaseModel):
         temp = []
         for file in v:
             if isinstance(file,str):
-                    if os.path.isfile(file) and os.access(file, os.R_OK):
-                        with open(file,mode="br") as f:
-                            u = UploadFile(f.name,f.read())
-                            temp.append(u)
-                    else:
-                        raise  ValueError("incorrect file path for attachment or not readable")
+
+                if os.path.isfile(file) and os.access(file, os.R_OK):
+                    with open(file,mode="br") as f:
+                        u = UploadFile(f.name,f.read())
+                        temp.append(u)
+                else:
+                    raise  ValueError("incorrect file path for attachment or not readable")
             elif isinstance(file,UploadFile):
                 temp.append(file)
             else:
