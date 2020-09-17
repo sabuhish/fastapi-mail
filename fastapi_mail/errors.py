@@ -32,3 +32,9 @@ class WrongFile(Exception):
     def __init__(self, expression, message):
         self.expression = expression
         self.message = message
+
+
+class PydanticClassRequired(Exception):
+
+    def __init__(self, expression):
+        self.expression = expression
