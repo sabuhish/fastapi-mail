@@ -1,7 +1,7 @@
 from pydantic import BaseModel, EmailStr,validator
 from typing import List, IO, Union, Any
 from fastapi import UploadFile
-import  os
+import  os, magic
 
 class MessageSchema(BaseModel):
     receipients: Union[List[EmailStr],EmailStr]
@@ -20,8 +20,9 @@ class MessageSchema(BaseModel):
             if isinstance(file,str):
 
                 if os.path.isfile(file) and os.access(file, os.R_OK):
+                    mime = magic.Magic(mime=True)
                     with open(file,mode="br") as f:
-                        u = UploadFile(f.name,f.read())
+                        u = UploadFile(f.name,f.read(),content_type=mime.from_file(file))
                         temp.append(u)
                 else:
                     raise  ValueError("incorrect file path for attachment or not readable")
