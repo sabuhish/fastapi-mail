@@ -5,7 +5,7 @@ import asyncio
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
-
+from schemas import MessageSchema
 
 class Message:
     """
@@ -82,12 +82,17 @@ class Message:
     def __bytes__(self):
         return self.as_bytes()
 
+
+m = MessageSchema( sender="test@mail.ru",
+    subject="",
+    receipients=["test@mail.ru"],
+    body="",
+    attachments=["Pipfile"])
     
 message = Message(
-    sender="",
-    subject="",
-    receipients=[""],
-    body="",
+   **m.dict()
 )
+
+print(message.attachments)
 
 
