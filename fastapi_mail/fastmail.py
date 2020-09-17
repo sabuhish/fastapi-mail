@@ -9,6 +9,20 @@ from fastapi_mail.version import PY3
 from fastapi_mail.errors import TypeExecption, NotAvilableService, WrongPort, WrongFormat, WrongFile, ConnectionErrors
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class FastMail: 
 
     """
@@ -153,7 +167,6 @@ class FastMail:
  
         if file:
             await  self.__attach_file(file,self.message)
-        print(self.message.as_string())
          
         return await self.__send(recipient,self.message)
 
@@ -186,7 +199,6 @@ class FastMail:
                 
                     self.message["To"] = ", ".join(email)
 
-                    print("Bulk mail sending to",self.message["To"])
 
                     conn.sendmail(self._email,[recieptent],self.message.as_string())
                     
@@ -278,7 +290,6 @@ class FastMail:
                     session = smtplib.SMTP(f"{self.__services.get(self._service)}:{self._port}")
 
                 else:
-                    print(f"{self._service}:{self._port}")
 
                     session = smtplib.SMTP(f"{self._service}:{self._port}")
                     
