@@ -6,16 +6,177 @@ from email.encoders import encode_base64
 from email.utils import formatdate, make_msgid
 from fastapi import UploadFile
 from fastapi_mail.version import PY3
-from fastapi_mail.errors import TypeExecption, NotAvilableService, WrongPort, WrongFormat, WrongFile, ConnectionErrors
+from fastapi_mail.errors import TypeExecption, NotAvilableService, WrongPort, WrongFormat, WrongFile, ConnectionErrors,PydanticClassRequired
+from config import  ConnectionConfig
+from  connection import Connection
+from message import MessageSchema
+from pydantic import BaseModel
+from attachments import AttachFile
+
+class NewFastMail:
+    '''
+    Fastapi mail system sending mails(individual, bulk) attachments(individual, bulk)
+
+    '''
+    def __init__(self,
+        connect : ConnectionConfig
+        ):
+
+        self.connect = connect
+        self.attempt_connection()
+
+
+    async def attempt_connection(self) -> None:
+        self.connect  = Connection(self.connect)
+        await self.connect._configure_connection()
+        
+
+
+    async def send_message_2(self, message: MessageSchema):
+
+        if not issubclass(message,BaseModel):
+            raise  PydanticClassRequired('''Email message should be provided with MessageSchema class, check example below:
+         \nfrom fastmail importMessageSchema \nclass MessageSchema: \receipients:  Union[List[EmailStr],EmailStr] \n attachments: List[Any] = [] \n subject: str = "" \n body:  str = None \html: str = None \ncc:List[EmailStr] = [] \nbcc: List[EmailStr] = [] \n charset: str = "utf-8" \nconnection = Connection(ConnectionConfig)
+         check documentaion :  #TODO link
+         ''')
 
 
 
+        msg = await  self.__preape_message(message)
 
 
+    async def __preape_message(self, message):
+        pass
+
+    
+
+    async def send_message(self,recipient: str, subject: str ,body: str ,text_format: str ="plain", Bcc: str = None,Cc: str=None, file: UploadFile = None, bulk: bool = False):
+
+        
+        TO = recipient if type(recipient) is list else [recipient]
+       
+        if text_format not in self.__text_format:
+            raise WrongFormat(f"{text_format} not possible", f'avaliable ones are {self.__text_format}')
+        if bulk:
+
+            if isinstance(recipient, str):
+                raise TypeExecption(f"{recipient} argument must be a list")
+            
+            if len(recipient)==1:
+                raise TypeExecption(f"if bulk is True,{recipient} cannot be 1. Should be more than one")
+            
+
+            if not file:
+
+                return await self.__send_bulk(recipient,subject,body,text_format)
+         
+            return await self.__send_bulk(recipient,subject,body,text_format,file)
+            
+        
+        
+        self.message["From"] = self._email
+        self.message["To"] = ", ".join(TO)
+        self.message["Subject"] = subject
+        self.message['Date'] = formatdate(time.time(), localtime=True)
+        self.message['Message-ID'] = self.msgId
+
+        if Bcc:
+            self.message["Bcc"] = Bcc 
+        
+        if Cc:
+            self.message['Cc'] = Cc
+
+           
+        message_form = MIMEText(body, text_format)
+        self.message.attach(message_form)
+ 
+        if file:
+            await  self.__attach_file(file,self.message)
+         
+        return await self.__send(recipient,self.message)
 
 
+    def __preape_message(self, message):
+        pass
 
 
+    async def __send(self,recipient: str, message: str) -> bool:
+
+        self.__configure_connection()
+        self.session.sendmail(self._email,recipient,message.as_string())
+        self.session.quit()
+        
+        return True
+
+
+    async def __send_bulk(self,TO: str, subject: str, body: str, text_format: str, file: UploadFile=None):
+        
+
+        if file:
+            await self.__attach_file(file,self.message)
+       
+        
+        self.message["From"] = self._email
+        self.message["Subject"] = subject
+        message_form = MIMEText(body, text_format)
+        self.message.attach(message_form) 
+
+        try:
+            with self.__configure_connection() as conn:
+                for recieptent in TO:
+                    email = recieptent.split()
+                    del self.message['To']
+                
+                    self.message["To"] = ", ".join(email)
+
+
+                    conn.sendmail(self._email,[recieptent],self.message.as_string())
+                    
+        except Exception as err:
+            raise ConnectionErrors(f"Exception rised {err} check connection") 
+
+        return True
+          
+    
+    
+    async  def __attach_file(self, file: UploadFile, message: str) -> bool:
+        try:
+            if isinstance(file, list):
+                attachments = file
+            else:
+                attachments = [file]
+
+
+            for attachment in attachments:
+                f = MIMEBase(*attachment.content_type.split('/'))
+                
+                f.set_payload(await attachment.read())
+                encode_base64(f)
+
+                filename = attachment.filename
+
+                try:
+                    filename and filename.encode('ascii')
+                except UnicodeEncodeError:
+                    if not PY3:
+                        filename = filename.encode('utf8')
+                filename = ('UTF8', '', filename)
+                
+
+                f.add_header('Content-Disposition',
+                            "attachment",
+                            filename=filename)
+                
+
+                self.message.attach(f)
+
+            return self.message.attach(f)
+
+
+        except Exception as err:
+            print(err)
+
+            raise WrongFile(f"{err}", "is not a file, make sure you provide a file")
 
 
 

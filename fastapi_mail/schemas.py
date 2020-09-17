@@ -4,7 +4,6 @@ from fastapi import UploadFile
 import  os
 
 class MessageSchema(BaseModel):
-    sender: EmailStr
     receipients: Union[List[EmailStr],EmailStr]
     attachments: List[Any] = []
     subject: str = ""

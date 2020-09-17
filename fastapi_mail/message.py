@@ -20,7 +20,6 @@ class Message:
     """
     def __init__(
         self,
-        sender: EmailStr,
         receipients: List[EmailStr] = [],
         attachments: List[IO[bytes]] = [],
         subject: str = "",
@@ -30,7 +29,6 @@ class Message:
         bcc: List[EmailStr] = [],
         charset: str = "utf-8"
     ):
-        self.sender = sender
         self.receipients = receipients
         self.attachments = attachments
         self.subject = subject
