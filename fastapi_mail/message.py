@@ -7,7 +7,7 @@ from email import encoders
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
-
+from schemas import MessageSchema
 
 class Message:
     """
@@ -102,14 +102,18 @@ class Message:
     def __bytes__(self):
         return self.as_bytes()
 
+
+m = MessageSchema( sender="test@mail.ru",
+    subject="",
+    receipients=["test@mail.ru"],
+    body="",
+    attachments=["Pipfile"])
     
 message = Message(
-    sender="sender@python.org",
-    subject="Subject message is about python",
-    receipients=["r1@gmail.com", "r2@gmail.com"],
-    body="Python Tutorials",
-    attachments = ["LICENSE", "MANIFEST.in"]
+   **m.dict()
 )
 message._message()
+
+print(message.attachments)
 
 
