@@ -3,6 +3,7 @@
 
 The fastapi-mail simple lightweight mail system, sending emails and attachments(individual && bulk)
 
+[![Downloads](https://pepy.tech/badge/fastapi-mail)](https://pepy.tech/project/fastapi-mail)
 
 ### Installation ###
 
