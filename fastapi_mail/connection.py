@@ -12,7 +12,6 @@ class Connection:
     '''
     Manages Connection to provided email service with its credentials
     '''
-    test = 5
 
     def __init__(self,settings: ConnectionConfig ):
 
@@ -26,6 +25,7 @@ class Connection:
 
     async def __aenter__(self): #setting up a connection
         await self._configure_connection()
+
         return self
 
 
@@ -33,8 +33,7 @@ class Connection:
         await self.session.quit()
 
 
-    async def tets(self):
-        print("tets")
+
 
     async def _configure_connection(self):
         try:
@@ -52,19 +51,5 @@ class Connection:
         except Exception as error:
             raise ConnectionErrors(f"Exception raised {error}, check your credentials or email service configuration") 
 
-
-# conf = ConnectionConfig(MAIL_USERNAME="info@offer.az",MAIL_PASSWORD="jobs_2020",MAIL_PORT=465,MAIL_SERVER="cpanel1.v.fozzy.com",MAIL_TLS= False, MAIL_SSL=True)
-
-
-# async def help():
-#     async with Connection(conf) as conn:
-#         print(conn)
-#         # Connection()._configure_connection()
-#         print(dir(conn))
-#         print("hello world")
-
-
-
-# asyncio.run(help())
 
 
