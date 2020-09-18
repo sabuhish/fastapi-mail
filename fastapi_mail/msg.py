@@ -91,16 +91,15 @@ class MailMsg:
 
 
     
-    async def _message(self):
+    async def _message(self,sender):
         """Creates the email message"""
             
         self.message = MIMEMultipart()
         self.message.set_charset(self.charset)
-        print(', '.join(self.receipients))
         self.message['Date'] = formatdate(time.time(), localtime=True)
         self.message['Message-ID'] = self.msgId
-        self.message["To"] = ', '.join(self.receipients)
-        self.message["From"] = "info@offer.az"
+        self.message["To"] =  ', '.join(self.receipients)
+        self.message["From"] = sender
 
 
 
@@ -108,10 +107,12 @@ class MailMsg:
             self.message["Subject"] = (self.subject)
            
         if self.cc:
+            print("hellow")
             self.message["Cc"] = ', '.join(self.cc)
         
         if self.bcc:
-            self.message["Bcc"] = ', '.join(self.cc)
+            print("tests")
+            self.message["Bcc"] = ', '.join(self.bcc)
 
         if self.body:
             self.message.attach(self._mimetext(self.body))
@@ -124,7 +125,7 @@ class MailMsg:
            
         
 
-        print(self.message)
+        print("THE MESSAGE",self.message)
 
         return self.message
 
