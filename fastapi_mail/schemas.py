@@ -5,11 +5,10 @@ import  os
 from mimetypes import MimeTypes
 
 class MessageSchema(BaseModel):
-    receipients: Union[List[EmailStr],EmailStr]
+    receipients: List[EmailStr]
     attachments: List[Any] = []
     subject: str = ""
     body: str = None
-    html: str = None
     cc: List[EmailStr] = []
     bcc: List[EmailStr] = []
     charset: str = "utf-8"
@@ -24,7 +23,7 @@ class MessageSchema(BaseModel):
                     # mime = magic.Magic(mime=True)
                     mime = MimeTypes()
                     mime_type = mime.guess_type(file)
-                    with open(file,mode="br") as f:
+                    with open(file,mode="rb") as f:
                         u = UploadFile(f.name,f.read(),content_type=mime_type[0])
                         temp.append(u)
                 else:
@@ -36,19 +35,19 @@ class MessageSchema(BaseModel):
         return temp
 
 
-f = open("/Users/tural/opt/fastapi-mail/setup.py",mode="rb")
+# f = open("/Users/tural/opt/fastapi-mail/setup.py",mode="rb")
 
-u = UploadFile(f.name,f.read())
-f.close()
+# u = UploadFile(f.name,f.read())
+# f.close()
 
-m = MessageSchema(
-    sender="test@mail.ru",
-    subject="",
-    receipients=["test@mail.ru"],
-    body="",
-    attachments = [u,"setup.py"],
-    html = '<span>Hello Outside<span>World</span>End'
-    )
+# m = MessageSchema(
+#     sender="test@mail.ru",
+#     subject="",
+#     receipients=["test@mail.ru"],
+#     body="",
+#     attachments = [u,"setup.py"],
+#     html = '<span>Hello Outside<span>World</span>End'
+#     )
 
-print(m.attachments)
+# print(m.attachments)
 

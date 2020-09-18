@@ -7,22 +7,19 @@ import aiosmtplib
 
 
 
-
-
-
 class Connection:
     '''
     Manages Connection to provided email service with its credentials
     '''
 
-    def __init__(self,settings: Settings = ConnectionConfig):
+    def __init__(self,settings: ConnectionConfig ):
 
-        if not issubclass(settings,Settings):
-            raise  PydanticClassRequired('''Email configuruation should be provided with ConnectionConfig class, check example below:
-         \nfrom fastmail import ConnectionConfig \nclass ConnectionConfig: \nMAIL_USERNAME:  EmailStr =None\nMAIL_PASSWORD: str =None \nMAIL_PORT: int  = 25 \nMAIL_SERVER: str = '127.0.0.1' \nMAIL_TLS: bool = False \nMAIL_SSL: bool = False \nconnection = Connection(ConnectionConfig)
-         ''')
+        # if not issubclass(settings,Settings):
+        #     raise  PydanticClassRequired('''Email configuruation should be provided with ConnectionConfig class, check example below:
+        #  \nfrom fastmail import ConnectionConfig \nclass ConnectionConfig: \nMAIL_USERNAME:  EmailStr =None\nMAIL_PASSWORD: str =None \nMAIL_PORT: int  = 25 \nMAIL_SERVER: str = '127.0.0.1' \nMAIL_TLS: bool = False \nMAIL_SSL: bool = False \nconnection = Connection(ConnectionConfig)
+        #  ''')
 
-        self.settings = settings().__dict__
+        self.settings = settings.dict()
 
 
     async def __aenter__(self): #setting up a connection
@@ -50,12 +47,12 @@ class Connection:
 
 
 
-async def help():
-    async with Connection() as conn:
-        print("hello world")
+# async def help():
+#     async with Connection() as conn:
+#         print("hello world")
 
 
 
-asyncio.run(help())
+# asyncio.run(help())
 
 
