@@ -25,7 +25,7 @@ class Connection:
 
 
     async def __aenter__(self): #setting up a connection
-        # await self._configure_connection()
+        await self._configure_connection()
         return self
 
 
@@ -39,6 +39,8 @@ class Connection:
     async def _configure_connection(self):
         try:
             self.session =   aiosmtplib.SMTP(hostname=self.settings.get("MAIL_SERVER"), port=self.settings.get("MAIL_PORT"), use_tls=self.settings.get("MAIL_SSL"))          
+            self.sender = self.settings.get("MAIL_USERNAME")
+            
             if self.settings.get("MAIL_TLS"):
                 await self.session.starttls()
             
@@ -46,7 +48,6 @@ class Connection:
 
             await self.session.login(self.settings.get("MAIL_USERNAME"), self.settings.get("MAIL_PASSWORD"))
 
-            return self.session
 
         except Exception as error:
             raise ConnectionErrors(f"Exception raised {error}, check your credentials or email service configuration") 

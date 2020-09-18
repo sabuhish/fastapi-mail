@@ -28,31 +28,28 @@ class NewFastMail:
         # await self.attempt_connection()
 
 
-    async def attempt_connection(self) -> None:
+    async def attempt_connection(self, message) -> None:
         # self.connect  = Connection(self.connect)
         async with Connection(self.connect) as conn:
 
-            await conn._configure_connection()
-        
-    
+            msg = await  self.__preape_message(message,conn.sender)
+
+
+            print("THE RES",message.receipients)
+
+
+            await conn.session.send_message(conn.sender,message.receipients,msg)
+
 
     async def send_message_2(self, message: MessageSchema):
 
-        await self.attempt_connection()
-
-        # if not issubclass(message,BaseModel):
-        #     raise  PydanticClassRequired('''Email message should be provided with MessageSchema class, check example below:
-        #  \nfrom fastmail importMessageSchema \nclass MessageSchema: \receipients:  Union[List[EmailStr],EmailStr] \n attachments: List[Any] = [] \n subject: str = "" \n body:  str = None \html: str = None \ncc:List[EmailStr] = [] \nbcc: List[EmailStr] = [] \n charset: str = "utf-8" \nconnection = Connection(ConnectionConfig)
-        #  check documentaion :  #TODO link
-        #  ''')
-
-        msg = await  self.__preape_message(message)
+        await self.attempt_connection(message)
 
 
-    async def __preape_message(self, message):
+    async def __preape_message(self, message,sender):
 
-        send  = MailMsg(message.dict())
-        await send._message()
+        send  = MailMsg(**message.dict())
+        return await send._message(sender)
         
 
 
@@ -70,60 +67,18 @@ message = MessageSchema(
 # )
 
 
-
+print(message)
 
 conf = ConnectionConfig(MAIL_USERNAME="info@offer.az",MAIL_PASSWORD="jobs_2020",MAIL_PORT=465,MAIL_SERVER="cpanel1.v.fozzy.com",MAIL_TLS= False, MAIL_SSL=True)
 
 obj = NewFastMail(conf)
 
 
-    
-
-
 asyncio.run(obj.send_message_2(message))
 
 
-    # async def __send(self,recipient: str, message: str) -> bool:
-
-    #     self.__configure_connection()
-    #     self.session.sendmail(self._email,recipient,message.as_string())
-    #     self.session.quit()
-        
-    #     return True
-
-
-    # async def __send_bulk(self,TO: str, subject: str, body: str, text_format: str, file: UploadFile=None):
-        
-
-    #     if file:
-    #         await self.__attach_file(file,self.message)
-       
-        
-    #     self.message["From"] = self._email
-    #     self.message["Subject"] = subject
-    #     message_form = MIMEText(body, text_format)
-    #     self.message.attach(message_form) 
-
-    #     try:
-    #         with self.__configure_connection() as conn:
-    #             for recieptent in TO:
-    #                 email = recieptent.split()
-    #                 del self.message['To']
-                
-    #                 self.message["To"] = ", ".join(email)
-
-
-    #                 conn.sendmail(self._email,[recieptent],self.message.as_string())
-                    
-    #     except Exception as err:
-    #         raise ConnectionErrors(f"Exception rised {err} check connection") 
-
-    #     return True
-          
+   
     
-
-
-
 
 
 
