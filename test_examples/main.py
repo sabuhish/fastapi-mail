@@ -6,18 +6,40 @@ from fastapi import Header,File, Body,Query, UploadFile
 from test_examples.schema import  EmailSchema
 from typing import List
 from starlette.requests import Request
+from fastapi_mail import  ConnectionConfig
+from fastapi_mail import MessageSchema
+
+
+conf = ConnectionConfig(
+    MAIL_USERNAME = "sebuhi.sukurov.sh@gmail.com",
+    MAIL_PASSWORD = "jjhuacxnagzjeijm",
+    MAIL_PORT = 587,
+    MAIL_SERVER = "smtp.gmail.com",
+    MAIL_TLS = True,
+    MAIL_SSL = False
+
+    )
+
+
+message = MessageSchema(
+    subject="Fastapi mail module",
+    receipients=["sabuhi.shukurov@gmail.com", "sabus02@gmail.com","sebuhi.sukurov.sh@gmail.com"],
+    body="HELLO SEBUHI  :) ",
+    attachments = ["testing.py"],
+    )
+
 
 app = FastAPI()
 
-
-
-    
 
 #test email standart sending mail 
 @app.post("/email")
 async def awesome_fastapi_func_1(email: EmailSchema) -> JSONResponse:
 
-    mail = FastMail("******@gmail.com","******",tls=True)
+
+    fm = FastMail(conf)
+    fm.send_message(message)
+
 
     await  mail.send_message(recipient=email.email,subject="Test email from fastapi-mail", body=html, text_format="html")
     
