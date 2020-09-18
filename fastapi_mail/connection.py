@@ -24,6 +24,7 @@ class Connection:
     async def __aenter__(self): #setting up a connection
         return await self._configure_connection()
 
+
     async def __aexit__(self, exc_type, exc, tb): #closing the connection
         await self.session.quit()
 
@@ -36,6 +37,7 @@ class Connection:
                 use_tls = self.settings.get("MAIL_SSL")
                 start_tls = self.settings.get("MAIL_TLS")
                 )
+
             
             await self.session.connect()
 
@@ -44,7 +46,6 @@ class Connection:
                 self.settings.get("MAIL_PASSWORD")
                 )
 
-            return self.session
 
         except Exception as error:
             raise ConnectionErrors(f"Exception raised {error}, check your credentials or email service configuration") 

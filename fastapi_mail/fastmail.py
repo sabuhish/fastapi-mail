@@ -20,7 +20,6 @@ class FastMail:
     async def __preape_message(self, message):
         msg = MailMsg(**message.dict())
         return await msg._message()
-            
 
     async def send_message(self, message: MessageSchema):
         msg = await self.__preape_message(message)
