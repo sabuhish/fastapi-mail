@@ -29,8 +29,10 @@ class NewFastMail:
 
 
     async def attempt_connection(self) -> None:
-        self.connect  = Connection(self.connect)
-        await self.connect._configure_connection()
+        # self.connect  = Connection(self.connect)
+        async with Connection(self.connect) as conn:
+
+            await conn._configure_connection()
         
     
 
