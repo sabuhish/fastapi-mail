@@ -2,10 +2,8 @@
 from config import  ConnectionConfig
 from errors import ConnectionErrors, PydanticClassRequired
 from pydantic import BaseSettings  as Settings
-import asyncio
 import aiosmtplib
 
-from config import  ConnectionConfig
 
 
 class Connection:
@@ -24,32 +22,30 @@ class Connection:
 
 
     async def __aenter__(self): #setting up a connection
-        await self._configure_connection()
-
-        return self
+        return await self._configure_connection()
 
 
     async def __aexit__(self, exc_type, exc, tb): #closing the connection
         await self.session.quit()
 
 
-
-
     async def _configure_connection(self):
         try:
-            self.session =   aiosmtplib.SMTP(hostname=self.settings.get("MAIL_SERVER"), port=self.settings.get("MAIL_PORT"), use_tls=self.settings.get("MAIL_SSL"))          
-            self.sender = self.settings.get("MAIL_USERNAME")
-            
-            if self.settings.get("MAIL_TLS"):
-                await self.session.starttls()
+            self.session = aiosmtplib.SMTP(
+                hostname = self.settings.get("MAIL_SERVER"), 
+                port = self.settings.get("MAIL_PORT"), 
+                use_tls = self.settings.get("MAIL_SSL")
+                start_tls = self.settings.get("MAIL_TLS")
+                )
+
             
             await self.session.connect()
 
-            await self.session.login(self.settings.get("MAIL_USERNAME"), self.settings.get("MAIL_PASSWORD"))
+            await self.session.login(
+                self.settings.get("MAIL_USERNAME"), 
+                self.settings.get("MAIL_PASSWORD")
+                )
 
 
         except Exception as error:
             raise ConnectionErrors(f"Exception raised {error}, check your credentials or email service configuration") 
-
-
-
