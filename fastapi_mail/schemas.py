@@ -35,19 +35,3 @@ class MessageSchema(BaseModel):
         return temp
 
 
-# f = open("/Users/tural/opt/fastapi-mail/setup.py",mode="rb")
-
-# u = UploadFile(f.name,f.read())
-# f.close()
-
-# m = MessageSchema(
-#     sender="test@mail.ru",
-#     subject="",
-#     receipients=["test@mail.ru"],
-#     body="",
-#     attachments = [u,"setup.py"],
-#     html = '<span>Hello Outside<span>World</span>End'
-#     )
-
-# print(m.attachments)
-

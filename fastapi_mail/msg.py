@@ -84,11 +84,9 @@ class MailMsg:
             self.message["Subject"] = (self.subject)
            
         if self.cc:
-            print("hellow")
             self.message["Cc"] = ', '.join(self.cc)
         
         if self.bcc:
-            print("tests")
             self.message["Bcc"] = ', '.join(self.bcc)
 
         if self.body:
