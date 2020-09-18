@@ -1,24 +1,21 @@
-from typing import List, IO, Dict
-from pydantic import EmailStr
-from datetime import date
 import asyncio
-from email import encoders
+import time
+
+from datetime import date
+
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
-from schemas import MessageSchema
+
 from email.utils import formatdate, make_msgid
-import time
-from fastapi import UploadFile
+
 from version import PY3
 from email.encoders import encode_base64
 
 
 class MailMsg:
     """
-
     Preaparation of class for email text
-    
     :param subject: email subject header
     :param recipients: list of email addresses
     :param body: plain text message
@@ -28,34 +25,15 @@ class MailMsg:
     :param bcc: BCC list
     :param attachments: list of Attachment instances
     """
-    def __init__(
-        self,
-        receipients: List[EmailStr] = [],
-        attachments: List[IO[bytes]] = [],
-        subject: str = "",
-        body: str = None,
-        html: str = None,
-        cc: List[EmailStr] = [],
-        bcc: List[EmailStr] = [],
-        charset: str = "utf-8"
-    ):
-        self.receipients = receipients
-        self.attachments = attachments
-        self.subject = subject
-        self.body = body
-        self.html = html
-        self.cc = cc
-        self.bcc = bcc
-        self.charset = charset
-        self.msgId = make_msgid()
 
+    def __init__(self, **entries):
+        self.__dict__.update(entries)
+        self.msgId = make_msgid()
 
 
     def _mimetext(self, text, subtype="plain"):
         """Creates a MIMEText object"""
         return MIMEText(text, _subtype=subtype, _charset=self.charset)
-
-
 
 
     async def attach_file(self, message, attachment):
@@ -89,8 +67,7 @@ class MailMsg:
 
             self.message.attach(part)
 
-
-    
+ 
     async def _message(self):
         """Creates the email message"""
             
@@ -101,7 +78,6 @@ class MailMsg:
         self.message['Message-ID'] = self.msgId
         self.message["To"] = ', '.join(self.receipients)
         self.message["From"] = "info@offer.az"
-
 
 
         if self.subject:
@@ -116,15 +92,8 @@ class MailMsg:
         if self.body:
             self.message.attach(self._mimetext(self.body))
 
-
         if self.attachments:
             await self.attach_file(self.message, self.attachments)
-            
-
-           
-        
-
-        print(self.message)
 
         return self.message
 
@@ -132,17 +101,12 @@ class MailMsg:
     async def as_string(self):
         return await self._message().as_string()
         
-    # def as_bytes(self):
-    #     return self._message().as_bytes()
+    def as_bytes(self):
+        return self._message().as_bytes()
 
-    # def __str__(self):
-    #     return self.as_string()
+    def __str__(self):
+        return self.as_string()
 
-    # def __bytes__(self):
-    #     return self.as_bytes()
-
-
-
-
-
+    def __bytes__(self):
+        return self.as_bytes()
 
