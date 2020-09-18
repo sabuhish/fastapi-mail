@@ -9,7 +9,7 @@ from email.mime.multipart import MIMEMultipart
 
 from email.utils import formatdate, make_msgid
 
-from version import PY3
+from fastapi_mail.version import PY3
 from email.encoders import encode_base64
 
 

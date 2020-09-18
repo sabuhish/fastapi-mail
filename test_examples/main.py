@@ -10,6 +10,8 @@ from fastapi_mail import  ConnectionConfig
 from fastapi_mail import MessageSchema
 
 
+
+
 conf = ConnectionConfig(
     MAIL_USERNAME = "sebuhi.sukurov.sh@gmail.com",
     MAIL_PASSWORD = "jjhuacxnagzjeijm",

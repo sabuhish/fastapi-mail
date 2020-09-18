@@ -10,9 +10,9 @@ The fastapi-mail simple lightweight mail system, sending emails and attachments(
 ```sh
  $ pip install fastapi-mail
 ```
+### Currently Under the Constructions
 
-
-
+<!-- 
 ## notes
 - [The examples below based on gmail configuration, please read documentation for more information](https://support.google.com/mail/answer/185833?hl=en)
 - if you want to use your custom mail server, see the latest example below
@@ -175,4 +175,4 @@ async def awesome_fastapi_func_5(email: EmailSchema) -> JSONResponse:
 ```
 
 # Contributing
-Fell free to open issue and send pull request.
+Fell free to open issue and send pull request. -->
