@@ -1,14 +1,17 @@
-from config import  ConnectionConfig
-from connection import Connection
-from schemas import MessageSchema
-from msg import MailMsg
+from fastapi_mail.config import  ConnectionConfig
+from fastapi_mail.connection import Connection
+from fastapi_mail.schemas import MessageSchema
+from fastapi_mail.msg import MailMsg
 import asyncio
 import aiosmtplib
+from pydantic import BaseModel
 
 
 class FastMail:
     '''
     Fastapi mail system sending mails(individual, bulk) attachments(individual, bulk)
+
+    :param config: Connection config to be passed
 
     '''
     def __init__(self,
@@ -19,31 +22,19 @@ class FastMail:
 
     async def __preape_message(self, message):
         msg = MailMsg(**message.dict())
-        return await msg._message()
+        return await msg._message(self.config.MAIL_USERNAME)
 
     async def send_message(self, message: MessageSchema):
+
+        if not issubclass(message.__class__,BaseModel):
+            raise  PydanticClassRequired('''Message schema should be provided from MessageSchema class, check example below:
+         \nfrom fastmail import MessageSchema  \nmessage = MessageSchema(\nsubject = "subject",\nreceipients= ["list_of_receipients"],\nbody = "Hello World",\ncc = ["list_of_receipients"],\nbcc =["list_of_receipients"],\nsubtype="plain")
+         ''')
+
         msg = await self.__preape_message(message)
 
         async with Connection(self.config) as session:
-            await session.send_message(msg)
+            await session.session.send_message(msg)
 
 
-conf = ConnectionConfig(
-    MAIL_USERNAME = "test_user",
-    MAIL_PASSWORD = "test123",
-    MAIL_PORT = 587,
-    MAIL_SERVER = "smtp.gmail.com",
-    MAIL_TLS = True,
-    MAIL_SSL = False
-    )
 
-message = MessageSchema(
-    subject="Fastapi mail module",
-    receipients=["sebuhi.sukurov.sh@gmail.com", "hasan-555@mail.ru"],
-    body="You received this message from vscode :) ",
-    attachments = ["testing.py"],
-    )
-
-fm = NewFastMail(conf)
-
-asyncio.run(fm.send_message(message))

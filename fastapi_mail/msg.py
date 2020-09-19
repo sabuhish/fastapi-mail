@@ -9,13 +9,14 @@ from email.mime.multipart import MIMEMultipart
 
 from email.utils import formatdate, make_msgid
 
-from version import PY3
+from fastapi_mail.version import PY3
 from email.encoders import encode_base64
 
 
 class MailMsg:
     """
     Preaparation of class for email text
+    
     :param subject: email subject header
     :param recipients: list of email addresses
     :param body: plain text message
@@ -33,7 +34,8 @@ class MailMsg:
 
     def _mimetext(self, text, subtype="plain"):
         """Creates a MIMEText object"""
-        return MIMEText(text, _subtype=subtype, _charset=self.charset)
+
+        return MIMEText(text, _subtype=self.subtype, _charset=self.charset)
 
 
     async def attach_file(self, message, attachment):
@@ -84,11 +86,9 @@ class MailMsg:
             self.message["Subject"] = (self.subject)
            
         if self.cc:
-            print("hellow")
             self.message["Cc"] = ', '.join(self.cc)
         
         if self.bcc:
-            print("tests")
             self.message["Bcc"] = ', '.join(self.bcc)
 
         if self.body:

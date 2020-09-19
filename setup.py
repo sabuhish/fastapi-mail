@@ -14,10 +14,8 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     license='MIT',
     url="https://github.com/sabuhish/fastapi-mail",
-    install_requires=["fastapi","aiosmtplib","python-multipart","email-validator"],
-    extras_require={
-        "fastapi": ["fastapi"]
-    },
+
+    install_requires=["fastapi", "aiosmtplib","python-multipart", "pydantic","email-validator"],
     platforms=['any'],
     packages=setuptools.find_packages(),
     classifiers=[
