@@ -44,10 +44,10 @@ class MailMsg:
         
         for file in attachment:
         
-            part = MIMEBase(*file.content_type.split('/'))
+            part = MIMEBase(_maintype="application", _subtype="octet-stream")
 
             
-            part.set_payload(file.file)
+            part.set_payload(await file.read())
             encode_base64(part)
 
             filename = file.filename

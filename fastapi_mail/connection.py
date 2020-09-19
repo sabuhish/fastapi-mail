@@ -23,7 +23,7 @@ class Connection:
 
 
     async def __aenter__(self): #setting up a connection
-        return await self._configure_connection()
+        await self._configure_connection()
         return self
 
     async def __aexit__(self, exc_type, exc, tb): #closing the connection
