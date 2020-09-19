@@ -8,12 +8,13 @@ from fastapi_mail import FastMail, MessageSchema,ConnectionConfig
 
 
 conf = ConnectionConfig(
-    MAIL_USERNAME = "sebuhi.sukurov.sh@gmail.com",
-    MAIL_PASSWORD = "jjhuacxnagzjeijm",
-    MAIL_PORT = 587,
-    MAIL_SERVER = "smtp.gmail.com",
-    MAIL_TLS = True,
-    MAIL_SSL = False)
+    # MAIL_USERNAME = "sebuhi.sukurov.sh@gmail.com",
+    # MAIL_PASSWORD = "jjhuacxnagzjeijm",
+    # MAIL_PORT = 587,
+    # MAIL_SERVER = "smtp.gmail.com",
+    # MAIL_TLS = True,
+    # MAIL_SSL = False
+    )
 
 
 app = FastAPI()
@@ -53,7 +54,7 @@ async def awesome_fastapi_func_2(background_tasks: BackgroundTasks,email: EmailS
 
 
 
-#an example of sending bulk mails attaching files 
+#an example of sending attachments
 @app.post("/file")
 async def awesome_fastapi_func_4(background_tasks: BackgroundTasks,file: UploadFile = File(...)) -> JSONResponse:
 
