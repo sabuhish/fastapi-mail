@@ -16,6 +16,7 @@ from email.encoders import encode_base64
 class MailMsg:
     """
     Preaparation of class for email text
+    
     :param subject: email subject header
     :param recipients: list of email addresses
     :param body: plain text message
@@ -33,7 +34,8 @@ class MailMsg:
 
     def _mimetext(self, text, subtype="plain"):
         """Creates a MIMEText object"""
-        return MIMEText(text, _subtype=subtype, _charset=self.charset)
+
+        return MIMEText(text, _subtype=self.subtype, _charset=self.charset)
 
 
     async def attach_file(self, message, attachment):

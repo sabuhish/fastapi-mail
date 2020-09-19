@@ -1,6 +1,7 @@
 
 from pydantic import BaseModel,EmailStr
+from typing import List, Union
 
 
 class EmailSchema(BaseModel):
-    email: EmailStr
+    email: List[EmailStr]

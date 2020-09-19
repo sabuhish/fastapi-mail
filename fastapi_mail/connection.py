@@ -11,18 +11,19 @@ class Connection:
     Manages Connection to provided email service with its credentials
     '''
 
+
     def __init__(self,settings: ConnectionConfig ):
 
         if not issubclass(settings.__class__,Settings):
-            raise  PydanticClassRequired('''Email configuruation should be provided with ConnectionConfig class, check example below:
-         \nfrom fastmail.config import ConnectionConfig \nclass ConnectionConfig: \nMAIL_USERNAME:  EmailStr =None\nMAIL_PASSWORD: str =None \nMAIL_PORT: int  = 25 \nMAIL_SERVER: str = '127.0.0.1' \nMAIL_TLS: bool = False \nMAIL_SSL: bool = False \nconnection = Connection(ConnectionConfig)
+            raise  PydanticClassRequired('''Email configuruation should be provided from ConnectionConfig class, check example below:
+         \nfrom fastmail import ConnectionConfig  \nconf = Connection(\nMAIL_USERNAME = "your_username",\nMAIL_PASSWORD = "your_pass",\nMAIL_PORT = 587,\nMAIL_SERVER = "email_service",\nMAIL_TLS = True,\nMAIL_SSL = False)
          ''')
 
         self.settings = settings.dict()
 
 
     async def __aenter__(self): #setting up a connection
-        await self._configure_connection()
+        return await self._configure_connection()
         return self
 
     async def __aexit__(self, exc_type, exc, tb): #closing the connection

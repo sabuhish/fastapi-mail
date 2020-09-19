@@ -3,6 +3,9 @@ from typing import List, IO, Union, Any
 from fastapi import UploadFile
 import  os
 from mimetypes import MimeTypes
+from fastapi_mail.errors import WrongFile
+
+
 
 class MessageSchema(BaseModel):
     receipients: List[EmailStr]
@@ -12,6 +15,8 @@ class MessageSchema(BaseModel):
     cc: List[EmailStr] = []
     bcc: List[EmailStr] = []
     charset: str = "utf-8"
+    subtype: str = "plain"
+
 
     @validator("attachments")
     def validate_file(cls,v):
@@ -27,11 +32,13 @@ class MessageSchema(BaseModel):
                         u = UploadFile(f.name,f.read(),content_type=mime_type[0])
                         temp.append(u)
                 else:
-                    raise  ValueError("incorrect file path for attachment or not readable")
+                    raise  WrongFile("incorrect file path for attachment or not readable")
             elif isinstance(file,UploadFile):
                 temp.append(file)
             else:
-                raise  ValueError("attachments field type incorrect, must be UploadFile or path")
+                raise  WrongFile("attachments field type incorrect, must be UploadFile or path")
         return temp
+
+
 
 

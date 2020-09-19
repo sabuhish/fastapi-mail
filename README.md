@@ -3,14 +3,20 @@
 
 The fastapi-mail simple lightweight mail system, sending emails and attachments(individual && bulk)
 
+
+[![MIT licensed](https://img.shields.io/github/license/marlin-dev/fastapi-mail)](https://raw.githubusercontent.com/marlin-dev/fastapi-mail/master/LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/marlin-dev/fastapi-mail.svg)](https://github.com/marlin-dev/fastapi-mail/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/marlin-dev/fastapi-mail.svg)](https://github.com/marlin-dev/fastapi-mail/network)
+[![GitHub issues](https://img.shields.io/github/issues-raw/marlin-dev/fastapi-mail)](https://github.com/marlin-dev/fastapi-mail/issues)
 [![Downloads](https://pepy.tech/badge/fastapi-mail)](https://pepy.tech/project/fastapi-mail)
 
-### Installation ###
+
+###  🔨  Installation ###
 
 ```sh
  $ pip install fastapi-mail
 ```
-### Currently Under the Constructions
+
 
 <!-- 
 ## notes
