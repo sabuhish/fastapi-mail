@@ -1,27 +1,25 @@
-from fastapi import FastAPI, BackgroundTasks, UploadFile,  File
+from fastapi import FastAPI, BackgroundTasks, UploadFile, File, Form
 from starlette.responses import JSONResponse
-from templates import  html, template,bulkmail
-from schema import  EmailSchema
+from .templates import  html, template,bulkmail
+from .schema import  EmailSchema, EmailStr
 from starlette.requests import Request
 from fastapi_mail import FastMail, MessageSchema,ConnectionConfig
 
 
-
 conf = ConnectionConfig(
-    # MAIL_USERNAME = "sebuhi.sukurov.sh@gmail.com",
-    # MAIL_PASSWORD = "jjhuacxnagzjeijm",
-    # MAIL_PORT = 587,
-    # MAIL_SERVER = "smtp.gmail.com",
-    # MAIL_TLS = True,
-    # MAIL_SSL = False
+    MAIL_USERNAME = "your@email.com",
+    MAIL_PASSWORD = "strong_password",
+    MAIL_PORT = 587,
+    MAIL_SERVER = "your mail server",
+    MAIL_TLS = True,
+    MAIL_SSL = False
     )
-
 
 app = FastAPI()
 
 #test email standart sending mail 
 @app.post("/email")
-async def awesome_fastapi_func_1(email: EmailSchema) -> JSONResponse:
+async def simple_send(email: EmailSchema) -> JSONResponse:
 
     message = MessageSchema(
         subject="Fastapi-Mail module",
@@ -38,7 +36,7 @@ async def awesome_fastapi_func_1(email: EmailSchema) -> JSONResponse:
 
 #this mail sending using starlettes background tasks, faster than the above one
 @app.post("/emailbackground")
-async def awesome_fastapi_func_2(background_tasks: BackgroundTasks,email: EmailSchema) -> JSONResponse:
+async def send_in_background(background_tasks: BackgroundTasks,email: EmailSchema) -> JSONResponse:
 
     message = MessageSchema(
         subject="Fastapi mail module",
@@ -56,14 +54,11 @@ async def awesome_fastapi_func_2(background_tasks: BackgroundTasks,email: EmailS
 
 #an example of sending attachments
 @app.post("/file")
-async def awesome_fastapi_func_4(background_tasks: BackgroundTasks,file: UploadFile = File(...)) -> JSONResponse:
+async def send_file(background_tasks: BackgroundTasks,file: UploadFile = File(...),email:EmailStr = Form(...)) -> JSONResponse:
 
-
-
-    
     message = MessageSchema(
             subject="Fastapi mail module",
-            receipients=["sabuhi.shukurov@gmail.com"],
+            receipients=[email],
             body="Simple background task ",
             attachments=[file]
             )
@@ -74,7 +69,3 @@ async def awesome_fastapi_func_4(background_tasks: BackgroundTasks,file: UploadF
 
     return JSONResponse(status_code=200, content={"message": "email has been sent"})
 
-
-
-
-# uvicorn test_examples.main:app --reload  --port 8001
