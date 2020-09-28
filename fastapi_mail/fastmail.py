@@ -28,7 +28,7 @@ class FastMail:
 
         if not issubclass(message.__class__,BaseModel):
             raise  PydanticClassRequired('''Message schema should be provided from MessageSchema class, check example below:
-         \nfrom fastmail import MessageSchema  \nmessage = MessageSchema(\nsubject = "subject",\nreceipients= ["list_of_receipients"],\nbody = "Hello World",\ncc = ["list_of_receipients"],\nbcc =["list_of_receipients"],\nsubtype="plain")
+         \nfrom fastmail import MessageSchema  \nmessage = MessageSchema(\nsubject = "subject",\nrecipients= ["list_of_recipients"],\nbody = "Hello World",\ncc = ["list_of_recipients"],\nbcc =["list_of_recipients"],\nsubtype="plain")
          ''')
 
         msg = await self.__preape_message(message)
