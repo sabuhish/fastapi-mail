@@ -6,9 +6,9 @@
 html = """
 <html> 
 <body>
-<p>Hi This test mail,
+<p>Hello from FastApi-Mail,
 <br>Thanks for using Fastapi-mail</p> 
-<p> Feel free to <strong>let us</strong> know in case of bug</p> 
+
 </body> 
 </html>
 """
@@ -18,9 +18,8 @@ html = """
 template = """
 <html> 
 <body>
-<p>Hi This test mail using BackgroundTask,
+<p>Hello from FastApi-Mail using BackgroundTask
 <br>Thanks for using Fastapi-mail</p> 
-<p> Feel free to <strong>let us</strong> know in case of bug</p> 
 </body> 
 </html>
 """
@@ -31,9 +30,8 @@ template = """
 bulkmail = """
 <html> 
 <body>
-<p>Hi, this  Bulk mail using BackgroundTask,
+<p>Hello from FastApi-Mail,  example of bulk mail using BackgroundTask,
 <br>Thanks for using Fastapi-mail</p> 
-<p> Feel free to <strong>let us</strong> know in case of bug</p> 
 </body> 
 </html>
 """
