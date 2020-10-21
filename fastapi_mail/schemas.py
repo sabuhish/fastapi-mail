@@ -26,7 +26,7 @@ class MessageSchema(BaseModel):
         for file in v:
             if isinstance(file,str):
 
-                if os.path.isfile(file) and os.access(file, os.R_OK):
+                if os.path.isfile(file) and os.access(file, os.R_OK) and validate_path(file):
                     mime_type = mime.guess_type(file)
                     with open(file,mode="rb") as f:
                         u = UploadFile(f.name,f.read(),content_type=mime_type[0])
@@ -41,4 +41,9 @@ class MessageSchema(BaseModel):
 
 
 
+def validate_path(path):
+    cur_dir = os.path.abspath(os.curdir)
+    requested_path = os.path.abspath(os.path.relpath(path, start=cur_dir))
+    common_prefix = os.path.commonprefix([requested_path, cur_dir])
+    return common_prefix == cur_dir
 
