@@ -78,7 +78,7 @@ class MailMsg:
         self.message.set_charset(self.charset)
         self.message['Date'] = formatdate(time.time(), localtime=True)
         self.message['Message-ID'] = self.msgId
-        self.message["To"] =  ', '.join(self.receipients)
+        self.message["To"] =  ', '.join(self.recipients)
         self.message["From"] = sender
 
 

@@ -23,7 +23,7 @@ async def simple_send(email: EmailSchema) -> JSONResponse:
 
     message = MessageSchema(
         subject="Fastapi-Mail module",
-        receipients=email.dict().get("email"),
+        recipients=email.dict().get("email"),
         body=html,
         subtype="html"
         )
@@ -40,7 +40,7 @@ async def send_in_background(background_tasks: BackgroundTasks,email: EmailSchem
 
     message = MessageSchema(
         subject="Fastapi mail module",
-        receipients=email.dict().get("email"),
+        recipients=email.dict().get("email"),
         body="Simple background task ",
         )
 
@@ -58,7 +58,7 @@ async def send_file(background_tasks: BackgroundTasks,file: UploadFile = File(..
 
     message = MessageSchema(
             subject="Fastapi mail module",
-            receipients=[email],
+            recipients=[email],
             body="Simple background task ",
             attachments=[file]
             )

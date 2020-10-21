@@ -8,7 +8,7 @@ from fastapi_mail.errors import WrongFile
 
 
 class MessageSchema(BaseModel):
-    receipients: List[EmailStr]
+    recipients: List[EmailStr]
     attachments: List[Any] = []
     subject: str = ""
     body: str = None

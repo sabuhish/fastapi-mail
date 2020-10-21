@@ -80,7 +80,7 @@ async def simple_send(email: EmailSchema) -> JSONResponse:
 
     message = MessageSchema(
         subject="Fastapi-Mail module",
-        receipients=email.dict().get("email"),  # List of receipients, as many as you can pass 
+        recipients=email.dict().get("email"),  # List of recipients, as many as you can pass 
         body=html,
         subtype="html"
         )
@@ -101,7 +101,7 @@ async def send_in_background(background_tasks: BackgroundTasks,email: EmailSchem
 
     message = MessageSchema(
         subject="Fastapi mail module",
-        receipients=email.dict().get("email"),
+        recipients=email.dict().get("email"),
         body="Simple background task ",
         )
 
@@ -125,7 +125,7 @@ async def send_file(background_tasks: BackgroundTasks,file: UploadFile = File(..
 
     message = MessageSchema(
             subject="Fastapi mail module",
-            receipients=[email],
+            recipients=[email],
             body="Simple background task ",
             attachments=[file]
             )
@@ -142,4 +142,34 @@ async def send_file(background_tasks: BackgroundTasks,file: UploadFile = File(..
 
 
 # Contributing
-Fell free to open issue and send pull request. -->
+Fell free to open issue and send pull request.
+
+
+## Contributors ✨
+
+Thanks goes to these wonderful people ([🚧](https://allcontributors.org/docs/en/maintenance)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/marlin-dev"><img src="https://avatars.githubusercontent.com/u/46589585?v=3" width="100px;" alt=""/><br /><sub><b>Sabuhi Shukurov</b></sub></a><br /><a href="#maintenance-tbenning" title="Answering Questions">💬</a> <a href="https://github.com/marlin-dev/fastapi-mail/" title="Reviewed Pull Requests">👀</a> <a href="#maintenance-jakebolam" title="Maintenance">🚧</a></td>
+    <td align="center"><a href="https://github.com/Turall"><img src="https://avatars.githubusercontent.com/u/32899328?v=3" width="100px;" alt=""/><br /><sub><b>Tural Muradov</b></sub></a><br /><a href="https://github.com/marlin-dev/fastapi-mail/" title="Documentation">📖</a> <a href="https://github.com/marlin-dev/fastapi-mail/" title="Reviewed Pull Requests">👀</a> <a href="#tool-jfmengels" title="Tools">🔧</a></td>
+    <td align="center"><a href="https://github.com/AliyevH"><img src="https://avatars.githubusercontent.com/u/5507950?v=3" width="100px;" alt=""/><br /><sub><b>Hasan Aliyev</b></sub></a><br /><a href="https://github.com/marlin-dev/fastapi-mail/" title="Documentation">📖</a> <a href="#maintenance-jakebolam" title="Maintenance">🚧</a> <a href="https://github.com/marlin-dev/fastapi-mail/" title="Reviewed Pull Requests">👀</a></td>
+    <td align="center"><a href="https://github.com/imaskm"><img src="https://avatars.githubusercontent.com/u/20543833?v=3" width="100px;" alt=""/><br /><sub><b>Ashwani</b></sub></a><br /><a href="#maintenance-tbenning" title="Maintenance">🚧</a></td>
+    <td align="center"><a href="https://github.com/LLYX"><img src="https://avatars1.githubusercontent.com/u/10430633" width="100px;" alt=""/><br /><sub><b>Leon Xu</b></sub></a><br /><a href="#maintenance-tbenning" title="Maintenance">🚧</a></td>
+
+  </tr>
+  
+
+</table>
+
+
+This project follows the [all-contributors](https://allcontributors.org) specification.
+Contributions of any kind are welcome!
+
+
+## LICENSE
+
+[MIT](LICENSE)
