@@ -7,8 +7,9 @@ from fastapi_mail import FastMail, MessageSchema,ConnectionConfig
 
 
 conf = ConnectionConfig(
-    MAIL_USERNAME = "your@email.com",
+    MAIL_USERNAME = "your_username",
     MAIL_PASSWORD = "strong_password",
+    MAIL_FROM = "your@email.com",
     MAIL_PORT = 587,
     MAIL_SERVER = "your mail server",
     MAIL_TLS = True,

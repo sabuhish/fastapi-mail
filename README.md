@@ -45,8 +45,9 @@ class EmailSchema(BaseModel):
 
 
 conf = ConnectionConfig(
-    MAIL_USERNAME = "your@email.com",
+    MAIL_USERNAME = "YourUsername",
     MAIL_PASSWORD = "strong_password",
+    MAIL_FROM = "your@email.com",
     MAIL_PORT = 587,
     MAIL_SERVER = "your mail server",
     MAIL_TLS = True,
