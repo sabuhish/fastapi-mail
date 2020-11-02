@@ -4,34 +4,13 @@
 
 
 html = """
-<html> 
-<body>
-<p>Hello from FastApi-Mail,
-<br>Thanks for using Fastapi-mail</p> 
-
-</body> 
-</html>
+<p>Hi this test mail, thanks for using Fastapi-mail</p> 
 """
-
-
 
 template = """
-<html> 
-<body>
-<p>Hello from FastApi-Mail using BackgroundTask
-<br>Thanks for using Fastapi-mail</p> 
-</body> 
-</html>
+<p>Hi this test mail using BackgroundTasks, thanks for using Fastapi-mail</p> 
 """
 
-
-
-
 bulkmail = """
-<html> 
-<body>
-<p>Hello from FastApi-Mail,  example of bulk mail using BackgroundTask,
-<br>Thanks for using Fastapi-mail</p> 
-</body> 
-</html>
+<p>Hi this test mail, example of bulk mail using BackgroundTask thanks for using Fastapi-mail</p> 
 """

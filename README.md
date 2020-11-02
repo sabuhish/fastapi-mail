@@ -21,7 +21,7 @@ The fastapi-mail simple lightweight mail system, sending emails and attachments(
 ### In order to run the application use command below ####
 
 ```sh
-uvicorn test_examples.main:app --reload  --port 8001
+uvicorn examples.main:app --reload  --port 8001
 
 ```
 
@@ -58,21 +58,11 @@ app = FastAPI()
 
 
 html = """
-<html> 
-<body>
-<p>Hi This test mail
-<br>Thanks for using Fastapi-mail</p> 
-</body> 
-</html>
+<p>Hi this test mail, thanks for using Fastapi-mail</p> 
 """
 
 template = """
-<html> 
-<body>
-<p>Hi This test mail using BackgroundTasks
-<br>Thanks for using Fastapi-mail</p> 
-</body> 
-</html>
+<p>Hi this test mail using BackgroundTasks, thanks for using Fastapi-mail</p> 
 """
 
 
@@ -150,9 +140,7 @@ Fell free to open issue and send pull request.
 
 Thanks goes to these wonderful people ([🚧](https://allcontributors.org/docs/en/maintenance)):
 
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
+
 <table>
   <tr>
     <td align="center"><a href="https://github.com/marlin-dev"><img src="https://avatars.githubusercontent.com/u/46589585?v=3" width="100px;" alt=""/><br /><sub><b>Sabuhi Shukurov</b></sub></a><br /><a href="#maintenance-tbenning" title="Answering Questions">💬</a> <a href="https://github.com/marlin-dev/fastapi-mail/" title="Reviewed Pull Requests">👀</a> <a href="#maintenance-jakebolam" title="Maintenance">🚧</a></td>
