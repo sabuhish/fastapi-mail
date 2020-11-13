@@ -3,7 +3,6 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-
 setuptools.setup(
     name="fastapi-mail",
     version=__import__("fastapi_mail").VERSION,
@@ -14,8 +13,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     license='MIT',
     url="https://github.com/sabuhish/fastapi-mail",
-
-    install_requires=["fastapi","jinja2","aiosmtplib","python-multipart", "pydantic","email-validator"],
+    install_requires=["fastapi",'jinja2 >= 2.11.2',"aiosmtplib","python-multipart", "pydantic","email-validator"],
     platforms=['any'],
     packages=setuptools.find_packages(),
     classifiers=[
