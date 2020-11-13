@@ -15,7 +15,7 @@ setuptools.setup(
     license='MIT',
     url="https://github.com/sabuhish/fastapi-mail",
 
-    install_requires=["fastapi","Jinja2","aiosmtplib","python-multipart", "pydantic","email-validator"],
+    install_requires=["fastapi","jinja2","aiosmtplib","python-multipart", "pydantic","email-validator"],
     platforms=['any'],
     packages=setuptools.find_packages(),
     classifiers=[
