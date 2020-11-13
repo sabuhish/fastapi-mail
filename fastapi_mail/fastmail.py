@@ -15,8 +15,8 @@ class FastMail:
     '''
 
     def __init__(self,
-                 config: ConnectionConfig
-                 ):
+        config: ConnectionConfig
+        ):
 
         self.config = config
 

@@ -35,6 +35,7 @@ Pipfile.lock
 requirements.txt
 app.py
 tests
+email
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
