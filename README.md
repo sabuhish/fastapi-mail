@@ -131,6 +131,52 @@ async def send_file(background_tasks: BackgroundTasks,file: UploadFile = File(..
 
 ```
 
+###  Using Jinja2 HTML Templates
+
+The email folder must be present within your applications working directory.
+
+In sending HTML emails, the CSS expected by mail servers -outlook, google, etc- must be inline CSS. Fastapi mail passes _"body"_ to the rendered template. In creating the template for emails the dynamic objects should be used with the assumption that the variable is named "_body_" and that it is a python dict.
+
+check out jinja2 for more details 
+https://jinja.palletsprojects.com/en/2.11.x/
+
+
+```python
+
+
+class EmailSchema(BaseModel):
+    email: List[EmailStr]
+    body: Dict[str, Any]
+
+conf = ConnectionConfig(
+    MAIL_USERNAME = "YourUsername",
+    MAIL_PASSWORD = "strong_password",
+    MAIL_FROM = "your@email.com",
+    MAIL_PORT = 587,
+    MAIL_SERVER = "your mail server",
+    MAIL_TLS = True,
+    MAIL_SSL = False,
+    TEMPLATE_FOLDER='./email templates folder'
+)
+
+
+@app.post("/email")
+async def send_with_template(email: EmailSchema) -> JSONResponse:
+
+    message = MessageSchema(
+        subject="Fastapi-Mail module",
+        recipients=email.dict().get("email"),  # List of recipients, as many as you can pass 
+        body=email.dict().get("body"),
+        subtype="html"
+        )
+
+    fm = FastMail(conf)
+    await fm.send_message(message, template_name="email_template.html") ##optional field template_name is the name of the html file(jinja template) to use from the email template folder
+    return JSONResponse(status_code=200, content={"message": "email has been sent"})
+
+
+```
+
 
 # Contributing
 Fell free to open issue and send pull request.

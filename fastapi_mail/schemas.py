@@ -11,7 +11,7 @@ class MessageSchema(BaseModel):
     recipients: List[EmailStr]
     attachments: List[Any] = []
     subject: str = ""
-    body: str = None
+    body: Union[str, dict] = None
     cc: List[EmailStr] = []
     bcc: List[EmailStr] = []
     charset: str = "utf-8"
