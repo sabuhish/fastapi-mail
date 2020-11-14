@@ -4,7 +4,7 @@ from fastapi_mail.config import ConnectionConfig
 from fastapi_mail.connection import Connection
 from fastapi_mail.schemas import MessageSchema
 from fastapi_mail.msg import MailMsg
-
+from fastapi_mail.errors import PydanticClassRequired
 
 class FastMail:
     '''
