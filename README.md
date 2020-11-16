@@ -206,7 +206,7 @@ Thanks goes to these wonderful people ([🚧](https://allcontributors.org/docs/e
 This project follows the [all-contributors](https://allcontributors.org) specification.
 Contributions of any kind are welcome!
 
-Before you start please read [CONTRIBUTING](LICENSE)
+Before you start please read [CONTRIBUTING](https://github.com/sabuhish/fastapi-mail/blob/master/CONTRIBUTING.md)
 
 
 
