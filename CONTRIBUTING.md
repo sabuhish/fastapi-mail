@@ -29,6 +29,14 @@ Please refer to each project's style and contribution guidelines for submitting 
 $ bash install.sh   
 $ source .venv/bin/activate
 $ cat main.py
+or
+
+```
+or run fastapi app with uvicron
+
+```sh
+uvicorn app:app --port 8000 --reload
+
 ```
 
 

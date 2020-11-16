@@ -9,7 +9,7 @@ set -e
 CURRENT_DIRECTORY=$(pwd)
 
 CURRENT_USER=$(whoami)
-VERSION="0.3.0.2"
+VERSION="0.3.0.3"
 
 README_URL="https://github.com/sabuhish/fastapi-mail"
 
@@ -28,7 +28,7 @@ function install(){
 
         echo "installing dependencies"
 
-        pip install "fastapi>=0.61.2" 'jinja2>=2.11.2' "aiosmtplib>=1.1.4" "python-multipart>=0.0.5" "pydantic>=1.7.1" "email-validator>=1.1.1"
+        pip install "fastapi>=0.61.2" 'uvicorn>=0.12.2' 'jinja2>=2.11.2' "aiosmtplib>=1.1.4" "python-multipart>=0.0.5" "pydantic>=1.7.1" "email-validator>=1.1.1"
             
        
         touch $CURRENT_DIRECTORY/main.py
@@ -66,6 +66,52 @@ task = loop.create_task(fm.send_message(message,template_name="email_template.ht
 
 loop.run_until_complete(task)
 loop.close()" >> main.py
+
+
+echo "
+from fastapi import FastAPI, BackgroundTasks
+from starlette.responses import JSONResponse
+from fastapi_mail import FastMail, MessageSchema,ConnectionConfig
+from pydantic import EmailStr
+from pydantic import EmailStr, BaseModel
+from typing import List
+
+
+
+class EmailSchema(BaseModel):
+    email: List[EmailStr]
+
+
+conf = ConnectionConfig(
+    MAIL_USERNAME = 'YourUsername',
+    MAIL_PASSWORD = 'strong_password',
+    MAIL_FROM = 'your@email.com',
+    MAIL_PORT = '587',
+    MAIL_SERVER = 'your mail server',
+    MAIL_TLS = True,
+    MAIL_SSL = False
+)
+
+app = FastAPI()
+
+
+html = '<p>Hi this test mail, thanks for using Fastapi-mail</p>'
+
+
+
+@app.post('/email')
+async def simple_send(email: EmailSchema) -> JSONResponse:
+
+    message = MessageSchema(
+        subject='Fastapi-Mail module',
+        recipients=email.dict().get('email'),  # List of recipients, as many as you can pass 
+        body=html,
+        subtype="html"
+        )
+
+    fm = FastMail(conf)
+    await fm.send_message(message)
+    return JSONResponse(status_code=200, content={'message': 'email has been sent'})" >> app.py
         
         echo ""
         echo -e "fastapi-mail: $VERSION"
