@@ -13,7 +13,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     license='MIT',
     url="https://github.com/sabuhish/fastapi-mail",
-    install_requires=["fastapi",'jinja2 >= 2.11.2',"aiosmtplib","python-multipart", "pydantic","email-validator"],
+    install_requires=["fastapi>=0.61.2",'jinja2>=2.11.2',"aiosmtplib>=1.1.4","python-multipart>=0.0.5", "pydantic>=1.7.1","email-validator>=1.1.1"],
     platforms=['any'],
     packages=setuptools.find_packages(),
     classifiers=[
