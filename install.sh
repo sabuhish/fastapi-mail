@@ -9,7 +9,7 @@ set -e
 CURRENT_DIRECTORY=$(pwd)
 
 CURRENT_USER=$(whoami)
-VERSION="0.3.0.3"
+VERSION="0.3.0.4"
 
 README_URL="https://github.com/sabuhish/fastapi-mail"
 
