@@ -31,7 +31,11 @@ class FastMail:
                 message.subtype = "html"
 
         msg = MailMsg(**message.dict())
-        return await msg._message(self.config.MAIL_FROM)
+        if self.config.MAIL_FROM_NAME is not None:
+            sender = f'{self.config.MAIL_FROM_NAME} {self.config.MAIL_FROM}'
+        else:
+            sender = self.config.MAIL_FROM
+        return await msg._message(sender)
 
     async def send_message(self, message: MessageSchema, template_name=None):
 

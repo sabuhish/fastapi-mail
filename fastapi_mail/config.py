@@ -16,6 +16,7 @@ class ConnectionConfig(Settings):
     MAIL_SSL: bool = True
     MAIL_DEBUG: int = 1
     MAIL_FROM: EmailStr
+    MAIL_FROM_NAME: str = None
     TEMPLATE_FOLDER: Any = None
 
     @validator("TEMPLATE_FOLDER", pre=True)
