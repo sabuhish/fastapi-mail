@@ -177,6 +177,146 @@ async def send_with_template(email: EmailSchema) -> JSONResponse:
 
 ```
 
+##  Guide for email utils
+
+The utility allows you to check temporary email addresses, you can block any email or domain. 
+You can connect Redis to save and check email addresses. If you do not provide a Redis configuration, 
+then the utility will save it in the list or set by default.
+
+
+### Check dispasoble email address
+
+```python
+from fastapi import FastAPI, Query, Body
+from starlette.responses import JSONResponse
+from pydantic import EmailStr
+from typing import List
+from fastapi_mail.email_utils import DefaultChecker
+from fastapi import Depends
+
+
+app = FastAPI()
+
+
+async def default_checker():
+    checker = DefaultChecker()  # you can pass source argument for your own email domains
+    await checker.fetch_temp_email_domains() # require to fetch temporary email domains
+    return checker
+
+
+@app.get('/email/dispasoble')
+async def simple_send(domain: str = Query(...), checker: DefaultChecker = Depends(default_checker)) -> JSONResponse:
+
+    if await checker.is_dispasoble(domain):
+        return JSONResponse(status_code=400, content={'message': 'this is dispasoble domain'})
+    ...
+
+    return JSONResponse(status_code=200, content={'message': 'email has been sent'})
+
+```
+
+### Add dispasoble email address
+
+```python
+@app.post('/email/dispasoble')
+async def add_disp_domain(domains: list = Body(...,embed=True), checker: DefaultChecker = Depends(default_checker)) -> JSONResponse:
+
+    res = await checker.add_temp_domain(domains)
+
+    return JSONResponse(status_code=200, content={'result': res})
+```
+
+### Add domain to blocked list
+
+```python
+@app.post('/email/blocked/domains')
+async def block_domain(domain: str = Query(...), checker: DefaultChecker = Depends(default_checker)) -> JSONResponse:
+
+    await checker.blacklist_add_domain(domain)
+    
+    return JSONResponse(status_code=200, content={'message': f'{domain} added to blacklist'})
+```
+
+### Check domain blocked or not
+
+```python
+@app.get('/email/blocked/domains')
+async def get_blocked_domain(domain: str = Query(...), checker: DefaultChecker = Depends(default_checker)) -> JSONResponse:
+
+    res = await checker.is_blocked_domain(domain)
+    
+    return JSONResponse(status_code=200, content={"result": res})
+```
+
+### Add email address to blocked list
+
+```python
+@app.post('/email/blocked/address')
+async def block_address(email: str = Query(...), checker: DefaultChecker = Depends(default_checker)) -> JSONResponse:
+
+    await checker.blacklist_add_email(email)
+    
+    return JSONResponse(status_code=200, content={"result": True})
+```
+
+### Check email blocked or not
+
+```python
+@app.get('/email/blocked/address')
+async def get_block_address(email: str = Query(...), checker: DefaultChecker = Depends(default_checker)) -> JSONResponse:
+
+    res = await checker.is_blocked_address(email)
+    
+    return JSONResponse(status_code=200, content={"result": res})
+```
+
+### Check MX record
+
+```python
+@app.get('/email/mx')
+async def test_mx(email: EmailStr = Query(...),full_result: bool = Query(False) ,checker: DefaultChecker = Depends(default_checker)) -> JSONResponse:
+    
+    domain = email.split("@")[-1]
+    res = await checker.check_mx_record(domain,full_result)
+    
+    return JSONResponse(status_code=200, content=res)
+```
+
+### Remove email address from blocked list
+
+```python
+@app.delete('/email/blocked/address')
+async def del_blocked_address(email: str = Query(...), checker: DefaultChecker = Depends(default_checker)) -> JSONResponse:
+
+    res = await checker.blacklist_rm_email(email)
+    
+    return JSONResponse(status_code=200, content={"result": res})
+```
+
+### Remove domain from blocked list
+
+```python
+@app.delete('/email/blocked/domains')
+async def del_blocked_domain(domain: str = Query(...), checker: DefaultChecker = Depends(default_checker)) -> JSONResponse:
+
+    res = await checker.blacklist_rm_domain(domain)
+    
+    return JSONResponse(status_code=200, content={"result": res})
+```
+
+### Remove domain from temporary list
+
+```python
+@app.delete('/email/dispasoble')
+async def del_disp_domain(domains: list = Body(...,embed=True), checker: DefaultChecker = Depends(default_checker)) -> JSONResponse:
+
+    res = await checker.blacklist_rm_temp(domains)
+
+    return JSONResponse(status_code=200, content={'result': res})
+```
+
+
+
 
 # Contributing
 Fell free to open issue and send pull request.
