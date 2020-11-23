@@ -24,7 +24,7 @@ class FastMail:
         template = env_path.get_template(template_name)
         return template
 
-    async def __preape_message(self, message: MessageSchema, template=None):
+    async def __prepare_message(self, message: MessageSchema, template=None):
         if template is not None:
             if message.body and not message.html:
                 message.body = template.render(body=message.body)
@@ -48,9 +48,9 @@ class FastMail:
 
         if self.config.TEMPLATE_FOLDER and template_name:
             template = await self.get_mail_template(self.config.TEMPLATE_FOLDER, template_name)
-            msg = await self.__preape_message(message, template)
+            msg = await self.__prepare_message(message, template)
         else:
-            msg = await self.__preape_message(message)
+            msg = await self.__prepare_message(message)
 
         async with Connection(self.config) as session:
             await session.session.send_message(msg)
