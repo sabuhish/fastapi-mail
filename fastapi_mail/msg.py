@@ -37,7 +37,7 @@ class MailMsg:
     def _mimetext(self, text, subtype="plain"):
         """Creates a MIMEText object"""
 
-        return MIMEText(text, _subtype=self.subtype, _charset=self.charset)
+        return MIMEText(text, _subtype=subtype, _charset=self.charset)
 
 
     async def attach_file(self, message, attachment):
@@ -94,7 +94,13 @@ class MailMsg:
             self.message["Bcc"] = ', '.join(self.bcc)
 
         if self.body:
-            self.message.attach(self._mimetext(self.body))
+            if not self.html and self.subtype:
+                self.message.attach(self._mimetext(self.body, self.subtype))
+            else:
+                self.message.attach(self._mimetext(self.body))
+
+        if self.html:
+            self.message.attach(self._mimetext(self.html, "html"))
 
         if self.attachments:
             await self.attach_file(self.message, self.attachments)
