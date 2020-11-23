@@ -16,7 +16,7 @@ class MessageSchema(BaseModel):
     cc: List[EmailStr] = []
     bcc: List[EmailStr] = []
     charset: str = "utf-8"
-    subtype: str = "plain"
+    subtype: Optional[str] = None
 
 
     @validator("attachments")

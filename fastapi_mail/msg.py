@@ -21,6 +21,8 @@ class MailMsg:
     :param recipients: list of email addresses
     :param body: plain text message
     :param html: HTML message
+    :param subtype: type of body parameter - "plain" or "html". Ignored if
+    the html parameter is explicitly specified
     :param sender: email sender address
     :param cc: CC list
     :param bcc: BCC list
