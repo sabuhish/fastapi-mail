@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr,validator
-from typing import List, IO, Union, Any, Optional
+from typing import List, IO, Union, Any, Optional, Dict
 from starlette.datastructures import  UploadFile
 import  os
 from mimetypes import MimeTypes
@@ -12,6 +12,7 @@ class MessageSchema(BaseModel):
     attachments: List[Any] = []
     subject: str = ""
     body: Union[str,list,dict] = None
+    html: Optional[Union[str, List, Dict]] = None
     cc: List[EmailStr] = []
     bcc: List[EmailStr] = []
     charset: str = "utf-8"
