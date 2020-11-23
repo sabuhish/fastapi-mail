@@ -24,11 +24,13 @@ class FastMail:
         template = env_path.get_template(template_name)
         return template
 
-    async def __preape_message(self, message, template=None):
-        if hasattr(message, "body") and template is not None:
-            message.body = template.render(body=message.body)
-            if hasattr(message, "subtype") and getattr(message, "subtype") != "html":
+    async def __preape_message(self, message: MessageSchema, template=None):
+        if template is not None:
+            if message.body and not message.html:
+                message.body = template.render(body=message.body)
                 message.subtype = "html"
+            elif message.html:
+                message.html = template.render(body=message.html)
 
         msg = MailMsg(**message.dict())
         if self.config.MAIL_FROM_NAME is not None:
