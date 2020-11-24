@@ -1,0 +1,34 @@
+site_name: FastApi-mail
+site_url: 
+site_description: fastapi-mail 
+dev_addr: 127.0.0.1:8080
+
+theme:
+  name: material
+  palette:
+    scheme: slate
+    primary: teal
+    accent: purple
+  
+  icon:
+    repo: fontawesome/brands/github
+repo_name: fastapi-mail
+repo_url: https://github.com/sabuhish/fastapi-mail
+edit_uri: ''
+
+plugins:
+- search
+- markdownextradata:
+    data: data
+
+markdown_extensions:
+  - toc:
+      permalink: true
+    
+nav:
+  - FastApi mail: index.md
+
+
+
+
+
