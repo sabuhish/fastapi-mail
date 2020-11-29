@@ -315,7 +315,57 @@ async def del_disp_domain(domains: list = Body(...,embed=True), checker: Default
     return JSONResponse(status_code=200, content={'result': res})
 ```
 
+### Writing unittests using Fastapi_Mail
+Fastapi mails allows you to write unittest for your application without sending emails to
+non existent email address by mocking the email to be sent. To mock sending out mails, set
+the suppress configuraton to true. Suppress send defaults to False to prevent mocking within applications.
 
+
+application.py
+```python
+conf = ConnectionConfig(
+    MAIL_USERNAME = "YourUsername",
+    MAIL_PASSWORD = "strong_password",
+    MAIL_FROM = "your@email.com",
+    MAIL_PORT = 587,
+    MAIL_SERVER = "your mail server",
+    MAIL_TLS = True,
+    MAIL_SSL = False,
+    TEMPLATE_FOLDER='./email templates folder',
+
+    # if no indicated SUPPRESS_SEND defaults to 0 (false) as below
+    SUPPRESS_SEND=0
+)
+
+fm = FastMail(conf)
+
+@app.post("/email")
+async def simple_send(email: EmailSchema) -> JSONResponse:
+
+    message = MessageSchema(
+        subject="Testing",
+        recipients=email.dict().get("email"),  # List of recipients, as many as you can pass 
+        body=html,
+        subtype="html"
+        )
+
+    await fm.send_message(message)
+    return JSONResponse(status_code=200, content={"message": "email has been sent"})
+
+```
+
+test.py
+```python
+from application.py import fm
+
+# make this setting available as a fixture through conftest.py if you plan on using pytest
+fm.config.SUPPRESS_SEND = 1
+
+with fm.record_messages() as outbox:
+    response = app.test_client.get("/email")
+    assert len(outbox) == 1
+    assert outbox[0].subject == "Testing"
+```
 
 
 # Contributing

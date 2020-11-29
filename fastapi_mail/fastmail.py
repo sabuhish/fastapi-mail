@@ -1,12 +1,45 @@
+from contextlib import contextmanager\
+
+import blinker
 import aiosmtplib
 from pydantic import BaseModel
+
 from fastapi_mail.config import ConnectionConfig
 from fastapi_mail.connection import Connection
 from fastapi_mail.schemas import MessageSchema
 from fastapi_mail.msg import MailMsg
 from fastapi_mail.errors import PydanticClassRequired
 
-class FastMail:
+
+class _MailMixin:
+    @contextmanager
+    def record_messages(self):
+        """Records all messages. Use in unit tests for example::
+            with mail.record_messages() as outbox:
+                response = app.test_client.get("/email-sending-view/")
+                assert len(outbox) == 1
+                assert outbox[0].subject == "testing"
+        You must have blinker installed in order to use this feature.
+        :versionadded: 0.4
+        """
+
+        if not email_dispatched:
+            raise RuntimeError("blinker must be installed")
+
+        outbox = []
+
+        def _record(message):
+            outbox.append(message)
+
+        email_dispatched.connect(_record)
+
+        try:
+            yield outbox
+        finally:
+            email_dispatched.disconnect(_record)
+
+
+class FastMail(_MailMixin):
     '''
     Fastapi mail system sending mails(individual, bulk) attachments(individual, bulk)
 
@@ -15,8 +48,8 @@ class FastMail:
     '''
 
     def __init__(self,
-        config: ConnectionConfig
-        ):
+                 config: ConnectionConfig
+                 ):
 
         self.config = config
 
@@ -51,4 +84,15 @@ class FastMail:
             msg = await self.__preape_message(message)
 
         async with Connection(self.config) as session:
-            await session.session.send_message(msg)
+            if not self.config.SUPPRESS_SEND:
+                await session.session.send_message(msg)
+
+            email_dispatched.send(msg)
+
+
+signals = blinker.Namespace()
+
+email_dispatched = signals.signal("email-dispatched", doc="""
+Signal sent when an email is dispatched. This signal will also be sent
+in testing mode, even though the email will not actually be sent.
+""")
