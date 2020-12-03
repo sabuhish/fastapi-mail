@@ -2,11 +2,12 @@ import pytest
 from pydantic import EmailError
 from fastapi_mail.email_utils.errors import DBProvaiderError
 
+
 @pytest.mark.asyncio
 async def test_default_checker(default_checker):
     await default_checker.fetch_temp_email_domains()
     assert default_checker.TEMP_EMAIL_DOMAINS != []
-    
+
     email = "tural_m@hotmail.com"
     domain = email.split("@")[-1]
 
@@ -43,6 +44,3 @@ async def test_default_checker(default_checker):
 
     with pytest.raises(DBProvaiderError):
         await default_checker.close_connections()
-
-
-
