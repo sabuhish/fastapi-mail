@@ -54,13 +54,13 @@ class DefaultChecker(AbstractEmailChecker):
         The class makes it possible to use redis to save data.
         ```
         :param source(optional): source for collected email data.
-        :param db_provaider: switch to redis
+        :param db_provider: switch to redis
 
         example: 
             from email_utils import DefaultChecker
             import asyncio
 
-            a = DefaultChecker(db_provaider="redis") # if you use redis
+            a = DefaultChecker(db_provider="redis") # if you use redis
             loop = asyncio.get_event_loop()
             loop.run_until_complete(a.init_redis()) # Connect to redis and create default values
         ```
@@ -72,7 +72,7 @@ class DefaultChecker(AbstractEmailChecker):
     def __init__(
         self,
         source: str = None,
-        db_provaider: str = None,
+        db_provider: str = None,
         *,
         redis_host: str = "redis://localhost",
         redis_port: str = 6379,
@@ -87,7 +87,7 @@ class DefaultChecker(AbstractEmailChecker):
         )
         self.redis_enabled = False
 
-        if db_provaider == "redis":
+        if db_provider == "redis":
             self.redis_enabled = True
             self.redis_host = redis_host
             self.redis_port = redis_port
@@ -101,13 +101,16 @@ class DefaultChecker(AbstractEmailChecker):
         )
 
     async def init_redis(self):
-        self.redis_client = await aioredis.create_redis_pool(
-            address=f"{self.redis_host}:{self.redis_port}",
-            db=self.redis_db,
-            password=self.redis_pass,
-            encoding="UTF-8",
-            **self.options
-        )
+        if not self.redis_enabled:
+            raise DBProvaiderError("redis is not connected")
+        if not hasattr(self,"redis_client"):
+            self.redis_client = await aioredis.create_redis_pool(
+                address=f"{self.redis_host}:{self.redis_port}",
+                db=self.redis_db,
+                password=self.redis_pass,
+                encoding="UTF-8",
+                **self.options
+            )
         
         temp_counter = await self.redis_client.get("temp_counter")
         domain_counter = await self.redis_client.get("domain_counter")
