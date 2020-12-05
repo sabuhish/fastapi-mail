@@ -315,6 +315,17 @@ async def del_disp_domain(domains: list = Body(...,embed=True), checker: Default
     return JSONResponse(status_code=200, content={'result': res})
 ```
 
+### Use email utils with Redis
+
+```python
+
+async def default_checker():
+    checker = DefaultChecker(db_provider="redis")
+    await checker.init_redis()
+    return checker
+
+```
+
 ### Writing unittests using Fastapi_Mail
 Fastapi mails allows you to write unittest for your application without sending emails to
 non existent email address by mocking the email to be sent. To mock sending out mails, set

@@ -1,5 +1,6 @@
 import os
 import pytest
+import fakeredis.aioredis
 from pytest_mock import mock
 
 from fastapi_mail.email_utils import DefaultChecker
@@ -16,7 +17,8 @@ def default_checker():
 @pytest.fixture
 @pytest.mark.asyncio
 async def redis_checker(scope="redis_config"):
-    test = DefaultChecker(db_provaider="redis")
+    test = DefaultChecker(db_provider="redis")
+    test.redis_client = await  fakeredis.aioredis.create_redis_pool(encoding="UTF-8")
     await test.init_redis()
     yield test
     await test.redis_client.flushall()
