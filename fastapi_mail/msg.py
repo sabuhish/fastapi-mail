@@ -27,6 +27,9 @@ class MailMsg:
     :param cc: CC list
     :param bcc: BCC list
     :param attachments: list of Attachment instances
+    :param multipart_subtype: MultipartSubtypeEnum instance. Determines the
+    nature of the parts of the message and their relationship to each other
+    according to the MIME standard
     """
 
     def __init__(self, **entries):
@@ -76,7 +79,7 @@ class MailMsg:
     async def _message(self,sender):
         """Creates the email message"""
             
-        self.message = MIMEMultipart()
+        self.message = MIMEMultipart(self.multipart_subtype.value)
         self.message.set_charset(self.charset)
         self.message['Date'] = formatdate(time.time(), localtime=True)
         self.message['Message-ID'] = self.msgId

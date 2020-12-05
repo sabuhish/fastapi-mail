@@ -1,3 +1,5 @@
+from enum import Enum
+
 from pydantic import BaseModel, EmailStr,validator
 from typing import List, IO, Union, Any, Optional, Dict
 from starlette.datastructures import  UploadFile
@@ -5,6 +7,18 @@ import  os
 from mimetypes import MimeTypes
 from fastapi_mail.errors import WrongFile
 
+
+class MultipartSubtypeEnum(Enum):
+    mixed = "mixed"
+    digest = "digest"
+    alternative = "alternative"
+    related = "related"
+    report = "report"
+    signed = "signed"
+    encrypted = "encrypted"
+    form_data = "form-data"
+    mixed_replace = "x-mixed-replace"
+    byterange = "byterange"
 
 
 class MessageSchema(BaseModel):
@@ -17,6 +31,7 @@ class MessageSchema(BaseModel):
     bcc: List[EmailStr] = []
     charset: str = "utf-8"
     subtype: Optional[str] = None
+    multipart_subtype: MultipartSubtypeEnum = MultipartSubtypeEnum.mixed
 
 
     @validator("attachments")
