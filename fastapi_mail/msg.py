@@ -66,7 +66,7 @@ class MailMsg:
 
     async def _message(self, sender):
         """Creates the email message"""
-
+        
         self.message = MIMEMultipart()
         self.message.set_charset(self.charset)
         self.message['Date'] = formatdate(time.time(), localtime=True)

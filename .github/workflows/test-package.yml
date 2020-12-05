@@ -1,0 +1,23 @@
+name: Python package
+
+on: [push]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7]
+
+    steps:
+    - uses: actions/setup-python@v1
+    with:
+      python-version: ${{ matrix.python }}
+    - name: Install tox
+      run: pip install tox
+    - name: Run tox
+      run: tox
+
+
