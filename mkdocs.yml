@@ -1,4 +1,4 @@
-site_name: FastApi-mail
+site_name: FastApi-MAIL
 site_url: 
 site_description: fastapi-mail 
 dev_addr: 127.0.0.1:8080
@@ -12,6 +12,9 @@ theme:
   
   icon:
     repo: fontawesome/brands/github
+
+
+    
 repo_name: fastapi-mail
 repo_url: https://github.com/sabuhish/fastapi-mail
 edit_uri: ''
@@ -26,9 +29,10 @@ markdown_extensions:
       permalink: true
     
 nav:
-  - FastApi mail: index.md
-
-
-
+  - FastApi MAIL: index.md
+  - 🔨 Installation: install.md
+  - 🕹 Getting Started: getting-started.md
+  - Example: example.md
+  - Contirbution: contribute.md
 
 
