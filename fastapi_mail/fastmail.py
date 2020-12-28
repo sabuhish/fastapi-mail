@@ -34,7 +34,7 @@ class FastMail:
 
         msg = MailMsg(**message.dict())
         if self.config.MAIL_FROM_NAME is not None:
-            sender = f'{self.config.MAIL_FROM_NAME} {self.config.MAIL_FROM}'
+            sender = f"{self.config.MAIL_FROM_NAME} <{self.config.MAIL_FROM}>"
         else:
             sender = self.config.MAIL_FROM
         return await msg._message(sender)
