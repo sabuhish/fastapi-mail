@@ -57,15 +57,17 @@ class FastMail(_MailMixin):
         template = env_path.get_template(template_name)
         return template
 
-    async def __preape_message(self, message, template=None):
-        if hasattr(message, "body") and template is not None:
-            message.body = template.render(body=message.body)
-            if hasattr(message, "subtype") and getattr(message, "subtype") != "html":
+    async def __prepare_message(self, message: MessageSchema, template=None):
+        if template is not None:
+            if message.body and not message.html:
+                message.body = template.render(body=message.body)
                 message.subtype = "html"
+            elif message.html:
+                message.html = template.render(body=message.html)
 
         msg = MailMsg(**message.dict())
         if self.config.MAIL_FROM_NAME is not None:
-            sender = f'{self.config.MAIL_FROM_NAME} {self.config.MAIL_FROM}'
+            sender = f"{self.config.MAIL_FROM_NAME} <{self.config.MAIL_FROM}>"
         else:
             sender = self.config.MAIL_FROM
         return await msg._message(sender)
@@ -79,9 +81,9 @@ class FastMail(_MailMixin):
 
         if self.config.TEMPLATE_FOLDER and template_name:
             template = await self.get_mail_template(self.config.TEMPLATE_FOLDER, template_name)
-            msg = await self.__preape_message(message, template)
+            msg = await self.__prepare_message(message, template)
         else:
-            msg = await self.__preape_message(message)
+            msg = await self.__prepare_message(message)
 
         async with Connection(self.config) as session:
             if not self.config.SUPPRESS_SEND:

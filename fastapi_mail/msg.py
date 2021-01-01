@@ -21,10 +21,15 @@ class MailMsg:
     :param recipients: list of email addresses
     :param body: plain text message
     :param html: HTML message
+    :param subtype: type of body parameter - "plain" or "html". Ignored if
+    the html parameter is explicitly specified
     :param sender: email sender address
     :param cc: CC list
     :param bcc: BCC list
     :param attachments: list of Attachment instances
+    :param multipart_subtype: MultipartSubtypeEnum instance. Determines the
+    nature of the parts of the message and their relationship to each other
+    according to the MIME standard
     """
 
     def __init__(self, **entries):
@@ -34,7 +39,7 @@ class MailMsg:
     def _mimetext(self, text, subtype="plain"):
         """Creates a MIMEText object"""
 
-        return MIMEText(text, _subtype=self.subtype, _charset=self.charset)
+        return MIMEText(text, _subtype=subtype, _charset=self.charset)
 
     async def attach_file(self, message, attachment):
 
@@ -66,8 +71,9 @@ class MailMsg:
 
     async def _message(self, sender):
         """Creates the email message"""
-        
-        self.message = MIMEMultipart()
+            
+        self.message = MIMEMultipart(self.multipart_subtype.value)
+
         self.message.set_charset(self.charset)
         self.message['Date'] = formatdate(time.time(), localtime=True)
         self.message['Message-ID'] = self.msgId
@@ -84,7 +90,13 @@ class MailMsg:
             self.message["Bcc"] = ', '.join(self.bcc)
 
         if self.body:
-            self.message.attach(self._mimetext(self.body))
+            if not self.html and self.subtype:
+                self.message.attach(self._mimetext(self.body, self.subtype))
+            else:
+                self.message.attach(self._mimetext(self.body))
+
+        if self.html:
+            self.message.attach(self._mimetext(self.html, "html"))
 
         if self.attachments:
             await self.attach_file(self.message, self.attachments)
