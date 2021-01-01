@@ -113,6 +113,7 @@ Thanks goes to these wonderful people ([🚧](https://allcontributors.org/docs/e
   </tr>
  <tr>
     <td align="center"><a href="https://github.com/TheTimKiely"><img src="https://avatars1.githubusercontent.com/u/34795732" width="100px;" alt=""/><br /><sub><b>Tim Kiely</b></sub></a><br /><a href="#maintenance-tbenning" title="Maintenance">🚧</a></td>
+    <td align="center"><a href=https://github.com/DmitriySolodkiy"><img src="https://avatars1.githubusercontent.com/u/37667152" width="100px;" alt=""/><br /><sub><b>Dmitriy Solodkiy</b></sub></a><br /><a href="#maintenance-tbenning" title="Maintenance">🚧</a></td>
 
   </tr>
   
