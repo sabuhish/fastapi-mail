@@ -1,5 +1,5 @@
 import setuptools
-
+import fastapi_mail
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
@@ -7,7 +7,7 @@ test_dependencies = ["pytest", "pytest-asyncio", "pytest-mock", "pytest-cov"]
 
 setuptools.setup(
     name="fastapi-mail",
-    version=__import__("version").VERSION,
+    version=fastapi_mail.__version__,
     author="Sabuhi Shukurov",
     author_email="sabuhi.shukurov@gmail.com",
     description="Simple lightwigh mail sending for FastApi",

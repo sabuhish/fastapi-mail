@@ -4,6 +4,13 @@ from fastapi_mail.config import  ConnectionConfig
 from fastapi_mail.schemas import MessageSchema,MultipartSubtypeEnum
 from . import email_utils
 
+import  sys
+
+
+
+__version__ = "0.3.3.1"
+
+
 
 __author__ = "sabuhi.shukurov@gmail.com"
 

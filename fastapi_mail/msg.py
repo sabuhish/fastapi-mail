@@ -1,14 +1,12 @@
 import time
-
+import sys
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
-
 from email.utils import formatdate, make_msgid
-
-from version import PY3
 from email.encoders import encode_base64
 
+PY3 = sys.version_info[0] == 3
 
 class MailMsg:
     """
