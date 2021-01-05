@@ -1,7 +1,4 @@
-import asyncio
 import time
-
-from datetime import date
 
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
@@ -9,7 +6,7 @@ from email.mime.multipart import MIMEMultipart
 
 from email.utils import formatdate, make_msgid
 
-from fastapi_mail.version import PY3
+from version import PY3
 from email.encoders import encode_base64
 
 
