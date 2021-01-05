@@ -20,6 +20,7 @@ class ConnectionConfig(Settings):
     MAIL_FROM_NAME: str = None
     TEMPLATE_FOLDER: Any = None
     SUPPRESS_SEND: int = 0
+    USE_CREDENTIALS: bool = True
 
     @validator("SUPPRESS_SEND")
     def validate_email_suppression(cls, v):
