@@ -40,10 +40,12 @@ class Connection:
                )
             await self.session.connect()
 
-            await self.session.login(
-                self.settings.get("MAIL_USERNAME"), 
-                self.settings.get("MAIL_PASSWORD")
-                )
+            if self.settings.get("USE_CREDENTIALS"):
+                await self.session.login(
+                    self.settings.get("MAIL_USERNAME"),
+                    self.settings.get("MAIL_PASSWORD")
+                    )
+
            
         except Exception as error:
             raise ConnectionErrors(f"Exception raised {error}, check your credentials or email service configuration") 

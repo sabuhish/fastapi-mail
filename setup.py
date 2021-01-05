@@ -7,7 +7,7 @@ test_dependencies = ["pytest", "pytest-asyncio", "pytest-mock", "pytest-cov"]
 
 setuptools.setup(
     name="fastapi-mail",
-    version=__import__("fastapi_mail").VERSION,
+    version=__import__("version").VERSION,
     author="Sabuhi Shukurov",
     author_email="sabuhi.shukurov@gmail.com",
     description="Simple lightwigh mail sending for FastApi",

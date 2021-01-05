@@ -32,7 +32,8 @@ conf = ConnectionConfig(
     MAIL_SERVER = "your mail server",
     MAIL_FROM_NAME="Desired Name"
     MAIL_TLS = True,
-    MAIL_SSL = False
+    MAIL_SSL = False,
+    USER_CREDENTIALS = True
 )
 
 app = FastAPI()

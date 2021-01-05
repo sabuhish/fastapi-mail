@@ -35,7 +35,8 @@ def mail_config():
         "MAIL_SERVER": "smtp.gmail.com",
         "MAIL_TLS": "True",
         "MAIL_SSL": "False",
-        "SUPPRESS_SEND": "1"
+        "SUPPRESS_SEND": "1",
+        "USE_CREDENTIALS": "True"
     }
 
     yield env
