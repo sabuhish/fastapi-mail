@@ -7,8 +7,10 @@ import  os
 from mimetypes import MimeTypes
 from fastapi_mail.errors import WrongFile
 
-
 class MultipartSubtypeEnum(Enum):
+    '''
+    for more info about Multipart subtypes visit: https://en.wikipedia.org/wiki/MIME#Multipart_subtypes
+    '''
     mixed = "mixed"
     digest = "digest"
     alternative = "alternative"

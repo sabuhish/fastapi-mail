@@ -1,8 +1,6 @@
 import os
 import pytest
 import fakeredis.aioredis
-from pytest_mock import mock
-
 from fastapi_mail.email_utils import DefaultChecker
 from fastapi_mail.config import ConnectionConfig
 
@@ -29,14 +27,17 @@ async def redis_checker(scope="redis_config"):
 def mail_config():
     env = {
         "MAIL_USERNAME": "example@test.com",
-        "MAIL_PASSWORD": "strong password",
+        "MAIL_PASSWORD":"strong",
         "MAIL_FROM": "example@test.com",
-        "MAIL_PORT": "587",
-        "MAIL_SERVER": "smtp.gmail.com",
-        "MAIL_TLS": "True",
-        "MAIL_SSL": "False",
-        "SUPPRESS_SEND": "1",
-        "USE_CREDENTIALS": "True"
+        "MAIL_FROM_NAME": "example",
+        "MAIL_PORT": 25,
+        "MAIL_SERVER": "localhost",
+        "MAIL_TLS": False,
+        "MAIL_SSL": False,
+        "MAIL_DEBUG": 0,
+        "SUPPRESS_SEND": 1,
+        "USE_CREDENTIALS": False,
+        "TEMPLATE_FOLDER": None,
     }
 
     yield env

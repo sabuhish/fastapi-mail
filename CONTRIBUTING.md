@@ -40,6 +40,10 @@ uvicorn app:app --port 8000 --reload
 ```
 
 
-
 NOTE: Be sure to merge the latest from "upstream" before making a pull request!
-`
+
+
+### Testing
+------------
+
+For testing use **tox** 
