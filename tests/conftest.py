@@ -25,6 +25,8 @@ async def redis_checker(scope="redis_config"):
 
 @pytest.fixture(autouse=True)
 def mail_config():
+    directory = os.getcwd()
+    html  = directory + "/files"
     env = {
         "MAIL_USERNAME": "example@test.com",
         "MAIL_PASSWORD":"strong",
@@ -37,7 +39,8 @@ def mail_config():
         "MAIL_DEBUG": 0,
         "SUPPRESS_SEND": 1,
         "USE_CREDENTIALS": False,
-        "TEMPLATE_FOLDER": None,
+        "TEMPLATE_FOLDER": html,
+
     }
 
     yield env

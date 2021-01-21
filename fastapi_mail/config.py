@@ -39,6 +39,8 @@ class ConnectionConfig(Settings):
     @validator("TEMPLATE_FOLDER", pre=True)
     def create_template_engine(cls, v):
         template_env = None
+        print("THE",v)
+        print(os.path.exists(v))
         if isinstance(v, str):
             if not os.path.exists(v):
                 raise TemplateFolderDoesNotExist(f"{v} is not a valid path to an email template folder")

@@ -1,8 +1,8 @@
 import pytest
 from fastapi_mail import FastMail
-from fastapi_mail.schemas import MessageSchema
+from fastapi_mail.schemas import MessageSchema, MultipartSubtypeEnum
 from fastapi_mail.msg import MailMsg
-
+import os
 
 CONTENT = "file test content"
 
@@ -38,20 +38,6 @@ def test_sendto_properly_set():
     assert len(msg.bcc) == 1
 
 
-# def test_attach(tmp_path):
-#     d = tmp_path / "sub"
-#     d.mkdir()
-#     p = d / "attachement.txt"
-#     p.write_text(CONTENT)
-
-#     attach = p.read_text()
-#     assert attach == CONTENT
-
-#     msg = MessageSchema(subject="testing",
-#                         recipients=["to@example.com"],
-#                         attachments=[attach])
-
-#     assert len(msg.attachments) == 1
 
 
 def test_plain_message():
@@ -65,6 +51,17 @@ def test_plain_message():
     assert message.body == "test"
 
 
+
+def test_charset():
+    message = MessageSchema(
+        subject="test subject",
+        recipients=["uzezio22@gmail.com"],
+        body="test",
+        subtype="plain"
+    )
+
+    assert message.charset == "utf-8"
+
 def test_message_str():
     message = MessageSchema(
         subject="test subject",
@@ -76,27 +73,21 @@ def test_message_str():
     assert type(message.body) == str
 
 
-# def test_plain_message_with_attachments(tmp_path):
-#     d = tmp_path / "sub"
-#     d.mkdir()
-#     p = d / "attachement.txt"
-#     p.write_text(CONTENT)
-#     assert p.read_text() == CONTENT
+def test_plain_message_with_attachments():
+    directory = os.getcwd()
+    attachement  = directory + "/files/attachement.txt"
+ 
+    msg = MessageSchema(subject="testing",
+                        recipients=["to@example.com"],
+                        attachments=[attachement],
+                        body="test mail body")
+    
+    with open(attachement, "w") as file:
+        file.write(CONTENT)
 
-#     msg = MessageSchema(subject="testing",
-#                         recipients=["to@example.com"],
-#                         attachments=[p],
-#                         body="test mail body")
-
-#     assert len(msg.attachments) == 1
-
-
-# def test_html_message():
-#     pass
+    assert len(msg.attachments) == 1
 
 
-# def test_html_message_with_attachments():
-#     pass
 
 
 def test_empty_subject_header():
@@ -124,6 +115,16 @@ def test_cc():
 
     assert len(msg.cc) == 1
     assert msg.cc == ["cc@example.com"]
+
+
+def test_multipart_subtype():
+    message = MessageSchema(
+        subject="test subject",
+        recipients=["to@example.com"],
+        body="test",
+        subtype="plain"
+    )
+    assert  message.multipart_subtype == MultipartSubtypeEnum.mixed
 
 
 @pytest.mark.asyncio
