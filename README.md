@@ -68,7 +68,7 @@ app = FastAPI()
 
 
 template = """
-<p>Hi this test mail using BackgroundTasks, thanks for using Fastapi-mail</p> 
+<p>Thanks for using Fastapi-mail</p> 
 """
 
 
