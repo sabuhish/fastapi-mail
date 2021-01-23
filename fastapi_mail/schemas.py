@@ -45,9 +45,9 @@ class MessageSchema(BaseModel):
             if isinstance(file,str):
                 if os.path.isfile(file) and os.access(file, os.R_OK) and validate_path(file):
                     mime_type = mime.guess_type(file)
-                    with open(file,mode="rb") as f:
-                        u = UploadFile(f.name,f.read(),content_type=mime_type[0])
-                        temp.append(u)
+                    f = open(file,mode="rb") 
+                    u = UploadFile(f.name,f,content_type=mime_type[0])
+                    temp.append(u)
                 else:
                     raise  WrongFile("incorrect file path for attachment or not readable")
             elif isinstance(file,UploadFile):
