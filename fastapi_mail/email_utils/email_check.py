@@ -3,8 +3,8 @@ import dns.exception
 import httpx
 import inspect
 import aioredis
-from .errors import InvalidEmail, ApiError, DBProvaiderError
-from pydantic import EmailStr, EmailError, BaseModel
+from .errors import ApiError, DBProvaiderError
+from pydantic import EmailStr
 from abc import ABC, abstractmethod
 from typing import List
 
@@ -94,6 +94,7 @@ class DefaultChecker(AbstractEmailChecker):
             self.redis_db = redis_db
             self.redis_pass = redis_pass
             self.options = options
+        self.redis_error_msg = "redis is not connected"
 
     def catch_all_check(self):
         raise NotImplementedError(
@@ -102,7 +103,7 @@ class DefaultChecker(AbstractEmailChecker):
 
     async def init_redis(self):
         if not self.redis_enabled:
-            raise DBProvaiderError("redis is not connected")
+            raise DBProvaiderError(self.redis_error_msg)
         if not hasattr(self,"redis_client"):
             self.redis_client = await aioredis.create_redis_pool(
                 address=f"{self.redis_host}:{self.redis_port}",
@@ -183,8 +184,7 @@ class DefaultChecker(AbstractEmailChecker):
         if self.redis_enabled:
             res = await self.redis_client.hdel("blocked_emails", email)
             if res:
-                await self.redis_client.decr("email_counter")
-            return True  
+                await self.redis_client.decr("email_counter")  
         else:
             self.BLOCKED_ADDRESSES.remove(email)
         return True
@@ -205,8 +205,7 @@ class DefaultChecker(AbstractEmailChecker):
         if self.redis_enabled:
             res = await self.redis_client.hdel("temp_domains", domain)
             if res:
-                res = await self.redis_client.decr("temp_counter")
-            return True  
+                await self.redis_client.decr("temp_counter")  
         else:
             self.TEMP_EMAIL_DOMAINS.remove(domain)
         return True
@@ -261,19 +260,19 @@ class DefaultChecker(AbstractEmailChecker):
         """ count all blocked emails in redis """
         if self.redis_enabled:
             return await self.redis_client.get("email_counter")
-        raise DBProvaiderError("redis is not connected")
+        return len(self.BLOCKED_ADDRESSES)
 
     async def blocked_domain_count(self):
         """ count all blocked domains in redis """
         if self.redis_enabled:
             return await self.redis_client.get("domain_counter")
-        raise DBProvaiderError("redis is not connected")
+        return len(self.BLOCKED_DOMAINS)
     
     async def temp_email_count(self):
         """ count all temporary emails in redis """
         if self.redis_enabled:
             return await self.redis_client.get("temp_counter")
-        raise DBProvaiderError("redis is not connected")
+        return len(self.TEMP_EMAIL_DOMAINS)
 
     async def close_connections(self):
         """ for correctly close connection from redis """
@@ -281,7 +280,7 @@ class DefaultChecker(AbstractEmailChecker):
             self.redis_client.close()
             await self.redis_client.wait_closed()
             return True
-        raise DBProvaiderError("redis is not connected")
+        raise DBProvaiderError(self.redis_error_msg)
 
 
 class WhoIsXmlApi:
