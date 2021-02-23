@@ -21,6 +21,7 @@ class MailMsg:
     :param sender: email sender address
     :param cc: CC list
     :param bcc: BCC list
+    :param reply_to: Reply-To list
     :param attachments: list of Attachment instances
     :param multipart_subtype: MultipartSubtypeEnum instance. Determines the
     nature of the parts of the message and their relationship to each other
@@ -83,6 +84,9 @@ class MailMsg:
 
         if self.bcc:
             self.message["Bcc"] = ', '.join(self.bcc)
+
+        if self.reply_to:
+            self.message["Reply-To"] = ', '.join(self.reply_to)
 
         if self.body:
             if not self.html and self.subtype:

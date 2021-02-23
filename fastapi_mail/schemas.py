@@ -31,6 +31,7 @@ class MessageSchema(BaseModel):
     html: Optional[Union[str, List, Dict]] = None
     cc: List[EmailStr] = []
     bcc: List[EmailStr] = []
+    reply_to: Optional[List[EmailStr]] = []
     charset: str = "utf-8"
     subtype: Optional[str] = None
     multipart_subtype: MultipartSubtypeEnum = MultipartSubtypeEnum.mixed
