@@ -31,11 +31,12 @@ def test_recipients_properly_initialized():
 
 def test_sendto_properly_set():
     msg = MessageSchema(subject="subject", recipients=["somebody@here.com", "somebody2@here.com"],
-                        cc=["cc@example.com"], bcc=["bcc@example.com"])
+                        cc=["cc@example.com"], bcc=["bcc@example.com"], reply_to=["replyto@example.com"])
 
     assert len(msg.recipients) == 2
     assert len(msg.cc) == 1
     assert len(msg.bcc) == 1
+    assert len(msg.reply_to) == 1
 
 
 
@@ -108,6 +109,12 @@ def test_bcc():
     assert len(msg.bcc) == 1
     assert msg.bcc == ["bcc@example.com"]
 
+def test_replyto():
+    msg = MessageSchema(subject="subject", recipients=[],
+                        reply_to=["replyto@example.com"])
+
+    assert len(msg.reply_to) == 1
+    assert msg.reply_to == ["replyto@example.com"]
 
 def test_cc():
     msg = MessageSchema(subject="subject", recipients=[],

@@ -45,8 +45,9 @@ class has following attributes
 -  attachments : attachments within mail
 -  subject  : subject content of the mail
 -  body : body of the message
--  cc : cc recivers in the mail
--  bcc : bcc recivers in the mail
+-  cc : cc recipients of the mail
+-  bcc : bcc recipients of the mail
+-  reply_to : Reply-To recipients in the mail
 -  charset : charset defaults to utf-8
 -  subtype : subtype of the mail defaults to plain
 

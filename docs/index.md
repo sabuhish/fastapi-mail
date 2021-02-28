@@ -35,3 +35,6 @@ Fastapi mails allows you to write unittest for your application without sending 
 non existent email address by mocking the email to be sent. To mock sending out mails, set
 the suppress configuraton to true. Suppress send defaults to False to prevent mocking within applications.
 
+
+## Support for Reply-To header is added
+Use this just like bcc but to specify addresses that should receive a reply to your message. E-mail systems MAY respect this as per RFC 2822.
