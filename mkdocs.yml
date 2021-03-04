@@ -27,12 +27,17 @@ plugins:
 markdown_extensions:
   - toc:
       permalink: true
-    
+  
+  - pymdownx.highlight:
+      linenums: false
+
+  - pymdownx.superfences
+
 nav:
   - FastApi MAIL: index.md
   - 🔨 Installation: install.md
   - 🕹 Getting Started: getting-started.md
   - Example: example.md
-  - Contirbution: contribute.md
+  - Contribution: contribute.md
 
 

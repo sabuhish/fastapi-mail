@@ -2,7 +2,7 @@
 
 ## Sending email with FastApi
 
-### List of Usefull Examples
+### List of Useful Examples
 ```python
 from fastapi import (
     FastAPI, 
