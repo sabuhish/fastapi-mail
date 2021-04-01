@@ -1,7 +1,7 @@
 blinker==1.4
 aiosmtplib==1.1.4
 pydantic==1.7.1
-Jinja2==2.11.2
+Jinja2==2.11.3
 starlette==0.13.8
 email-validator==1.1.1
 httpx==0.16.1
