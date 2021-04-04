@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-   ‍
 
 from fastapi_mail.config import  ConnectionConfig
 from fastapi_mail.errors import ConnectionErrors, PydanticClassRequired

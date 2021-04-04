@@ -28,7 +28,6 @@ class ConnectionConfig(Settings):
             raise ValueError(f"Expected either 0 or 1, got {v}")
         if v > 1:
             raise ValueError(f"Expected either 0 or 1, got {v}")
-
     @validator("MAIL_DEBUG")
     def validate_email_debug(cls, v):
         if v < 0:
