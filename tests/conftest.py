@@ -2,7 +2,6 @@ import os
 import pytest
 import fakeredis.aioredis
 from fastapi_mail.email_utils import DefaultChecker
-from fastapi_mail.config import ConnectionConfig
 
 
 @pytest.fixture

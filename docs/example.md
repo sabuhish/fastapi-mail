@@ -352,7 +352,7 @@ conf = ConnectionConfig(
     TEMPLATE_FOLDER='./email templates folder',
 
     # if no indicated SUPPRESS_SEND defaults to 0 (false) as below
-    SUPPRESS_SEND=0
+    # SUPPRESS_SEND=1
 )
 
 fm = FastMail(conf)
@@ -374,14 +374,21 @@ async def simple_send(email: EmailSchema) -> JSONResponse:
 
 test.py
 ```python
-from application.py import fm
+from starlette.testclient import TestClient
+from .application import app, fm
 
-# make this setting available as a fixture through conftest.py if you plan on using pytest
-fm.config.SUPPRESS_SEND = 1
+client = TestClient(app)
 
-with fm.record_messages() as outbox:
-    response = app.test_client.get("/email")
-    assert len(outbox) == 1
-    assert outbox[0].subject == "Testing"
+
+def test_send_msg():
+    fm.config.SUPPRESS_SEND = 1
+    with fm.record_messages() as outbox:
+        payload = {"email": [ "user@example.com"]}
+        response = client.post("/email",json=payload)
+        assert response.status_code == 200
+        assert len(outbox) == 1
+        assert outbox[0]['from'] == "your@email.com"
+        assert outbox[0]['To'] == "user@example.com"
+
 ```
 
