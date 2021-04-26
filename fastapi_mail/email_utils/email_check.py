@@ -6,7 +6,6 @@ import aioredis
 from .errors import ApiError, DBProvaiderError
 from pydantic import EmailStr
 from abc import ABC, abstractmethod
-from typing import List
 
 
 class AbstractEmailChecker(ABC):
@@ -80,7 +79,7 @@ class DefaultChecker(AbstractEmailChecker):
         redis_pass: str = None,
         **options: dict,
     ):
-        
+
         self.source = (
             source
             or "https://gist.githubusercontent.com/Turall/3f32cb57270aed30d0c7f5e0800b2a92/raw/dcd9b47506e9da26d5772ccebf6913343e53cec9/temporary-email-address-domains"
@@ -104,7 +103,7 @@ class DefaultChecker(AbstractEmailChecker):
     async def init_redis(self):
         if not self.redis_enabled:
             raise DBProvaiderError(self.redis_error_msg)
-        if not hasattr(self,"redis_client"):
+        if not hasattr(self, "redis_client"):
             self.redis_client = await aioredis.create_redis_pool(
                 address=f"{self.redis_host}:{self.redis_port}",
                 db=self.redis_db,
@@ -112,11 +111,11 @@ class DefaultChecker(AbstractEmailChecker):
                 encoding="UTF-8",
                 **self.options
             )
-        
+
         temp_counter = await self.redis_client.get("temp_counter")
         domain_counter = await self.redis_client.get("domain_counter")
         blocked_emails = await self.redis_client.get("email_counter")
-        
+
         if not temp_counter:
             await self.redis_client.set("temp_counter", 0)
         if not domain_counter:
@@ -126,12 +125,11 @@ class DefaultChecker(AbstractEmailChecker):
         temp_domains = await self.fetch_temp_email_domains()
         check_key = await self.redis_client.hgetall("temp_domains")
         if not check_key:
-            kwargs = {domain : await self.redis_client.incr("temp_counter") for domain in temp_domains}
+            kwargs = {domain: await self.redis_client.incr("temp_counter") for domain in temp_domains}
             await self.redis_client.hmset_dict("temp_domains", kwargs)
-        
+
         return True
 
- 
     def validate_email(self, email: str):
         """ Validate email address """
         if EmailStr.validate(email):
@@ -142,16 +140,15 @@ class DefaultChecker(AbstractEmailChecker):
         async with httpx.AsyncClient() as client:
             response = await client.get(self.source)
             if self.redis_enabled:
-                return  response.text.split("\n")
+                return response.text.split("\n")
 
             self.TEMP_EMAIL_DOMAINS.extend(response.text.split("\n"))
-            
 
     async def blacklist_add_domain(self, domain: str):
         """ Add domain to blacklist """
         if self.redis_enabled:
-            result = await self.redis_client.hget("blocked_domains",domain)
-            if not result :
+            result = await self.redis_client.hget("blocked_domains", domain)
+            if not result:
                 incr = await self.redis_client.incr("domain_counter")
                 await self.redis_client.hset("blocked_domains", domain, incr)
         else:
@@ -172,7 +169,7 @@ class DefaultChecker(AbstractEmailChecker):
         """ Add email address to blacklist """
         if self.validate_email(email):
             if self.redis_enabled:
-                blocked_domain = await self.redis_client.hget("blocked_emails",email)
+                blocked_domain = await self.redis_client.hget("blocked_emails", email)
                 if not blocked_domain:
                     inc = await self.redis_client.incr("email_counter")
                     await self.redis_client.hset("blocked_emails", email, inc)
@@ -184,7 +181,7 @@ class DefaultChecker(AbstractEmailChecker):
         if self.redis_enabled:
             res = await self.redis_client.hdel("blocked_emails", email)
             if res:
-                await self.redis_client.decr("email_counter")  
+                await self.redis_client.decr("email_counter")
         else:
             self.BLOCKED_ADDRESSES.remove(email)
         return True
@@ -192,10 +189,10 @@ class DefaultChecker(AbstractEmailChecker):
     async def add_temp_domain(self, domain_lists: list):
         """ Manually add temporary email """
         if self.redis_enabled:
-            for domain in domain_lists: 
+            for domain in domain_lists:
                 temp_email = await self.redis_client.hget("temp_domains", domain)
                 if not temp_email:
-                    incr = await  self.redis_client.incr("temp_counter")
+                    incr = await self.redis_client.incr("temp_counter")
                     await self.redis_client.hset("temp_domains", domain, incr)
         else:
             self.TEMP_EMAIL_DOMAINS.extend(domain_lists)
@@ -205,7 +202,7 @@ class DefaultChecker(AbstractEmailChecker):
         if self.redis_enabled:
             res = await self.redis_client.hdel("temp_domains", domain)
             if res:
-                await self.redis_client.decr("temp_counter")  
+                await self.redis_client.decr("temp_counter")
         else:
             self.TEMP_EMAIL_DOMAINS.remove(domain)
         return True
@@ -216,30 +213,30 @@ class DefaultChecker(AbstractEmailChecker):
             _, domain = email.split("@")
             result = None
             if self.redis_enabled:
-                result = await self.redis_client.hget("temp_domains",domain)
+                result = await self.redis_client.hget("temp_domains", domain)
                 return bool(result)
             return domain in self.TEMP_EMAIL_DOMAINS
 
     async def is_blocked_domain(self, domain: str):
         """ Check blocked email domain"""
-        if self.redis_enabled:
-            blocked_email = await self.redis_client.hget("blocked_domains",domain)
-            return bool(blocked_email)
-        else:
+        if not self.redis_enabled:
             return domain in self.BLOCKED_DOMAINS
+
+        blocked_email = await self.redis_client.hget("blocked_domains", domain)
+        return bool(blocked_email)
 
     async def is_blocked_address(self, email: str):
         """ Check blocked email address"""
         if self.validate_email(email):
-            if self.redis_enabled:
-                blocked_domain = await self.redis_client.hget("blocked_emails",email)
-                return bool(blocked_domain)
-            else:
+            if not self.redis_enabled:
                 return email in self.BLOCKED_ADDRESSES
+
+            blocked_domain = await self.redis_client.hget("blocked_emails", email)
+            return bool(blocked_domain)
 
     async def check_mx_record(self, domain: str, full_result: bool = False):
         """ Check domain MX records """
-        
+
         try:
             mx_records = dns.resolver.resolve(domain, "MX")
             return (
@@ -267,7 +264,7 @@ class DefaultChecker(AbstractEmailChecker):
         if self.redis_enabled:
             return await self.redis_client.get("domain_counter")
         return len(self.BLOCKED_DOMAINS)
-    
+
     async def temp_email_count(self):
         """ count all temporary emails in redis """
         if self.redis_enabled:
@@ -302,6 +299,7 @@ class WhoIsXmlApi:
             print(who_is.free_check()) # check email domain is free or not
         ```
     """
+
     def __init__(self, token: str, email: str):
         self.token = token
         self.validate_email(email)
@@ -311,7 +309,7 @@ class WhoIsXmlApi:
         self.free_check = bool()
         self.disposable = bool()
         self.catch_all = bool()
-        self.mx_records = list()
+        self.mx_records = []
         self.host = "https://emailverification.whoisxmlapi.com/api/v1"
 
     async def fetch_info(self):
@@ -424,4 +422,3 @@ class WhoIsXmlApi:
         raise NotImplementedError(
             f"Func named {inspect.currentframe().f_code.co_name} not implemented for class {self.__class__.__name__}"
         )
-

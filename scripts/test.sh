@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-pytest --cov-report term-missing --cov-report=html -v --cov=fastapi_mail fastapi_mail/tests/
+pytest --cov-report term-missing --cov-report=html -v --cov=fastapi_mail

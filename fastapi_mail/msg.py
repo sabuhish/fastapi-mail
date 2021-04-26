@@ -8,6 +8,7 @@ from email.encoders import encode_base64
 
 PY3 = sys.version_info[0] == 3
 
+
 class MailMsg:
     """
     Preaparation of class for email text
@@ -67,7 +68,7 @@ class MailMsg:
 
     async def _message(self, sender):
         """Creates the email message"""
-            
+
         self.message = MIMEMultipart(self.multipart_subtype.value)
 
         self.message.set_charset(self.charset)

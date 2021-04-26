@@ -32,11 +32,3 @@ async def test_redis_checker(redis_checker):
 
     assert await redis_checker.is_blocked_address(email) is True
     assert await redis_checker.check_mx_record(domain) is True
-
-    # count = await redis_checker.temp_email_count()
-    # assert count == '3131'
-
-    # await redis_checker.blacklist_rm_temp("promail1.net")
-    
-    # count = await redis_checker.temp_email_count()
-    # assert count == '3130'

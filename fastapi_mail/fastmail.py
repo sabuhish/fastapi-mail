@@ -1,7 +1,6 @@
-from contextlib import contextmanager\
+from contextlib import contextmanager
 
 import blinker
-import aiosmtplib
 from pydantic import BaseModel
 
 from fastapi_mail.config import ConnectionConfig
@@ -54,8 +53,7 @@ class FastMail(_MailMixin):
         self.config = config
 
     async def get_mail_template(self, env_path, template_name):
-        template = env_path.get_template(template_name)
-        return template
+        return env_path.get_template(template_name)
 
     async def __prepare_message(self, message: MessageSchema, template=None):
         if template is not None:
