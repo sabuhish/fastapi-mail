@@ -22,14 +22,14 @@ The fastapi-mail simple lightweight mail system, sending emails and attachments(
 ---
 
 
-The key feature are:
+The key features are:
 
 -  sending emails with either with FastApi or using asyncio module 
--  sending emails using FastApi backroung task managment
+-  sending emails using FastApi background task managment
 -  sending files either from form-data or files from server
 -  Using Jinja2 HTML Templates
 -  email utils (utility allows you to check temporary email addresses, you can block any email or domain)
--  email utils  has two avalibale class ```DefaultChecker``` and  ```WhoIsXmlApi```
+-  email utils has two available classes ```DefaultChecker``` and  ```WhoIsXmlApi```
 -  Unittests using FastapiMail
 
 More information on [Getting-Started](https://sabuhish.github.io/fastapi-mail/getting-started/)
@@ -67,7 +67,7 @@ conf = ConnectionConfig(
 app = FastAPI()
 
 
-template = """
+html = """
 <p>Thanks for using Fastapi-mail</p> 
 """
 
@@ -89,10 +89,10 @@ async def simple_send(email: EmailSchema) -> JSONResponse:
 
 ## List of Examples
 
-for more examples of using fastapi-mail please check [example](https://sabuhish.github.io/fastapi-mail/example/) section
+For more examples of using fastapi-mail please check [example](https://sabuhish.github.io/fastapi-mail/example/) section
 
 # Contributing
-Fell free to open issue and send pull request.
+Feel free to open issues and send pull requests.
 
 
 ## Contributors ✨
