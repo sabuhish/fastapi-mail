@@ -61,6 +61,13 @@ class MessageSchema(BaseModel):
                     "attachments field type incorrect, must be UploadFile or path")
         return temp
 
+    @validator('subtype')
+    def validate_subtype(cls, value, values, config, field):
+        """Validate subtype field."""
+        if values['template_body']:
+            return 'html'
+        return value
+
 
 def validate_path(path):
     cur_dir = os.path.abspath(os.curdir)

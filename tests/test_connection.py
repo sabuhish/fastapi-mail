@@ -55,8 +55,7 @@ async def test_jinja_message(mail_config):
     ]
     msg = MessageSchema(subject=subject,
                         recipients=[to],
-                        template_body=persons,
-                        subtype='html')
+                        template_body=persons)
     conf = ConnectionConfig(**mail_config)
     fm = FastMail(conf)
 
@@ -76,7 +75,6 @@ async def test_jinja_message(mail_config):
 async def test_send_msg(mail_config):
     msg = MessageSchema(subject="testing",
                         recipients=["to@example.com"],
-
                         body="html test")
 
     sender = f"{mail_config['MAIL_FROM_NAME']} <{mail_config['MAIL_FROM']}>"
@@ -105,8 +103,7 @@ async def test_html_message_with_html(mail_config):
 
     msg = MessageSchema(subject="testing",
                         recipients=["to@example.com"],
-                        template_body=persons,
-                        subtype='html')
+                        template_body=persons)
     conf = ConnectionConfig(**mail_config)
     fm = FastMail(conf)
     await fm.send_message(message=msg, template_name="email.html")
