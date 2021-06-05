@@ -94,7 +94,7 @@ class MailMsg:
 
         if self.template_body:
             if not self.html and self.subtype == 'html':
-                self.message.attach(self._mimetext(self.body, self.subtype))
+                self.message.attach(self._mimetext(self.template_body, self.subtype))
             else:
                 raise ValueError("tried to send jinja2 template and html")
         elif self.html:
