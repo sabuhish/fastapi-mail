@@ -29,7 +29,7 @@ class MessageSchema(BaseModel):
     attachments: List[Any] = []
     subject: str = ""
     body: Optional[Union[str, list]] = None
-    template_body: Optional[dict] = None
+    template_body: Optional[Union[list, dict]] = None
     html: Optional[Union[str, List, Dict]] = None
     cc: List[EmailStr] = []
     bcc: List[EmailStr] = []

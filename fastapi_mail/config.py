@@ -1,12 +1,10 @@
 import os
-import functools as fn
 from typing import Optional
 
 from pydantic import BaseSettings as Settings, conint
 from pydantic import EmailStr, validator, DirectoryPath
 from jinja2 import Environment, FileSystemLoader
 
-from fastapi_mail.schemas import validate_path
 from fastapi_mail.errors import TemplateFolderDoesNotExist
 
 
@@ -29,12 +27,11 @@ class ConnectionConfig(Settings):
         """Validate the template folder directory."""
         # need to convert ``PathLike`` object
         fp = str(v)
-        if not os.path.exists(fp) or not os.path.isdir(fp) or not os.access(fp, os.R_OK) or not validate_path(fp):
+        if not os.path.exists(fp) or not os.path.isdir(fp) or not os.access(fp, os.R_OK):
             raise TemplateFolderDoesNotExist(
                 f"{v!r} is not a valid path to an email template folder")
         return v
 
-    @fn.cache
     def template_engine(self) -> Environment:
         """Return template environment."""
         folder = self.TEMPLATE_FOLDER
