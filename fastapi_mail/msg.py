@@ -90,10 +90,13 @@ class MailMsg:
             self.message["Reply-To"] = ', '.join(self.reply_to)
 
         if self.body:
+            self.message.attach(self._mimetext(self.body))
+
+        if self.template_body:
             if not self.html and self.subtype:
                 self.message.attach(self._mimetext(self.body, self.subtype))
             else:
-                self.message.attach(self._mimetext(self.body))
+                raise ValueError("tried to send jinja2 template and html")
 
         if self.html:
             self.message.attach(self._mimetext(self.html, "html"))

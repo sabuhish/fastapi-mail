@@ -28,11 +28,12 @@ class MessageSchema(BaseModel):
     recipients: List[EmailStr]
     attachments: List[Any] = []
     subject: str = ""
-    body: Union[str, list, dict] = None
+    body: Optional[Union[str, list]] = None
+    template_body: Optional[dict] = None
     html: Optional[Union[str, List, Dict]] = None
     cc: List[EmailStr] = []
     bcc: List[EmailStr] = []
-    reply_to: Optional[List[EmailStr]] = []
+    reply_to: List[EmailStr] = []
     charset: str = "utf-8"
     subtype: Optional[str] = None
     multipart_subtype: MultipartSubtypeEnum = MultipartSubtypeEnum.mixed
