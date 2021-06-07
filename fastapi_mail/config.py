@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from typing import Optional
 
 from pydantic import BaseSettings as Settings, conint
@@ -27,17 +28,28 @@ class ConnectionConfig(Settings):
         """Validate the template folder directory."""
         if not v:
             return
-        # need to convert ``PathLike`` object
-        fp = str(v)
-        if not os.path.exists(fp) or not os.path.isdir(fp) or not os.access(fp, os.R_OK):
+        if not os.access(str(v), os.R_OK) or not path_traversal(v):
             raise TemplateFolderDoesNotExist(
-                f"{v!r} is not a valid path to an email template folder")
+                f"{v!r} is not a valid path to an email template folder"
+            )
         return v
 
     def template_engine(self) -> Environment:
         """Return template environment."""
         folder = self.TEMPLATE_FOLDER
         if not folder:
-            raise ValueError("Class initialization did not include a ``TEMPLATE_FOLDER`` ``PathLike`` object.")
+            raise ValueError(
+                "Class initialization did not include a ``TEMPLATE_FOLDER`` ``PathLike`` object."
+            )
         template_env = Environment(loader=FileSystemLoader(folder))
         return template_env
+
+
+def path_traversal(fp: Path):
+    """Check for path traversal vulnerabilities."""
+    base = Path(__file__).parent.parent
+    try:
+        base.joinpath(fp).resolve().relative_to(base.resolve())
+    except ValueError:
+        return False
+    return True
