@@ -25,6 +25,8 @@ class ConnectionConfig(Settings):
     @validator("TEMPLATE_FOLDER")
     def template_folder_validator(cls, v):
         """Validate the template folder directory."""
+        if not v:
+            return
         # need to convert ``PathLike`` object
         fp = str(v)
         if not os.path.exists(fp) or not os.path.isdir(fp) or not os.access(fp, os.R_OK):
@@ -37,5 +39,5 @@ class ConnectionConfig(Settings):
         folder = self.TEMPLATE_FOLDER
         if not folder:
             raise ValueError("Class initialization did not include a ``TEMPLATE_FOLDER`` ``PathLike`` object.")
-        template_env = Environment(loader=FileSystemLoader(self.TEMPLATE_FOLDER))
+        template_env = Environment(loader=FileSystemLoader(folder))
         return template_env

@@ -1,5 +1,6 @@
 import time
 import sys
+import warnings
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
@@ -16,6 +17,7 @@ class MailMsg:
     :param subject: email subject header
     :param recipients: list of email addresses
     :param body: plain text message
+    :param template_body: Data to pass into chosen Jinja2 template
     :param html: HTML message
     :param subtype: type of body parameter - "plain" or "html". Ignored if
     the html parameter is explicitly specified
@@ -92,10 +94,13 @@ class MailMsg:
         if self.body:
             self.message.attach(self._mimetext(self.body))
 
-        if self.template_body:
+        if self.template_body or self.body:
             if not self.html and self.subtype == 'html':
-                self.message.attach(self._mimetext(self.template_body, self.subtype))
-            else:
+                if self.body:
+                    warnings.warn("Use ``template_body`` instead of ``body`` to pass data into Jinja2 template",
+                                  DeprecationWarning)
+                self.message.attach(self._mimetext(self.template_body or self.body, self.subtype))
+            elif self.template_body:
                 raise ValueError("tried to send jinja2 template and html")
         elif self.html:
             self.message.attach(self._mimetext(self.html, "html"))
