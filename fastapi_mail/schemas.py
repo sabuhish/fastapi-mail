@@ -28,11 +28,12 @@ class MessageSchema(BaseModel):
     recipients: List[EmailStr]
     attachments: List[Any] = []
     subject: str = ""
-    body: Union[str, list, dict] = None
+    body: Optional[Union[str, list]] = None
+    template_body: Optional[Union[list, dict]] = None
     html: Optional[Union[str, List, Dict]] = None
     cc: List[EmailStr] = []
     bcc: List[EmailStr] = []
-    reply_to: Optional[List[EmailStr]] = []
+    reply_to: List[EmailStr] = []
     charset: str = "utf-8"
     subtype: Optional[str] = None
     multipart_subtype: MultipartSubtypeEnum = MultipartSubtypeEnum.mixed
@@ -59,6 +60,13 @@ class MessageSchema(BaseModel):
                 raise WrongFile(
                     "attachments field type incorrect, must be UploadFile or path")
         return temp
+
+    @validator('subtype')
+    def validate_subtype(cls, value, values, config, field):
+        """Validate subtype field."""
+        if values['template_body']:
+            return 'html'
+        return value
 
 
 def validate_path(path):

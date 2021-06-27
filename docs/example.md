@@ -131,7 +131,7 @@ conf = ConnectionConfig(
     MAIL_SERVER = "your mail server",
     MAIL_TLS = True,
     MAIL_SSL = False,
-    TEMPLATE_FOLDER='./email '
+    TEMPLATE_FOLDER = Path(__file__).parent / 'templates',
 )
 
 
@@ -141,8 +141,7 @@ async def send_with_template(email: EmailSchema) -> JSONResponse:
     message = MessageSchema(
         subject="Fastapi-Mail module",
         recipients=email.dict().get("email"),  # List of recipients, as many as you can pass 
-        body=email.dict().get("body"),
-        subtype="html"
+        template_body=email.dict().get("body"),
         )
 
     fm = FastMail(conf)
@@ -350,7 +349,7 @@ conf = ConnectionConfig(
     MAIL_SERVER = "your mail server",
     MAIL_TLS = True,
     MAIL_SSL = False,
-    TEMPLATE_FOLDER='./email templates folder',
+    TEMPLATE_FOLDER = Path(__file__).parent / 'templates',
 
     # if no indicated SUPPRESS_SEND defaults to 0 (false) as below
     # SUPPRESS_SEND=1

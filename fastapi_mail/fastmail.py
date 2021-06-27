@@ -57,8 +57,9 @@ class FastMail(_MailMixin):
 
     async def __prepare_message(self, message: MessageSchema, template=None):
         if template is not None:
-            if message.body and not message.html:
-                message.body = template.render(body=message.body)
+            template_body = message.template_body
+            if template_body and not message.html:
+                message.template_body = template.render(body=template_body)
                 message.subtype = "html"
             elif message.html:
                 message.html = template.render(body=message.html)
@@ -78,7 +79,7 @@ class FastMail(_MailMixin):
          ''')
 
         if self.config.TEMPLATE_FOLDER and template_name:
-            template = await self.get_mail_template(self.config.TEMPLATE_FOLDER, template_name)
+            template = await self.get_mail_template(self.config.template_engine(), template_name)
             msg = await self.__prepare_message(message, template)
         else:
             msg = await self.__prepare_message(message)
