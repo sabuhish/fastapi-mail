@@ -117,8 +117,9 @@ Thanks goes to these wonderful people ([🚧](https://allcontributors.org/docs/e
     <td align="center"><a href=https://github.com/DmitriySolodkiy"><img src="https://avatars1.githubusercontent.com/u/37667152" width="100px;" alt=""/><br/><sub><b>Dmitriy Solodkiy</b></sub></a><br /><a href="#maintenance-tbenning" title="Maintenance">🚧</a></td>
     <td align="center"><a href="https://github.com/pboers1988"><img src="https://avatars1.githubusercontent.com/u/3235585" width="100px;" alt=""/><br /><sub><b>Peter Boers</b></sub></a><br /><a href="#maintenance-tbenning" title="Maintenance">🚧</a></td>
     <td align="center"><a href="https://github.com/jdvalentine"><img src="https://avatars.githubusercontent.com/u/557514" width="100px;" alt=""/><br /><sub><b>James Valentine</b></sub></a><br /><a href="https://github.com/marlin-dev/fastapi-mail/" title="Documentation">📖</a> <a  href="#maintenance-jakebolam"  title="Maintenance">🚧</a> <a href="#tool-jfmengels" title="Tools">🔧</a></td>
-
-  </tr>
+    <td align="center"><a href="https://github.com/gogoku"><img src="https://avatars.githubusercontent.com/u/25707104" width="100px;" alt=""/><br /><sub><b>Gogoku</b></sub></a><br /><a href="https://github.com/marlin-dev/fastapi-mail/" title="Documentation">📖</a> <a  href="#maintenance-jakebolam"  title="Maintenance">🚧</a> <a href="#tool-jfmengels" title="Tools">🔧</a></td>
+    <td align="center"><a href="https://github.com/kucera-lukas"><img src="https://avatars.githubusercontent.com/u/85391931" width="100px;" alt=""/><br /><sub><b>Kucera-Lukas</b></sub></a><br /><a href="https://github.com/marlin-dev/fastapi-mail/" title="Documentation">📖</a> <a  href="#maintenance-jakebolam"  title="Maintenance">🚧</a> <a href="#tool-jfmengels" title="Tools">🔧</a></td>
+    <td align="center"><a href="https://github.com/LLYX"><img src="https://avatars.githubusercontent.com/u/10430633" width="100px;" alt=""/><br /><sub><b>LLYX</b></sub></a><br /><a href="https://github.com/marlin-dev/fastapi-mail/" title="Documentation">📖</a> <a  href="#maintenance-jakebolam"  title="Maintenance">🚧</a> <a href="#tool-jfmengels" title="Tools">🔧</a></td></tr>
   
 
 </table>
