@@ -34,6 +34,7 @@ class has following attributes
 -  TEMPLATE_FOLDER: If you are using jinja2, specify template folder name
 -  SUPPRESS_SEND:  To mock sending out mail, defaults 0.
 -  USE_CREDENTIALS: Defaults to `True`. However it enables users to choose whether or not to login to their SMTP server.
+-  VALIDATE_CERTS: Defaults to `True`. It enables to choose whether to verify the mail server's certificate
 
 
 

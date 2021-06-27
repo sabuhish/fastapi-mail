@@ -38,8 +38,8 @@ def mail_config():
         "MAIL_DEBUG": 0,
         "SUPPRESS_SEND": 1,
         "USE_CREDENTIALS": False,
+        "VALIDATE_CERTS": False,
         "TEMPLATE_FOLDER": html,
-
     }
 
     yield env

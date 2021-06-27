@@ -33,7 +33,8 @@ class Connection:
                 hostname=self.settings.get("MAIL_SERVER"),
                 port=self.settings.get("MAIL_PORT"),
                 use_tls=self.settings.get("MAIL_SSL"),
-                start_tls=self.settings.get("MAIL_TLS")
+                start_tls=self.settings.get("MAIL_TLS"),
+                validate_certs=self.settings.get("VALIDATE_CERTS")
             )
             
             if not self.settings.get("SUPPRESS_SEND"): # for test environ
