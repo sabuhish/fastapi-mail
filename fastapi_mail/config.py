@@ -20,6 +20,7 @@ class ConnectionConfig(Settings):
     TEMPLATE_FOLDER: Any = None
     SUPPRESS_SEND: conint(gt=-1, lt=2) = 0
     USE_CREDENTIALS: bool = True
+    VALIDATE_CERTS: bool = True
 
     @validator("TEMPLATE_FOLDER", pre=True)
     def create_template_engine(cls, v):

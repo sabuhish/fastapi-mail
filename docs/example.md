@@ -33,7 +33,8 @@ conf = ConnectionConfig(
     MAIL_FROM_NAME="Desired Name"
     MAIL_TLS = True,
     MAIL_SSL = False,
-    USE_CREDENTIALS = True
+    USE_CREDENTIALS = True,
+    VALIDATE_CERTS = True
 )
 
 app = FastAPI()
