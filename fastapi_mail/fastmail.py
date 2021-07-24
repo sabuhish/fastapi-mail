@@ -55,14 +55,27 @@ class FastMail(_MailMixin):
     async def get_mail_template(self, env_path, template_name):
         return env_path.get_template(template_name)
 
+    @staticmethod
+    async def get_template_type(data):
+        if type(data) not in {dict, list, set, tuple}:
+            raise TypeError("template variables for template_body and message.html must be of type list, tuple, set "
+                            f"or dict - {type(data)} is invalid")
+        return type(data)
+
     async def __prepare_message(self, message: MessageSchema, template=None):
         if template is not None:
             template_body = message.template_body
             if template_body and not message.html:
-                message.template_body = template.render(body=template_body)
+                if self.get_template_type(template_body) == dict:
+                    message.template_body = template.render(**template_body)
+                else:
+                    message.template_body = template.render(*template_body)
                 message.subtype = "html"
             elif message.html:
-                message.html = template.render(body=message.html)
+                if self.get_template_type(message.html) == dict:
+                    message.html = template.render(**message.html)
+                else:
+                    message.html = template.render(*message.html)
 
         msg = MailMsg(**message.dict())
         if self.config.MAIL_FROM_NAME is not None:
