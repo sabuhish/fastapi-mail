@@ -30,7 +30,7 @@ conf = ConnectionConfig(
     MAIL_FROM = "your@email.com",
     MAIL_PORT = 587,
     MAIL_SERVER = "your mail server",
-    MAIL_FROM_NAME="Desired Name"
+    MAIL_FROM_NAME="Desired Name",
     MAIL_TLS = True,
     MAIL_SSL = False,
     USE_CREDENTIALS = True,
@@ -117,6 +117,10 @@ async def send_file(
 
 ### Using Jinja2 HTML Templates
 
+You can enable Jinja2 HTML Template emails by setting the `TEMPLATE_FOLDER` configuration option, and supplying a 
+value (which is just the name of the template file within the `TEMPLATE_FOLDER` dir) for the `template_name` parameter 
+in `FastMail.send_message()`. You then can pass a Dict as the `template_body` property of your `MessageSchema` object:
+
 ```python
 
 class EmailSchema(BaseModel):
@@ -150,6 +154,37 @@ async def send_with_template(email: EmailSchema) -> JSONResponse:
 
 
 ```
+
+For example, assume we pass a `template_body` of:
+
+```json
+{
+  "first_name": "Fred",
+  "last_name": "Fredsson"
+}
+```
+
+We can reference the variables in our Jinja templates as per normal:
+
+```
+...
+<span>Hello, {{ first_name }}!</span>
+...
+```
+
+#### Legacy Behaviour (<= 0.4.0)
+
+The original behaviour in <= 0.4.0 was to wrap the Dict you provide in a variable named `body` when it was provided to 
+Jinja behind the scenes. In these versions, you can then access your dict in your template like so:
+
+```
+...
+<span>Hello, {{ body.first_name }}!</span>
+...
+```
+
+As you can see our keys in our dict are no longer the top level, they are part of the `body` variable. Nesting works 
+as per normal below this level also. 
 
 ##  Guide for email utils
 
