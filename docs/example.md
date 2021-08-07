@@ -177,11 +177,13 @@ We can reference the variables in our Jinja templates as per normal:
 The original behaviour in <= 0.4.0 was to wrap the Dict you provide in a variable named `body` when it was provided to 
 Jinja behind the scenes. In these versions, you can then access your dict in your template like so:
 
+
 ```
 ...
-<span>Hello, {{ body.first_name }}!</span>
+<span>Hello,  body.first_name !</span>
 ...
 ```
+
 
 As you can see our keys in our dict are no longer the top level, they are part of the `body` variable. Nesting works 
 as per normal below this level also. 
