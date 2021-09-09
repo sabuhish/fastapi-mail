@@ -55,7 +55,7 @@ class DefaultChecker(AbstractEmailChecker):
         :param source(optional): source for collected email data.
         :param db_provider: switch to redis
 
-        example: 
+        example:
             from email_utils import DefaultChecker
             import asyncio
 
@@ -104,7 +104,7 @@ class DefaultChecker(AbstractEmailChecker):
         if not self.redis_enabled:
             raise DBProvaiderError(self.redis_error_msg)
         if not hasattr(self, "redis_client"):
-            self.redis_client = await aioredis.create_redis_pool(
+            self.redis_client = await aioredis.from_url(
                 address=f"{self.redis_host}:{self.redis_port}",
                 db=self.redis_db,
                 password=self.redis_pass,
@@ -288,14 +288,14 @@ class WhoIsXmlApi:
         :param token: token you can get from this https://www.whoisxmlapi.com/ link
         :param email: email for checking
 
-        example: 
+        example:
             from email_utils import WhoIsXmlApi
 
             who_is = WhoIsXmlApi(token="Your access token", email = "your@mailaddress.com")
 
             print(who_is.smtp_check_())  # check smtp server
             print(who_is.is_dispasoble()) # check email is disposable or not
-            print(who_is.check_mx_record()) # check domain mx records 
+            print(who_is.check_mx_record()) # check domain mx records
             print(who_is.free_check()) # check email domain is free or not
         ```
     """
@@ -341,24 +341,24 @@ class WhoIsXmlApi:
 
     def catch_all_check(self):
         """
-        Tells you whether or not this mail server has a “catch-all” address. 
-        This refers to a special type of address that can receive emails for any number of non-existent email addresses 
-        under a particular domain. Catch-all addresses are common in businesses where if you send an email to test@hi.com and 
-        another email to non-existent test2@hi.com, both of those emails will go into the same inbox. 
+        Tells you whether or not this mail server has a “catch-all” address.
+        This refers to a special type of address that can receive emails for any number of non-existent email addresses
+        under a particular domain. Catch-all addresses are common in businesses where if you send an email to test@hi.com and
+        another email to non-existent test2@hi.com, both of those emails will go into the same inbox.
         Possible values are 'true' or 'false'. May be 'null' for invalid or non-existing emails.
 
         """
         return self.catch_all
 
     def smtp_check_(self):
-        """  
-        Checks if the email address exists and 
-        can receive emails by using SMTP connection and 
-        email-sending emulation techniques. 
-        This value will be 'true' if the email address exists and 
-        can receive email over SMTP, and 'false' if the email address does not exist 
-        on the target SMTP server or temporarily couldn't receive messages. 
-        The value will be null if the SMTP request could not be completed, 
+        """
+        Checks if the email address exists and
+        can receive emails by using SMTP connection and
+        email-sending emulation techniques.
+        This value will be 'true' if the email address exists and
+        can receive email over SMTP, and 'false' if the email address does not exist
+        on the target SMTP server or temporarily couldn't receive messages.
+        The value will be null if the SMTP request could not be completed,
         mailbox verification is not supported on the target mailbox provider, or not applicable.
 
         """
@@ -366,8 +366,8 @@ class WhoIsXmlApi:
 
     def is_dispasoble(self):
         """
-        Tells you whether or not the email address is disposable (created via a service like Mailinator). 
-        This helps you check for abuse. This value will be 'false' if the email is not disposable, and 'true' otherwise. 
+        Tells you whether or not the email address is disposable (created via a service like Mailinator).
+        This helps you check for abuse. This value will be 'false' if the email is not disposable, and 'true' otherwise.
         May be 'null' for invalid or non-existing emails.
 
         """
@@ -375,15 +375,15 @@ class WhoIsXmlApi:
 
     def check_mx_record(self):
         """
-        Mail servers list. 
-        May be absent for invalid or non-existing emails.    
+        Mail servers list.
+        May be absent for invalid or non-existing emails.
         """
         return self.mx_records
 
     def check_dns(self):
         """
-        Ensures that the domain in the email address, eg: gmail.com, is a valid domain. 
-        This value will be 'true' if the domain is good and 'false' otherwise. 
+        Ensures that the domain in the email address, eg: gmail.com, is a valid domain.
+        This value will be 'true' if the domain is good and 'false' otherwise.
         May be 'null' for invalid or non-existing emails.
 
         """
@@ -391,8 +391,8 @@ class WhoIsXmlApi:
 
     def check_free(self):
         """
-        Check to see if the email address is from a free email provider like Gmail or not. 
-        This value will be 'false' if the email address is not free, and 'true' otherwise. 
+        Check to see if the email address is from a free email provider like Gmail or not.
+        This value will be 'false' if the email address is not free, and 'true' otherwise.
         May be 'null' for invalid or non-existing emails.
 
         """
