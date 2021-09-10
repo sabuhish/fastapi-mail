@@ -1,12 +1,8 @@
-import os
-from pathlib import Path
 from typing import Optional
 
 from pydantic import BaseSettings as Settings, conint
-from pydantic import EmailStr, validator, DirectoryPath
+from pydantic import EmailStr, DirectoryPath
 from jinja2 import Environment, FileSystemLoader
-
-from fastapi_mail.errors import TemplateFolderDoesNotExist
 
 
 class ConnectionConfig(Settings):
@@ -24,17 +20,6 @@ class ConnectionConfig(Settings):
     USE_CREDENTIALS: bool = True
     VALIDATE_CERTS: bool = True
 
-    @validator("TEMPLATE_FOLDER")
-    def template_folder_validator(cls, v):
-        """Validate the template folder directory."""
-        if not v:
-            return
-        if not os.access(str(v), os.R_OK) or not path_traversal(v):
-            raise TemplateFolderDoesNotExist(
-                f"{v!r} is not a valid path to an email template folder"
-            )
-        return v
-
     def template_engine(self) -> Environment:
         """Return template environment."""
         folder = self.TEMPLATE_FOLDER
@@ -44,13 +29,3 @@ class ConnectionConfig(Settings):
             )
         template_env = Environment(loader=FileSystemLoader(folder))
         return template_env
-
-
-def path_traversal(fp: Path):
-    """Check for path traversal vulnerabilities."""
-    base = Path(__file__).parent.parent
-    try:
-        base.joinpath(fp).resolve().relative_to(base.resolve())
-    except ValueError:
-        return False
-    return True

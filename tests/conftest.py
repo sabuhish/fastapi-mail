@@ -16,7 +16,7 @@ def default_checker():
 @pytest.mark.asyncio
 async def redis_checker(scope="redis_config"):
     test = DefaultChecker(db_provider="redis")
-    test.redis_client = await  fakeredis.aioredis.create_redis_pool(encoding="UTF-8")
+    test.redis_client = await fakeredis.aioredis.from_url(encoding="UTF-8")
     await test.init_redis()
     yield test
     await test.redis_client.flushall()
