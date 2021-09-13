@@ -42,6 +42,7 @@ mkdocs-markdownextradata-plugin = "^0.2.4"
 isort = "^5.9.3"
 blue = "^0.7.0"
 mypy = "^0.910"
+typed-ast = "^1.4.3"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
