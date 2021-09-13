@@ -19,7 +19,7 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3"
 fastapi = "^0.68.1"
 Jinja2 = "^3.0.1"
 aiosmtplib = "^1.1.6"
@@ -46,3 +46,10 @@ mypy = "^0.910"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.isort]
+profile = "black"
+line_length = 100
+
+[tool.blue]
+line-length = 100
