@@ -13,7 +13,7 @@ from .errors import ApiError, DBProvaiderError
 
 class AbstractEmailChecker(ABC):
     @abstractmethod
-    def validate_email(self, email: str):
+    def validate_email(self, email: str) -> bool:
         pass
 
     @abstractmethod
@@ -137,9 +137,10 @@ class DefaultChecker(AbstractEmailChecker):
 
         return True
 
-    def validate_email(self, email: str):
+    def validate_email(self, email: str) -> bool:
         """Validate email address"""
         EmailStr.validate(email)
+        return True
 
     async def fetch_temp_email_domains(self):
         """Async request to source param resource"""
@@ -207,7 +208,7 @@ class DefaultChecker(AbstractEmailChecker):
             self.TEMP_EMAIL_DOMAINS.remove(domain)
         return True
 
-    async def is_dispasoble(self, email: str):
+    async def is_dispasoble(self, email: str) -> bool:
         """Check email address is temporary or not"""
         if self.validate_email(email):
             _, domain = email.split('@')
@@ -216,6 +217,7 @@ class DefaultChecker(AbstractEmailChecker):
                 result = await self.redis_client.hget('temp_domains', domain)
                 return bool(result)
             return domain in self.TEMP_EMAIL_DOMAINS
+        return False
 
     async def is_blocked_domain(self, domain: str):
         """Check blocked email domain"""
