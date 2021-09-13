@@ -5,9 +5,9 @@ from pydantic import BaseModel
 
 from fastapi_mail.config import ConnectionConfig
 from fastapi_mail.connection import Connection
-from fastapi_mail.schemas import MessageSchema
-from fastapi_mail.msg import MailMsg
 from fastapi_mail.errors import PydanticClassRequired
+from fastapi_mail.msg import MailMsg
+from fastapi_mail.schemas import MessageSchema
 
 
 class _MailMixin:
@@ -23,7 +23,7 @@ class _MailMixin:
         """
 
         if not email_dispatched:
-            raise RuntimeError("blinker must be installed")
+            raise RuntimeError('blinker must be installed')
 
         outbox = []
 
@@ -46,9 +46,7 @@ class FastMail(_MailMixin):
 
     """
 
-    def __init__(self,
-                 config: ConnectionConfig
-                 ):
+    def __init__(self, config: ConnectionConfig):
 
         self.config = config
 
@@ -60,7 +58,10 @@ class FastMail(_MailMixin):
         try:
             return dict(data)
         except ValueError:
-            raise ValueError(f"Unable to build template data dictionary - {type(data)} is an invalid source data type")
+            raise ValueError(
+                f'Unable to build template data dictionary - {type(data)} '
+                'is an invalid source data type'
+            )
 
     async def __prepare_message(self, message: MessageSchema, template=None):
         if template is not None:
@@ -68,14 +69,14 @@ class FastMail(_MailMixin):
             if template_body and not message.html:
                 template_data = self.make_dict(template_body)
                 message.template_body = template.render(**template_data)
-                message.subtype = "html"
+                message.subtype = 'html'
             elif message.html:
                 template_data = self.make_dict(message.html)
                 message.html = template.render(**template_data)
 
         msg = MailMsg(**message.dict())
         if self.config.MAIL_FROM_NAME is not None:
-            sender = f"{self.config.MAIL_FROM_NAME} <{self.config.MAIL_FROM}>"
+            sender = f'{self.config.MAIL_FROM_NAME} <{self.config.MAIL_FROM}>'
         else:
             sender = self.config.MAIL_FROM
         return await msg._message(sender)
@@ -83,9 +84,23 @@ class FastMail(_MailMixin):
     async def send_message(self, message: MessageSchema, template_name=None):
 
         if not issubclass(message.__class__, BaseModel):
-            raise PydanticClassRequired('''Message schema should be provided from MessageSchema class, check example below:
-         \nfrom fastmail import MessageSchema  \nmessage = MessageSchema(\nsubject = "subject",\nrecipients = ["list_of_recipients"],\nbody = "Hello World",\ncc = ["list_of_recipients"],\nbcc = ["list_of_recipients"],\nreply_to = ["list_of_recipients"],\nsubtype = "plain")
-         ''')
+            raise PydanticClassRequired(
+                """
+Message schema should be provided from MessageSchema class, check example below:
+
+from fastmail import MessageSchema
+
+message = MessageSchema(
+    subject="subject",
+    recipients=["list_of_recipients"],
+    body="Hello World",
+    cc=["list_of_recipients"],
+    bcc=["list_of_recipients"],
+    reply_to=["list_of_recipients"],
+    subtype="plain",
+)
+"""
+            )
 
         if self.config.TEMPLATE_FOLDER and template_name:
             template = await self.get_mail_template(self.config.template_engine(), template_name)
@@ -102,7 +117,10 @@ class FastMail(_MailMixin):
 
 signals = blinker.Namespace()
 
-email_dispatched = signals.signal("email-dispatched", doc="""
+email_dispatched = signals.signal(
+    'email-dispatched',
+    doc="""
 Signal sent when an email is dispatched. This signal will also be sent
 in testing mode, even though the email will not actually be sent.
-""")
+""",
+)
