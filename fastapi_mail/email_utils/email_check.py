@@ -275,7 +275,6 @@ class DefaultChecker(AbstractEmailChecker):
         """ for correctly close connection from redis """
         if self.redis_enabled:
             self.redis_client.close()
-            await self.redis_client.wait_closed()
             return True
         raise DBProvaiderError(self.redis_error_msg)
 
