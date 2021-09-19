@@ -67,13 +67,19 @@ class FastMail(_MailMixin):
         if template is not None:
             template_body = message.template_body
             if template_body and not message.html:
-                template_data = self.make_dict(template_body)
-                message.template_body = template.render(**template_data)
+                if isinstance(template_body, list):
+                    message.template_body = template.render({'body': template_body})
+                else:
+                    template_data = self.make_dict(template_body)
+                    message.template_body = template.render(**template_data)
+
                 message.subtype = 'html'
             elif message.html:
-                template_data = self.make_dict(message.html)
-                message.html = template.render(**template_data)
-
+                if isinstance(template_body, list):
+                    message.template_body = template.render({'body': template_body})
+                else:
+                    template_data = self.make_dict(template_body)
+                    message.template_body = template.render(**template_data)
         msg = MailMsg(**message.dict())
         if self.config.MAIL_FROM_NAME is not None:
             sender = f'{self.config.MAIL_FROM_NAME} <{self.config.MAIL_FROM}>'
