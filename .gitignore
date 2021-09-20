@@ -36,6 +36,7 @@ requirements.txt
 app.py
 email
 main.py
+templates
 
 
 # PyInstaller

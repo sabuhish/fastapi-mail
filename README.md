@@ -123,6 +123,9 @@ Thanks goes to these wonderful people ([🚧](https://sabuhish.github.io/fastapi
   
 <tr>
     <td align="center"><a href="https://github.com/floodpants"><img src="https://avatars.githubusercontent.com/u/37890036?" width="100px;" alt=""/><br /><sub><b>floodpants</b></sub></a><br /><a href="#maintenance-tbenning" title="Maintenance">🚧</a></td>
+    <td align="center"><a href="https://github.com/andredias"><img src="https://avatars.githubusercontent.com/u/902540" width="100px;" alt=""/><br /><sub><b>André Felipe Dias</b></sub></a><br /><a href="https://github.com/marlin-dev/fastapi-mail/" title="Documentation">📖</a> <a href="https://github.com/marlin-dev/fastapi-mail/" title="Reviewed Pull Requests">👀</a> <a href="#tool-jfmengels" title="Tools">🔧</a></td>
+</b></sub></a><br /><a href="#maintenance-tbenning" title="Maintenance">🚧</a></td>
+
 </tr>
 </table>
 
