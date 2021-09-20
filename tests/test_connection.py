@@ -45,7 +45,7 @@ async def test_html_message(mail_config):
 
 
 @pytest.mark.asyncio
-async def test_jinja_message(mail_config):
+async def test_jinja_message_list(mail_config):
     sender = f"{mail_config['MAIL_FROM_NAME']} <{mail_config['MAIL_FROM']}>"
     subject = 'testing'
     to = 'to@example.com'
@@ -66,6 +66,29 @@ async def test_jinja_message(mail_config):
         assert mail['Subject'] == subject
     assert msg.subtype == 'html'
     assert msg.template_body == ('\n    \n    \n        Andrej\n    \n\n\n')
+
+
+@pytest.mark.asyncio
+async def test_jinja_message_dict(mail_config):
+    sender = f"{mail_config['MAIL_FROM_NAME']} <{mail_config['MAIL_FROM']}>"
+    subject = 'testing'
+    to = 'to@example.com'
+    persons = {'name': 'Andrej'}
+
+    msg = MessageSchema(subject=subject, recipients=[to], template_body=persons)
+    conf = ConnectionConfig(**mail_config)
+    fm = FastMail(conf)
+
+    with fm.record_messages() as outbox:
+        await fm.send_message(message=msg, template_name='email_dict.html')
+
+        assert len(outbox) == 1
+        mail = outbox[0]
+        assert mail['To'] == to
+        assert mail['From'] == sender
+        assert mail['Subject'] == subject
+    assert msg.subtype == 'html'
+    assert msg.template_body == ('\n   Andrej\n\n')
 
 
 @pytest.mark.asyncio
