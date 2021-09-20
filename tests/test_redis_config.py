@@ -3,12 +3,12 @@ import pytest
 
 @pytest.mark.asyncio
 async def test_redis_checker(redis_checker):
-        
+
     redis_checker.TEMP_EMAIL_DOMAINS = []
     redis_checker.BLOCKED_ADDRESSES = {}
     redis_checker.BLOCKED_DOMAINS = {}
-    email = "test_me@hotmail.com"
-    domain = email.split("@")[-1]
+    email = 'test_me@hotmail.com'
+    domain = email.split('@')[-1]
 
     assert await redis_checker.is_dispasoble(email) is False
     assert await redis_checker.is_blocked_domain(domain) is False

@@ -1,7 +1,8 @@
 {% block content %}
-<p>
-    {% for person in body %}
-    {{ person.name }}
+    {% for persons in body %}
+    {% for key, value in persons.items() %}
+        {{value}}
+    {% endfor %}
 {% endfor %}
-</p>
 {% endblock %}
+

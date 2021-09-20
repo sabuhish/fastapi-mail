@@ -1,11 +1,11 @@
-import time
 import sys
+import time
 import warnings
-from email.mime.text import MIMEText
+from email.encoders import encode_base64
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from email.utils import formatdate, make_msgid
-from email.encoders import encode_base64
 
 PY3 = sys.version_info[0] == 3
 
@@ -35,7 +35,7 @@ class MailMsg:
         self.__dict__.update(entries)
         self.msgId = make_msgid()
 
-    def _mimetext(self, text, subtype="plain"):
+    def _mimetext(self, text, subtype='plain'):
         """Creates a MIMEText object"""
 
         return MIMEText(text, _subtype=subtype, _charset=self.charset)
@@ -46,7 +46,7 @@ class MailMsg:
 
         for file in attachment:
 
-            part = MIMEBase(_maintype="application", _subtype="octet-stream")
+            part = MIMEBase(_maintype='application', _subtype='octet-stream')
 
             part.set_payload(await file.read())
             encode_base64(part)
@@ -61,10 +61,7 @@ class MailMsg:
 
             filename = ('UTF8', '', filename)
 
-            part.add_header(
-                'Content-Disposition',
-                "attachment",
-                filename=filename)
+            part.add_header('Content-Disposition', 'attachment', filename=filename)
 
             self.message.attach(part)
 
@@ -76,20 +73,20 @@ class MailMsg:
         self.message.set_charset(self.charset)
         self.message['Date'] = formatdate(time.time(), localtime=True)
         self.message['Message-ID'] = self.msgId
-        self.message["To"] = ', '.join(self.recipients)
-        self.message["From"] = sender
+        self.message['To'] = ', '.join(self.recipients)
+        self.message['From'] = sender
 
         if self.subject:
-            self.message["Subject"] = (self.subject)
+            self.message['Subject'] = self.subject
 
         if self.cc:
-            self.message["Cc"] = ', '.join(self.cc)
+            self.message['Cc'] = ', '.join(self.cc)
 
         if self.bcc:
-            self.message["Bcc"] = ', '.join(self.bcc)
+            self.message['Bcc'] = ', '.join(self.bcc)
 
         if self.reply_to:
-            self.message["Reply-To"] = ', '.join(self.reply_to)
+            self.message['Reply-To'] = ', '.join(self.reply_to)
 
         if self.body:
             self.message.attach(self._mimetext(self.body))
@@ -97,13 +94,16 @@ class MailMsg:
         if self.template_body or self.body:
             if not self.html and self.subtype == 'html':
                 if self.body:
-                    warnings.warn("Use ``template_body`` instead of ``body`` to pass data into Jinja2 template",
-                                  DeprecationWarning)
+                    warnings.warn(
+                        'Use ``template_body`` instead of ``body`` to pass data into Jinja2 '
+                        'template',
+                        DeprecationWarning,
+                    )
                 self.message.attach(self._mimetext(self.template_body or self.body, self.subtype))
             elif self.template_body:
-                raise ValueError("tried to send jinja2 template and html")
+                raise ValueError('tried to send jinja2 template and html')
         elif self.html:
-            self.message.attach(self._mimetext(self.html, "html"))
+            self.message.attach(self._mimetext(self.html, 'html'))
 
         if self.attachments:
             await self.attach_file(self.message, self.attachments)
