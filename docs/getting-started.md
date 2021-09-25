@@ -11,7 +11,7 @@ class has following attributes and methods
 
 -  config  : ConnectionConfig class should be passed in order to establish connection
 
-- send_message : The methods has two atributes, message: MessageSchema, template_name=None
+- send_message : The methods has two attributes, message: MessageSchema, template_name=None
     - message : where you define message sturcture for email
     - template_name : if you are using jinja2 consider template_name as well for passing HTML.
 
