@@ -1,7 +1,7 @@
 import os
 from enum import Enum
 from mimetypes import MimeTypes
-from typing import Any, Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from pydantic import BaseModel, EmailStr, validator
 from starlette.datastructures import UploadFile
@@ -80,7 +80,7 @@ class MessageSchema(BaseModel):
     class Config:
         arbitrary_types_allowed = True
 
-        
+
 def validate_path(path):
     cur_dir = os.path.abspath(os.curdir)
     requested_path = os.path.abspath(os.path.relpath(path, start=cur_dir))
