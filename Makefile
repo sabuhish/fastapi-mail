@@ -15,7 +15,7 @@ format_code:
 
 
 test_only:
-	pytest --cov-report term-missing --cov-report html --cov-branch \
+	pytest -v --cov-report term-missing --cov-report html --cov-branch \
 			--cov fastapi_mail/
 
 test: lint test_only

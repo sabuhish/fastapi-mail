@@ -41,13 +41,12 @@ class MailMsg:
         return MIMEText(text, _subtype=subtype, _charset=self.charset)
 
     async def attach_file(self, message, attachment):
-        
-        print(attachment)
-
+        """Creates a MIMEBase object"""
         for file, file_meta in attachment:
-            
             if file_meta and 'mime_type' in file_meta and 'mime_subtype' in file_meta:
-                part = MIMEBase(_maintype=file_meta['mime_type'], _subtype=file_meta['mime_subtype'])
+                part = MIMEBase(
+                    _maintype=file_meta['mime_type'], _subtype=file_meta['mime_subtype']
+                )
             else:
                 part = MIMEBase(_maintype='application', _subtype='octet-stream')
 
@@ -65,7 +64,7 @@ class MailMsg:
             filename = ('UTF8', '', filename)
 
             part.add_header('Content-Disposition', 'attachment', filename=filename)
-            if  file_meta and 'headers' in file_meta:
+            if file_meta and 'headers' in file_meta:
                 for header in file_meta['headers'].keys():
                     part.add_header(header, file_meta['headers'][header])
             self.message.attach(part)
