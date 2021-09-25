@@ -1,6 +1,10 @@
+import os
+
 import pytest
 
 from fastapi_mail import ConnectionConfig, FastMail, MessageSchema
+
+CONTENT = 'file test content'
 
 
 @pytest.mark.asyncio
@@ -42,6 +46,76 @@ async def test_html_message(mail_config):
         assert mail['Subject'] == subject
         assert not msg.subtype
     assert msg.html == 'html test'
+
+
+@pytest.mark.asyncio
+async def test_attachement_message(mail_config):
+    directory = os.getcwd()
+    attachement = directory + '/files/attachement.txt'
+
+    with open(attachement, 'w') as file:
+        file.write(CONTENT)
+
+    subject = 'testing'
+    to = 'to@example.com'
+    msg = MessageSchema(
+        subject=subject,
+        recipients=[to],
+        html='html test',
+        subtype='html',
+        attachments=[attachement],
+    )
+    conf = ConnectionConfig(**mail_config)
+    fm = FastMail(conf)
+
+    with fm.record_messages() as outbox:
+        await fm.send_message(message=msg)
+        mail = outbox[0]
+
+        assert len(outbox) == 1
+        assert mail._payload[1].get_content_maintype() == 'application'
+        assert mail._payload[1].__dict__.get('_headers')[0][1] == 'application/octet-stream'
+
+
+@pytest.mark.asyncio
+async def test_attachement_message_with_headers(mail_config):
+    directory = os.getcwd()
+    attachement = directory + '/files/attachement.txt'
+
+    with open(attachement, 'w') as file:
+        file.write(CONTENT)
+
+    subject = 'testing'
+    to = 'to@example.com'
+    msg = MessageSchema(
+        subject=subject,
+        recipients=[to],
+        html='html test',
+        subtype='html',
+        attachments=[
+            {
+                'file': attachement,
+                'headers': {'Content-ID': 'test ID'},
+                'mime_type': 'image',
+                'mime_subtype': 'png',
+            }
+        ],
+    )
+    conf = ConnectionConfig(**mail_config)
+    fm = FastMail(conf)
+
+    with fm.record_messages() as outbox:
+        await fm.send_message(message=msg)
+
+        assert len(outbox) == 1
+        mail = outbox[0]
+        assert mail._payload[1].get_content_maintype() == msg.attachments[0][1].get('mime_type')
+        assert mail._payload[1].get_content_subtype() == msg.attachments[0][1].get('mime_subtype')
+
+        assert mail._payload[1].__dict__.get('_headers')[0][1] == 'image/png'
+        assert mail._payload[1].__dict__.get('_headers')[4][1] == msg.attachments[0][1].get(
+            'headers'
+        ).get('Content-ID')
 
 
 @pytest.mark.asyncio

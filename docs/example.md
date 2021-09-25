@@ -188,6 +188,29 @@ Jinja behind the scenes. In these versions, you can then access your dict in you
 As you can see our keys in our dict are no longer the top level, they are part of the `body` variable. Nesting works 
 as per normal below this level also. 
 
+### Customizing attachments by headers and MIME type
+
+Used for example for referencing Content-ID images in html of email
+
+```python
+message = MessageSchema(
+    subject='Fastapi-Mail module',
+    recipients=recipients,
+    html="<img src='cid:logo_image'>",
+    subtype='html',
+    attachments=[
+            {
+                "file": "/path/to/file.png"),
+                "headers": {"Content-ID": "<logo_image>"},
+                "mime_type": "image",
+                "mime_subtype": "png",
+            }
+        ],
+)
+
+fm = FastMail(conf)
+await fm.send_message(message)
+```
 ##  Guide for email utils
 
 The utility allows you to check temporary email addresses, you can block any email or domain. 

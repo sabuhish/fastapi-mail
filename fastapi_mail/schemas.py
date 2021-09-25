@@ -1,7 +1,7 @@
 import os
 from enum import Enum
 from mimetypes import MimeTypes
-from typing import Any, Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from pydantic import BaseModel, EmailStr, validator
 from starlette.datastructures import UploadFile
@@ -29,7 +29,7 @@ class MultipartSubtypeEnum(Enum):
 
 class MessageSchema(BaseModel):
     recipients: List[EmailStr]
-    attachments: List[Any] = []
+    attachments: List[Union[UploadFile, Dict, str]] = []
     subject: str = ''
     body: Optional[Union[str, list]] = None
     template_body: Optional[Union[list, dict]] = None
@@ -47,17 +47,25 @@ class MessageSchema(BaseModel):
         mime = MimeTypes()
 
         for file in v:
+            file_meta = None
+            if isinstance(file, dict):
+                keys = file.keys()
+                if 'file' not in keys:
+                    raise WrongFile('missing "file" key')
+                file_meta = dict.copy(file)
+                del file_meta['file']
+                file = file['file']
             if isinstance(file, str):
                 if os.path.isfile(file) and os.access(file, os.R_OK) and validate_path(file):
                     mime_type = mime.guess_type(file)
                     f = open(file, mode='rb')
                     _, file_name = os.path.split(f.name)
                     u = UploadFile(file_name, f, content_type=mime_type[0])
-                    temp.append(u)
+                    temp.append((u, file_meta))
                 else:
                     raise WrongFile('incorrect file path for attachment or not readable')
             elif isinstance(file, UploadFile):
-                temp.append(file)
+                temp.append((file, file_meta))
             else:
                 raise WrongFile('attachments field type incorrect, must be UploadFile or path')
         return temp
@@ -68,6 +76,9 @@ class MessageSchema(BaseModel):
         if values['template_body']:
             return 'html'
         return value
+
+    class Config:
+        arbitrary_types_allowed = True
 
 
 def validate_path(path):
