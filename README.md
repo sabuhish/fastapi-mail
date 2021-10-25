@@ -32,7 +32,7 @@ The key features are:
 -  email utils has two available classes ```DefaultChecker``` and  ```WhoIsXmlApi```
 -  Unittests using FastapiMail
 
-More information on [Getting-Started](https://sabuhish.github.io/fastapi-mail/getting-started.html)
+More information on [Getting-Started](https://sabuhish.github.io/fastapi-mail/getting-started/)
 
 
 ### Guide
