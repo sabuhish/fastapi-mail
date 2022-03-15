@@ -218,7 +218,7 @@ You can connect Redis to save and check email addresses. If you do not provide a
 then the utility will save it in the list or set by default.
 
 
-### Check dispasoble email address
+### Check disposable email address
 
 ```python
 
@@ -228,23 +228,23 @@ async def default_checker():
     return checker
 
 
-@app.get('/email/dispasoble')
+@app.get('/email/disposable')
 async def simple_send(
     domain: str = Query(...), 
     checker: DefaultChecker = Depends(default_checker)
     ) -> JSONResponse:
 
-    if await checker.is_dispasoble(domain):
-        return JSONResponse(status_code=400, content={'message': 'this is dispasoble domain'})
+    if await checker.is_disposable(domain):
+        return JSONResponse(status_code=400, content={'message': 'this is disposable domain'})
 
     return JSONResponse(status_code=200, content={'message': 'email has been sent'})
 
 ```
 
-### Add dispasoble email address
+### Add disposable email address
 
 ```python
-@app.post('/email/dispasoble')
+@app.post('/email/disposable')
 async def add_disp_domain(
     domains: list = Body(...,embed=True), 
     checker: DefaultChecker = Depends(default_checker)
@@ -357,7 +357,7 @@ async def del_blocked_domain(
 ### Remove domain from temporary list
 
 ```python
-@app.delete('/email/dispasoble')
+@app.delete('/email/disposable')
 async def del_disp_domain(
     domains: list = Body(...,embed=True), 
     checker: DefaultChecker = Depends(default_checker)
@@ -386,7 +386,7 @@ from email_utils import WhoIsXmlApi
 who_is = WhoIsXmlApi(token="Your access token", email="your@mailaddress.com")
 
 print(who_is.smtp_check_())    #check smtp server
-print(who_is.is_dispasoble()) # check email is disposable or not
+print(who_is.is_disposable()) # check email is disposable or not
 print(who_is.check_mx_record()) # check domain mx records 
 print(who_is.free_check) # check email domain is free or not
 
