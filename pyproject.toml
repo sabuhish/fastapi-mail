@@ -20,7 +20,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.6.2"
-fastapi = "^0.73.0"
+fastapi = "^0.75.0"
 Jinja2 = "^3.0.1"
 aiosmtplib = "^1.1.6"
 pydantic = "^1.8.2"
