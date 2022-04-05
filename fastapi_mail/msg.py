@@ -29,7 +29,7 @@ class MailMsg:
     :param multipart_subtype: MultipartSubtypeEnum instance. Determines the
     nature of the parts of the message and their relationship to each other
     according to the MIME standard
-    :param: headers: list of custom SMTP headers
+    :param: headers: dict of custom SMTP headers
     """
 
     def __init__(self, **entries):
