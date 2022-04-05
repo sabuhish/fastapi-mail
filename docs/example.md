@@ -200,7 +200,7 @@ message = MessageSchema(
     subtype='html',
     attachments=[
             {
-                "file": "/path/to/file.png"),
+                "file": "/path/to/file.png",
                 "headers": {"Content-ID": "<logo_image>"},
                 "mime_type": "image",
                 "mime_subtype": "png",
