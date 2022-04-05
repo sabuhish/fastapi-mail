@@ -114,6 +114,13 @@ def test_multipart_subtype():
     assert message.multipart_subtype == MultipartSubtypeEnum.mixed
 
 
+def test_headers():
+    message = MessageSchema(
+        subject='test subject', recipients=['to@example.com'], headers={"foo": "bar"}
+    )
+    assert message.headers == {"foo": "bar"}
+
+
 @pytest.mark.asyncio
 async def test_msgid_header():
     message = MessageSchema(
