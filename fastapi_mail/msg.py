@@ -29,6 +29,7 @@ class MailMsg:
     :param multipart_subtype: MultipartSubtypeEnum instance. Determines the
     nature of the parts of the message and their relationship to each other
     according to the MIME standard
+    :param: headers: list of custom SMTP headers
     """
 
     def __init__(self, **entries):
@@ -111,6 +112,10 @@ class MailMsg:
 
         if self.attachments:
             await self.attach_file(self.message, self.attachments)
+
+        if self.headers:
+            for header_name, header_content in self.headers.items():
+                self.message.add_header(header_name, header_content)
 
         return self.message
 

@@ -78,6 +78,20 @@ async def test_attachement_message(mail_config):
 
 
 @pytest.mark.asyncio
+async def test_message_with_headers(mail_config):
+    subject = 'testing'
+    to = 'to@example.com'
+    msg = MessageSchema(subject=subject, recipients=[to], headers={"foo": "bar"})
+    conf = ConnectionConfig(**mail_config)
+    fm = FastMail(conf)
+
+    with fm.record_messages() as outbox:
+        await fm.send_message(message=msg)
+        mail = outbox[0]
+        assert ('foo', 'bar') in mail._headers
+
+
+@pytest.mark.asyncio
 async def test_attachement_message_with_headers(mail_config):
     directory = os.getcwd()
     attachement = directory + '/files/attachement.txt'

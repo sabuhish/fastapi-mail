@@ -40,6 +40,7 @@ class MessageSchema(BaseModel):
     charset: str = 'utf-8'
     subtype: Optional[str] = None
     multipart_subtype: MultipartSubtypeEnum = MultipartSubtypeEnum.mixed
+    headers: Optional[Dict] = None
 
     @validator('attachments')
     def validate_file(cls, v):

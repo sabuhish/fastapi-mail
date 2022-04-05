@@ -211,6 +211,19 @@ message = MessageSchema(
 fm = FastMail(conf)
 await fm.send_message(message)
 ```
+
+### Adding custom SMTP headers
+```python
+message = MessageSchema(
+    subject='Fastapi-Mail module',
+    recipients=recipients,
+    headers={"your custom header": "your custom value"}
+)
+
+fm = FastMail(conf)
+await fm.send_message(message)
+```
+
 ##  Guide for email utils
 
 The utility allows you to check temporary email addresses, you can block any email or domain. 
