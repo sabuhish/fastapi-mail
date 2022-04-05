@@ -116,9 +116,9 @@ def test_multipart_subtype():
 
 def test_headers():
     message = MessageSchema(
-        subject='test subject', recipients=['to@example.com'], headers={"foo": "bar"}
+        subject='test subject', recipients=['to@example.com'], headers={'foo': 'bar'}
     )
-    assert message.headers == {"foo": "bar"}
+    assert message.headers == {'foo': 'bar'}
 
 
 @pytest.mark.asyncio

@@ -81,7 +81,7 @@ async def test_attachement_message(mail_config):
 async def test_message_with_headers(mail_config):
     subject = 'testing'
     to = 'to@example.com'
-    msg = MessageSchema(subject=subject, recipients=[to], headers={"foo": "bar"})
+    msg = MessageSchema(subject=subject, recipients=[to], headers={'foo': 'bar'})
     conf = ConnectionConfig(**mail_config)
     fm = FastMail(conf)
 
