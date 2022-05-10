@@ -87,7 +87,7 @@ class FastMail(_MailMixin):
             sender = self.config.MAIL_FROM
         return await msg._message(sender)
 
-    async def send_message(self, message: MessageSchema, template_name=None):
+    async def send_message(self, message: MessageSchema, template_name:str = None):
 
         if not issubclass(message.__class__, BaseModel):
             raise PydanticClassRequired(
