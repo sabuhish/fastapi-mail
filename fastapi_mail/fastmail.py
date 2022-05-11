@@ -9,7 +9,7 @@ from fastapi_mail.errors import PydanticClassRequired
 from fastapi_mail.msg import MailMsg
 from fastapi_mail.schemas import MessageSchema
 
-
+# change to a connect Type
 class _MailMixin:
     @contextmanager
     def record_messages(self):

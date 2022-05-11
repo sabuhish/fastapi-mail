@@ -14,6 +14,19 @@ typing-extensions = "*"
 hiredis = ["hiredis (>=1.0)"]
 
 [[package]]
+name = "aiosmtpd"
+version = "1.4.2"
+description = "aiosmtpd - asyncio based SMTP server"
+category = "main"
+optional = false
+python-versions = "~=3.6"
+
+[package.dependencies]
+atpublic = "*"
+attrs = "*"
+typing-extensions = {version = "*", markers = "python_version < \"3.8\""}
+
+[[package]]
 name = "aiosmtplib"
 version = "1.1.6"
 description = "asyncio SMTP client"
@@ -81,10 +94,21 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [[package]]
+name = "atpublic"
+version = "2.3"
+description = "public -- @public for populating __all__"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+typing_extensions = {version = "*", markers = "python_version < \"3.8\""}
+
+[[package]]
 name = "attrs"
 version = "21.4.0"
 description = "Classes Without Boilerplate"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
@@ -924,12 +948,16 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.6.2"
-content-hash = "a6668fca5f15640350bf3424ecdcc9f29b4f679ca33864bdffbd0d8c58e74604"
+content-hash = "b9a49a4bccc02efc70ebf7873139a89e2a60a794e7f9bd490dda039097519996"
 
 [metadata.files]
 aioredis = [
     {file = "aioredis-2.0.1-py3-none-any.whl", hash = "sha256:9ac0d0b3b485d293b8ca1987e6de8658d7dafcca1cddfcd1d506cae8cdebfdd6"},
     {file = "aioredis-2.0.1.tar.gz", hash = "sha256:eaa51aaf993f2d71f54b70527c440437ba65340588afeb786cd87c55c89cd98e"},
+]
+aiosmtpd = [
+    {file = "aiosmtpd-1.4.2-py3-none-any.whl", hash = "sha256:314f70b74cb8474882cef396b186fbfad8660c7b52be5c1937f3c31df14232a4"},
+    {file = "aiosmtpd-1.4.2.tar.gz", hash = "sha256:aa891d010d2097274189078c6ce2a59a167f3fb2e974e028b572a61e92e1549c"},
 ]
 aiosmtplib = [
     {file = "aiosmtplib-1.1.6-py3-none-any.whl", hash = "sha256:84174765778b2c5e0e207fbce0a769202fcf0c3de81faa87cc03551a6333bfa9"},
@@ -954,6 +982,9 @@ async-timeout = [
 atomicwrites = [
     {file = "atomicwrites-1.4.0-py2.py3-none-any.whl", hash = "sha256:6d1784dea7c0c8d4a5172b6c620f40b6e4cbfdf96d783691f2e1302a7b88e197"},
     {file = "atomicwrites-1.4.0.tar.gz", hash = "sha256:ae70396ad1a434f9c7046fd2dd196fc04b12f9e91ffb859164193be8b6168a7a"},
+]
+atpublic = [
+    {file = "atpublic-2.3.tar.gz", hash = "sha256:d6b9167fc3e09a2de2d2adcfc9a1b48d84eab70753c97de3800362e1703e3367"},
 ]
 attrs = [
     {file = "attrs-21.4.0-py2.py3-none-any.whl", hash = "sha256:2d27e3784d7a565d36ab851fe94887c5eccd6a463168875832a1be79c82828b4"},

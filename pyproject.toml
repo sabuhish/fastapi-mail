@@ -30,6 +30,7 @@ httpx = "^0.22.0"
 blinker = "^1.4"
 fakeredis = "^1.6.1"
 python-multipart = "^0.0.5"
+aiosmtpd = "^1.4.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"

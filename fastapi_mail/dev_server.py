@@ -1,20 +1,16 @@
+import logging
 from aiosmtpd.controller import Controller
 
 
-class DevMailHandler:
-    async def handle_RCPT(self, server, session, envelope, address, rcpt_options):
-        envelope.rcpt_tos.append(address)
-        return '250 OK'
+logging.basicConfig(level=logging.DEBUG)
 
+
+class DevMailHandler:
     async def handle_DATA(self, server, session, envelope):
+        logging.debug('\n\rNEW MAIL'.strip())
         for ln in envelope.content.decode('utf8', errors='replace').splitlines():
-           print(f'{ln}'.strip())
+           logging.debug(f'{ln}'.strip())
         return '250 Message accepted for delivery'
 
 
-dev_controller = Controller(DevMailHandler())
-
-# this should be in the main file?
-# controller.start()
-# to stop the server once done
-# controller.stop()
+dev_controller = Controller(DevMailHandler(), hostname="127.0.0.1")

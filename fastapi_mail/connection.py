@@ -73,13 +73,13 @@ conf = Connection(
             )
 
 
-class Connect(ABC):
+class BaseConnect(ABC):
     async def connect(self):
         if not self.settings.get('SUPPRESS_SEND', None):
             return await self.client.connect()
 
 
-class ProdConnect(Connect):
+class ProdConnect(BaseConnect):
     def __init__(self, setting: dict):
         self.settings = settings
         self.client = aiosmtplib.SMTP(
@@ -91,7 +91,7 @@ class ProdConnect(Connect):
         )
 
 
-class DevConnect(Connect):
+class DevConnect(BaseConnect):
     def __init__(self, setting: dict):
         aiosmtplib.SMTP(
             hostname=dev_controller.hostname,
