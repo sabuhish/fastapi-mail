@@ -1,99 +1,207 @@
 from abc import ABC, abstractmethod
 import aiosmtplib
+import blinker
 from pydantic import BaseSettings as Settings
 
 from fastapi_mail.config import ConnectionConfig
 from fastapi_mail.dev_server import dev_controller
 from fastapi_mail.errors import ConnectionErrors, PydanticClassRequired
+from enum import Enum
 
 
-class Connection:
-    """
-    Manages Connection to provided email service with its credentials
-    """
+class ConnectionEnum(Enum):
+    PROD = "prod"
+    DEV = "dev"
+    TEST = "test"
 
-    def __init__(self, settings: ConnectionConfig):
 
+
+
+class BaseConnection(ABC):
+    @property
+    @abstractmethod
+    def session(self):
+        raise NotImplemented
+
+    @abstractmethod
+    async def __aenter__(self):
+        raise NotImplemented
+
+    @abstractmethod
+    async def __aexit__(self, exc_type, exc, tb):
+        raise NotImplemented
+
+    @abstractmethod
+    async def _connect(self):
+        raise NotImplemented
+
+
+class ProdConnection(BaseConnection):
+    def __init__(self, setting: Settings):
         if not issubclass(settings.__class__, Settings):
             raise PydanticClassRequired(
-                """\
-Email configuration should be provided from ConnectionConfig class, \
-check example below:
+                """\r
+                Email configuration should be provided from ConnectionConfig class, \r
+                check example below:
 
-from fastmail import ConnectionConfig
-conf = Connection(
-    MAIL_USERNAME="your_username",
-    MAIL_PASSWORD="your_pass",
-    MAIL_FROM="your_from_email",
-    MAIL_PORT=587,
-    MAIL_SERVER="email_service",
-    MAIL_TLS=True,
-    MAIL_SSL=False
-)
-"""
+                from fastmail import ConnectionConfig
+                conf = Connection(
+                    MAIL_USERNAME="your_username",
+                    MAIL_PASSWORD="your_pass",
+                    MAIL_FROM="your_from_email",
+                    MAIL_PORT=587,
+                    MAIL_SERVER="email_service",
+                    MAIL_TLS=True,
+                    MAIL_SSL=False
+                )
+                """
             )
+        self.settings = settings
+        self.client = aiosmtplib.SMTP(
+            hostname=self.settings.get("MAIL_SERVER"),
+            port=self.settings.get("MAIL_PORT"),
+            use_tls=self.settings.get("MAIL_SSL"),
+            start_tls=self.settings.get("MAIL_TLS"),
+            validate_certs=self.settings.get("VALIDATE_CERTS"),
+        )
 
-        self.settings = settings.dict()
-    
     @property
     def session(self):
         return None
 
-    @property
-    def debug_mode(self):
-        return self.setting.get('MAIL_DEBUG')
-
-    async def __aenter__(self):  # setting up a connection
+    async def __aenter__(self):
         self.session = await self._configure_connection()
         return self
 
-    async def __aexit__(self, exc_type, exc, tb):  # closing the connection
-        if not self.settings.get('SUPPRESS_SEND'):   # for test environ
-            return await self.session.quit()
+    async def __aexit__(self, exc_type, exc, tb):
+        return await self.session.quit()
+
+    async def _connect(self):
+        return await self.client.connect()
+
+    async def _email_login(self, username: str, password: str):
+        if self.settings.get("USE_CREDENTIALS"):
+            return await session.login(username, password)
 
     async def _configure_connection(self):
         try:
-            if self.debug_mode:
-                session = DevConnect(settings)
-                await session.connect()
-                return session
-
-            session = ProdConnect(settings)
-            await session.connect()
-            if self.settings.get('USE_CREDENTIALS'):
-                await session.login(
-                    self.settings.get('MAIL_USERNAME'), self.settings.get('MAIL_PASSWORD')
-                )
-
-            return session
-
+            await self._connect()
+            await self._email_login(
+                self.setting.MAIL_USERNAME, self.setting.MAIL_PASSWORD
+            )
+            return self.session
         except Exception as error:
             raise ConnectionErrors(
-                f'Exception raised {error}, check your credentials or email service configuration'
+                f"Exception raised {error}, check your credentials or email service configuration"
             )
 
 
-class BaseConnect(ABC):
-    async def connect(self):
-        if not self.settings.get('SUPPRESS_SEND', None):
-            return await self.client.connect()
-
-
-class ProdConnect(BaseConnect):
-    def __init__(self, setting: dict):
+class DevConnection(BaseConnection):
+    def __init__(self, settings: Settings):
         self.settings = settings
+        if not issubclass(settings.__class__, Settings):
+            raise PydanticClassRequired(
+                """\r
+                Email configuration should be provided from ConnectionConfig class, \r
+                check example below:
+
+                from fastmail import ConnectionConfig
+                conf = Connection(
+                    MAIL_USERNAME="your_username",
+                    MAIL_PASSWORD="your_pass",
+                    MAIL_FROM="your_from_email",
+                    MAIL_PORT=587,
+                    MAIL_SERVER="email_service",
+                    MAIL_TLS=True,
+                    MAIL_SSL=False
+                )
+                """
+            )
+
         self.client = aiosmtplib.SMTP(
-            hostname=self.settings.get('MAIL_SERVER'),
-            port=self.settings.get('MAIL_PORT'),
-            use_tls=self.settings.get('MAIL_SSL'),
-            start_tls=self.settings.get('MAIL_TLS'),
-            validate_certs=self.settings.get('VALIDATE_CERTS'),
-        )
-
-
-class DevConnect(BaseConnect):
-    def __init__(self, setting: dict):
-        aiosmtplib.SMTP(
             hostname=dev_controller.hostname,
             port=dev_controller.port,
         )
+
+    @property
+    def session(self):
+        return None
+
+    async def __aenter__(self):
+        self.session = await self._configure_connection()
+        return self
+
+    async def __aexit__(self, exc_type, exc, tb):
+        return await self.session.quit()
+
+    async def _connect(self):
+        return await self.client.connect()
+
+    async def _configure_connection(self):
+        try:
+            await self._connect()
+            return self.session
+        except Exception as error:
+            raise ConnectionErrors(
+                f"Exception raised {error}, check your credentials or email service configuration"
+            )
+
+
+class ArtificialSession:
+    def __init__(self):
+        self.email_dispatched = email_dispatched
+
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self):
+        try:
+            return await self.quit()
+        except Exception:
+            pass
+
+    async def send_message(self, msg):
+        return self.email_dispatched.send(msg)
+
+    async def quit(self, func):
+        return self.email_dispatched.disconnect(func)
+
+    async def connect(self, func):
+        return self.email_dispatched.connect(func)
+
+
+class TestConnection(BaseConnection):
+    def __init__(self, settings):
+        self._session = ArtificialSession()
+        self.outbox = []
+
+    @property
+    def session(self):
+        return self._session
+
+    async def __aenter__(self):
+        if not self.session.email_dispatched:
+            raise RuntimeError("blinker must be installed")
+        await self._connect()
+        return self
+
+    async def __aexit__(self, exc_type, exc, tb):
+        return await self.session.quit(self._record)
+
+    async def _connect(self):
+        return await self.session.connect(self._record)
+
+    def _record(self, message):
+        return self.outbox.append(message)
+
+
+signals = blinker.Namespace()
+
+email_dispatched = signals.signal(
+    'email-dispatched',
+    doc="""
+Signal sent when an email is dispatched. This signal will also be sent
+in testing mode, even though the email will not actually be sent.
+""",
+)

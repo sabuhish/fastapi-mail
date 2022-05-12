@@ -1,15 +1,22 @@
-from contextlib import contextmanager
-
+from contextlib import contextmanager, asynccontextmanager
+import warnings
 import blinker
 from pydantic import BaseModel
 
 from fastapi_mail.config import ConnectionConfig
-from fastapi_mail.connection import Connection
+from fastapi_mail.connection import (
+    ProdConnection,
+    DevConnection,
+    TestConnection,
+    ConnectionEnum,
+    BaseConnection,
+    email_dispatched
+)
 from fastapi_mail.errors import PydanticClassRequired
 from fastapi_mail.msg import MailMsg
 from fastapi_mail.schemas import MessageSchema
 
-# change to a connect Type
+
 class _MailMixin:
     @contextmanager
     def record_messages(self):
@@ -21,6 +28,11 @@ class _MailMixin:
         You must have blinker installed in order to use this feature.
         :versionadded: 0.4
         """
+
+        warnings.warn(
+            "Use ``async_record_messages`` instead of ``record_messages`` for unit testing fastapi-mail, record_messages is deprecated",
+            DeprecationWarning,
+        )
 
         if not email_dispatched:
             raise RuntimeError('blinker must be installed')
@@ -59,8 +71,8 @@ class FastMail(_MailMixin):
             return dict(data)
         except ValueError:
             raise ValueError(
-                f'Unable to build template data dictionary - {type(data)} '
-                'is an invalid source data type'
+                f"Unable to build template data dictionary - {type(data)} "
+                "is an invalid source data type"
             )
 
     async def __prepare_message(self, message: MessageSchema, template=None):
@@ -68,26 +80,38 @@ class FastMail(_MailMixin):
             template_body = message.template_body
             if template_body and not message.html:
                 if isinstance(template_body, list):
-                    message.template_body = template.render({'body': template_body})
+                    message.template_body = template.render({"body": template_body})
                 else:
                     template_data = self.make_dict(template_body)
                     message.template_body = template.render(**template_data)
 
-                message.subtype = 'html'
+                message.subtype = "html"
             elif message.html:
                 if isinstance(template_body, list):
-                    message.template_body = template.render({'body': template_body})
+                    message.template_body = template.render({"body": template_body})
                 else:
                     template_data = self.make_dict(template_body)
                     message.template_body = template.render(**template_data)
         msg = MailMsg(**message.dict())
         if self.config.MAIL_FROM_NAME is not None:
-            sender = f'{self.config.MAIL_FROM_NAME} <{self.config.MAIL_FROM}>'
+            sender = f"{self.config.MAIL_FROM_NAME} <{self.config.MAIL_FROM}>"
         else:
             sender = self.config.MAIL_FROM
         return await msg._message(sender)
 
-    async def send_message(self, message: MessageSchema, template_name:str = None):
+    async def send_message(
+        self,
+        message: MessageSchema,
+        template_name: str = None,
+        connection: BaseConnection = None,
+    ):
+
+        if connection is None:
+            connection = self._guess_connection(
+                self.config.SUPPRESS_SEND, self.config.MAIL_DEBUG
+            )
+        elif connection is not None and connection is not issubclass(BaseConnection):
+            raise InvalidConnectionObject()
 
         if not issubclass(message.__class__, BaseModel):
             raise PydanticClassRequired(
@@ -109,24 +133,33 @@ message = MessageSchema(
             )
 
         if self.config.TEMPLATE_FOLDER and template_name:
-            template = await self.get_mail_template(self.config.template_engine(), template_name)
+            template = await self.get_mail_template(
+                self.config.template_engine(), template_name
+            )
             msg = await self.__prepare_message(message, template)
         else:
             msg = await self.__prepare_message(message)
 
-        async with Connection(self.config) as session:
-            if not self.config.SUPPRESS_SEND:
-                await session.session.send_message(msg)
+        async with connection(self.config) as client:
+            await client.session.send_message(msg)
 
-            email_dispatched.send(msg)
+    @asynccontextmanager
+    async def async_record_messages(self):
+        connection = self._guess_connection(
+            1, self.config.MAIL_DEBUG
+        )
+        async with connection(self.config) as client:
+            yield client.outbox
 
+    def _guess_connection(self, suppress_send: int, mail_debug: int):
+        guess = ConnectionEnum.PROD
+        if suppress_send:
+            guess = ConnectionEnum.TEST
+        if not suppress_send and mail_debug:
+            guess = ConnectionEnum.DEV
 
-signals = blinker.Namespace()
-
-email_dispatched = signals.signal(
-    'email-dispatched',
-    doc="""
-Signal sent when an email is dispatched. This signal will also be sent
-in testing mode, even though the email will not actually be sent.
-""",
-)
+        return {
+            ConnectionEnum.PROD: ProdConnection,
+            ConnectionEnum.DEV: DevConnection,
+            ConnectionEnum.TEST: TestConnection,
+        }.get(guess, None)
