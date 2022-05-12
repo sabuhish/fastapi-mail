@@ -10,7 +10,7 @@ from fastapi_mail.connection import (
     TestConnection,
     ConnectionEnum,
     BaseConnection,
-    email_dispatched
+    email_dispatched,
 )
 from fastapi_mail.errors import PydanticClassRequired
 from fastapi_mail.msg import MailMsg
@@ -35,7 +35,7 @@ class _MailMixin:
         )
 
         if not email_dispatched:
-            raise RuntimeError('blinker must be installed')
+            raise RuntimeError("blinker must be installed")
 
         outbox = []
 
@@ -145,9 +145,7 @@ message = MessageSchema(
 
     @asynccontextmanager
     async def async_record_messages(self):
-        connection = self._guess_connection(
-            1, self.config.MAIL_DEBUG
-        )
+        connection = self._guess_connection(1, self.config.MAIL_DEBUG)
         async with connection(self.config) as client:
             yield client.outbox
 

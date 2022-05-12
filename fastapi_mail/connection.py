@@ -15,8 +15,6 @@ class ConnectionEnum(Enum):
     TEST = "test"
 
 
-
-
 class BaseConnection(ABC):
     @property
     @abstractmethod
@@ -151,7 +149,6 @@ class ArtificialSession:
     def __init__(self):
         self.email_dispatched = email_dispatched
 
-
     async def __aenter__(self):
         return self
 
@@ -199,7 +196,7 @@ class TestConnection(BaseConnection):
 signals = blinker.Namespace()
 
 email_dispatched = signals.signal(
-    'email-dispatched',
+    "email-dispatched",
     doc="""
 Signal sent when an email is dispatched. This signal will also be sent
 in testing mode, even though the email will not actually be sent.
