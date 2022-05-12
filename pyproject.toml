@@ -19,11 +19,11 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.6.2"
+python = "^3.7"
 fastapi = "^0.75.0"
 Jinja2 = "^3.0.1"
 aiosmtplib = "^1.1.6"
-pydantic = "^1.8.2"
+pydantic = {extras = ["email"], version = "^1.9.0"}
 email-validator = "^1.1.3"
 aioredis = "^2.0.0"
 httpx = "^0.22.0"
@@ -31,6 +31,7 @@ blinker = "^1.4"
 fakeredis = "^1.6.1"
 python-multipart = "^0.0.5"
 aiosmtpd = "^1.4.2"
+uvicorn = {extras = ["standard"], version = "^0.17.6"}
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"

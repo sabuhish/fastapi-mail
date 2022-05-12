@@ -23,9 +23,16 @@ from fastapi_mail.dev_server import dev_controller
 
 
 def server_main():
+    quit = None
     try:
         dev_controller.start()
+        while not quit:
+            item = input('exit server? y/n')
+            if item == 'y':
+                quit = 'y'
     except KeyboardInterrupt:
+        dev_controller.stop()
+    finally:
         dev_controller.stop()
 
 

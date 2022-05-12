@@ -1,3 +1,3 @@
-from fastapi_mail import server_main, send_mail_spaced
+from fastapi_mail import server_main
 
 server_main()

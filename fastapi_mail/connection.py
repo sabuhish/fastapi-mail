@@ -35,7 +35,7 @@ class BaseConnection(ABC):
 
 
 class ProdConnection(BaseConnection):
-    def __init__(self, setting: Settings):
+    def __init__(self, settings: Settings):
         if not issubclass(settings.__class__, Settings):
             raise PydanticClassRequired(
                 """\r
@@ -54,8 +54,8 @@ class ProdConnection(BaseConnection):
                 )
                 """
             )
-        self.settings = settings
-        self.client = aiosmtplib.SMTP(
+        self.settings = settings.dict()
+        self._session = aiosmtplib.SMTP(
             hostname=self.settings.get("MAIL_SERVER"),
             port=self.settings.get("MAIL_PORT"),
             use_tls=self.settings.get("MAIL_SSL"),
@@ -65,7 +65,12 @@ class ProdConnection(BaseConnection):
 
     @property
     def session(self):
-        return None
+        return self._session
+
+    @session.setter
+    def session(self, value):
+        self._session = value
+        return self._session
 
     async def __aenter__(self):
         self.session = await self._configure_connection()
@@ -75,7 +80,7 @@ class ProdConnection(BaseConnection):
         return await self.session.quit()
 
     async def _connect(self):
-        return await self.client.connect()
+        return await self.session.connect()
 
     async def _email_login(self, username: str, password: str):
         if self.settings.get("USE_CREDENTIALS"):
@@ -116,14 +121,19 @@ class DevConnection(BaseConnection):
                 """
             )
 
-        self.client = aiosmtplib.SMTP(
+        self._session = aiosmtplib.SMTP(
             hostname=dev_controller.hostname,
             port=dev_controller.port,
         )
 
     @property
     def session(self):
-        return None
+        return self._session
+
+    @session.setter
+    def session(self, value):
+        self._session = value
+        return self._session
 
     async def __aenter__(self):
         self.session = await self._configure_connection()
@@ -133,7 +143,7 @@ class DevConnection(BaseConnection):
         return await self.session.quit()
 
     async def _connect(self):
-        return await self.client.connect()
+        return await self.session.connect()
 
     async def _configure_connection(self):
         try:
@@ -175,6 +185,11 @@ class TestConnection(BaseConnection):
 
     @property
     def session(self):
+        return self._session
+
+    @session.setter
+    def session(self, value):
+        self._session = value
         return self._session
 
     async def __aenter__(self):
