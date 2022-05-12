@@ -1,3 +1,4 @@
+from enum import Enum
 from abc import ABC, abstractmethod
 import aiosmtplib
 import blinker
@@ -6,7 +7,6 @@ from pydantic import BaseSettings as Settings
 from fastapi_mail.config import ConnectionConfig
 from fastapi_mail.dev_server import dev_controller
 from fastapi_mail.errors import ConnectionErrors, PydanticClassRequired
-from enum import Enum
 
 
 class ConnectionEnum(Enum):
