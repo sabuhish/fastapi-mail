@@ -58,9 +58,15 @@ class FastMail(_MailMixin):
 
     """
 
-    def __init__(self, config: ConnectionConfig):
+    def __init__(self, config: ConnectionConfig, connection: BaseConnection = None,):
 
         self.config = config
+        if connection is None:
+            self.connection = self._guess_connection(
+                self.config.SUPPRESS_SEND, self.config.MAIL_DEBUG
+            )
+        elif connection is not None and connection is not issubclass(connection, BaseConnection):
+            raise InvalidConnectionObject()
 
     async def get_mail_template(self, env_path, template_name):
         return env_path.get_template(template_name)
@@ -132,6 +138,8 @@ message = MessageSchema(
 """
             )
 
+        fn_conn = connection if connection is not None and connection is not issubclass(connection, BaseConnection) else self.connection
+
         if self.config.TEMPLATE_FOLDER and template_name:
             template = await self.get_mail_template(
                 self.config.template_engine(), template_name
@@ -140,7 +148,7 @@ message = MessageSchema(
         else:
             msg = await self.__prepare_message(message)
 
-        async with connection(self.config) as client:
+        async with fn_conn(self.config) as client:
             await client.session.send_message(msg)
 
     @asynccontextmanager
