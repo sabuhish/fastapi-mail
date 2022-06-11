@@ -79,7 +79,7 @@ async def simple_send(email: EmailSchema) -> JSONResponse:
     message = MessageSchema(
         subject="Fastapi-Mail module",
         recipients=email.dict().get("email"),  # List of recipients, as many as you can pass 
-        body=html,
+        html=html,
         subtype="html"
         )
 
