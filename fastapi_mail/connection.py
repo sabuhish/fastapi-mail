@@ -35,7 +35,7 @@ class BaseConnection(ABC):
 
 
 class ProdConnection(BaseConnection):
-    def __init__(self, settings: Settings):
+    def __init__(self, settings: ConnectionConfig):
         if not issubclass(settings.__class__, Settings):
             raise PydanticClassRequired(
                 """\r
@@ -72,7 +72,7 @@ class ProdConnection(BaseConnection):
         self._session = value
         return self._session
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> BaseConnection:
         self.session = await self._configure_connection()
         return self
 
@@ -84,13 +84,13 @@ class ProdConnection(BaseConnection):
 
     async def _email_login(self, username: str, password: str):
         if self.settings.get("USE_CREDENTIALS"):
-            return await session.login(username, password)
+            return await self.session.login(username, password)
 
     async def _configure_connection(self):
         try:
             await self._connect()
             await self._email_login(
-                self.setting.MAIL_USERNAME, self.setting.MAIL_PASSWORD
+                self.settings.get("MAIL_USERNAME"), self.settings.get("MAIL_PASSWORD")
             )
             return self.session
         except Exception as error:
@@ -100,8 +100,8 @@ class ProdConnection(BaseConnection):
 
 
 class DevConnection(BaseConnection):
-    def __init__(self, settings: Settings):
-        self.settings = settings
+    def __init__(self, settings: ConnectionConfig):
+        self.settings: ConnectionConfig = settings
         if not issubclass(settings.__class__, Settings):
             raise PydanticClassRequired(
                 """\r
@@ -135,7 +135,7 @@ class DevConnection(BaseConnection):
         self._session = value
         return self._session
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> BaseConnection:
         self.session = await self._configure_connection()
         return self
 
@@ -171,6 +171,11 @@ class ArtificialSession:
     async def send_message(self, msg):
         return self.email_dispatched.send(msg)
 
+    async def login(self, username: str, password: str) -> bool:
+        if username and password:
+            return True
+        return False
+
     async def quit(self, func):
         return self.email_dispatched.disconnect(func)
 
@@ -179,20 +184,26 @@ class ArtificialSession:
 
 
 class TestConnection(BaseConnection):
-    def __init__(self, settings):
+    def __init__(self, settings: ConnectionConfig):
         self._session = ArtificialSession()
+        self.settings: ConnectionConfig = settings
         self.outbox = []
+        self._logged_in = False
 
     @property
     def session(self):
         return self._session
+
+    @property
+    def logged_in(self):
+        return self._logged_in
 
     @session.setter
     def session(self, value):
         self._session = value
         return self._session
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> BaseConnection:
         if not self.session.email_dispatched:
             raise RuntimeError("blinker must be installed")
         await self._connect()
@@ -207,6 +218,11 @@ class TestConnection(BaseConnection):
     def _record(self, message):
         return self.outbox.append(message)
 
+    async def test_email_login(self):
+        self._logged_in = self.session.login(
+            self.settings.MAIL_USERNAME, self.settings.MAIL_PASSWORD
+        )
+        return self.logged_in
 
 signals = blinker.Namespace()
 

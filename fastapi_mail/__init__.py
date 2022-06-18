@@ -1,6 +1,7 @@
 from fastapi_mail.config import ConnectionConfig
 from fastapi_mail.fastmail import FastMail
 from fastapi_mail.schemas import MessageSchema, MultipartSubtypeEnum
+from fastapi_mail.connection import ProdConnection, DevConnection, TestConnection
 
 from . import email_utils
 
@@ -16,6 +17,9 @@ __all__ = [
     "MessageSchema",
     "email_utils",
     "MultipartSubtypeEnum",
+    "ProdConnection", 
+    "DevConnection", 
+    "TestConnection"
 ]
 
 

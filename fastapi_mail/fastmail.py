@@ -12,7 +12,7 @@ from fastapi_mail.connection import (
     BaseConnection,
     email_dispatched,
 )
-from fastapi_mail.errors import PydanticClassRequired
+from fastapi_mail.errors import PydanticClassRequired, InvalidConnectionObject
 from fastapi_mail.msg import MailMsg
 from fastapi_mail.schemas import MessageSchema
 
@@ -62,7 +62,7 @@ class FastMail(_MailMixin):
 
         self.config = config
         if connection is None:
-            self.connection = self._guess_connection(
+            self.connection: BaseConnection = self._guess_connection(
                 self.config.SUPPRESS_SEND, self.config.MAIL_DEBUG
             )
         elif connection is not None and connection is not issubclass(connection, BaseConnection):
@@ -109,16 +109,7 @@ class FastMail(_MailMixin):
         self,
         message: MessageSchema,
         template_name: str = None,
-        connection: BaseConnection = None,
     ):
-
-        if connection is None:
-            connection = self._guess_connection(
-                self.config.SUPPRESS_SEND, self.config.MAIL_DEBUG
-            )
-        elif connection is not None and connection is not issubclass(BaseConnection):
-            raise InvalidConnectionObject()
-
         if not issubclass(message.__class__, BaseModel):
             raise PydanticClassRequired(
                 """
@@ -138,8 +129,6 @@ message = MessageSchema(
 """
             )
 
-        fn_conn = connection if connection is not None and connection is not issubclass(connection, BaseConnection) else self.connection
-
         if self.config.TEMPLATE_FOLDER and template_name:
             template = await self.get_mail_template(
                 self.config.template_engine(), template_name
@@ -148,12 +137,14 @@ message = MessageSchema(
         else:
             msg = await self.__prepare_message(message)
 
-        async with fn_conn(self.config) as client:
+        async with self.connection(self.config) as client:
             await client.session.send_message(msg)
 
     @asynccontextmanager
     async def async_record_messages(self):
         connection = self._guess_connection(1, self.config.MAIL_DEBUG)
+        
+        # return TestConnection
         async with connection(self.config) as client:
             yield client.outbox
 
