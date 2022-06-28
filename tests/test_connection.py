@@ -109,10 +109,18 @@ async def test_attachement_message_with_headers(mail_config):
         attachments=[
             {
                 'file': attachement,
-                'headers': {'Content-ID': 'test ID'},
+                'headers': {
+                    'Content-ID': 'test ID',
+                    'Content-Disposition': 'inline; filename="attachement.txt"',
+                },
                 'mime_type': 'image',
                 'mime_subtype': 'png',
-            }
+            },
+            {
+                'file': attachement,
+                'mime_type': 'image',
+                'mime_subtype': 'png',
+            },
         ],
     )
     conf = ConnectionConfig(**mail_config)
@@ -127,9 +135,17 @@ async def test_attachement_message_with_headers(mail_config):
         assert mail._payload[1].get_content_subtype() == msg.attachments[0][1].get('mime_subtype')
 
         assert mail._payload[1].__dict__.get('_headers')[0][1] == 'image/png'
-        assert mail._payload[1].__dict__.get('_headers')[4][1] == msg.attachments[0][1].get(
+        assert mail._payload[1].__dict__.get('_headers')[3][1] == msg.attachments[0][1].get(
             'headers'
         ).get('Content-ID')
+        assert mail._payload[1].__dict__.get('_headers')[4][1] == msg.attachments[0][1].get(
+            'headers'
+        ).get('Content-Disposition')
+
+        assert (
+            mail._payload[2].__dict__.get('_headers')[3][1] == 'attachment; '
+            "filename*=UTF8''attachement.txt"
+        )
 
 
 @pytest.mark.asyncio

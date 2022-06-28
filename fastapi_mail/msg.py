@@ -54,20 +54,25 @@ class MailMsg:
             part.set_payload(await file.read())
             encode_base64(part)
 
-            filename = file.filename
-
-            try:
-                filename and filename.encode('ascii')
-            except UnicodeEncodeError:
-                if not PY3:
-                    filename = filename.encode('utf8')
-
-            filename = ('UTF8', '', filename)
-
-            part.add_header('Content-Disposition', 'attachment', filename=filename)
             if file_meta and 'headers' in file_meta:
                 for header in file_meta['headers'].keys():
                     part.add_header(header, file_meta['headers'][header])
+
+            # Add an implicit `Content-Disposition` attachment header,
+            #   but only if it wasn't supplied explicitly.
+            #   More info here: https://github.com/sabuhish/fastapi-mail/issues/128
+            if not part.get('Content-Disposition'):
+                filename = file.filename
+
+                try:
+                    filename and filename.encode('ascii')
+                except UnicodeEncodeError:
+                    if not PY3:
+                        filename = filename.encode('utf8')
+
+                filename = ('UTF8', '', filename)
+                part.add_header('Content-Disposition', 'attachment', filename=filename)
+
             self.message.attach(part)
 
     async def _message(self, sender):
