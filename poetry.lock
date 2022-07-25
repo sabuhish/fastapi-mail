@@ -866,6 +866,7 @@ lock-version = "1.1"
 python-versions = "^3.7"
 content-hash = "65f1bafa87e48a5e4dda7995b34ab4385847ea9ea0253a6418d31d560a3eaf27"
 
+
 [metadata.files]
 aioredis = [
     {file = "aioredis-2.0.1-py3-none-any.whl", hash = "sha256:9ac0d0b3b485d293b8ca1987e6de8658d7dafcca1cddfcd1d506cae8cdebfdd6"},
