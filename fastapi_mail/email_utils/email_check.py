@@ -7,13 +7,15 @@ import dns.resolver
 
 try:
     import aioredis
+
     redis_lib = True
 except ImportError as error:
     redis_lib = False
     print(error)
-    
+
 try:
     import httpx
+
     request_lib = True
 except ImportError as error:
     request_lib = False
@@ -98,10 +100,14 @@ class DefaultChecker(AbstractEmailChecker):
     ):
 
         if not redis_lib:
-            raise ImportError("You must install aioredis from https://pypi.org/project/aioredis in order to run functionality")
-        
+            raise ImportError(
+                'You must install aioredis from https://pypi.org/project/aioredis in order to run functionality'
+            )
+
         if not request_lib:
-            raise ImportError("You must install httpx from https://pypi.org/project/httpx in order to run functionality")
+            raise ImportError(
+                'You must install httpx from https://pypi.org/project/httpx in order to run functionality'
+            )
 
         self.source = (
             source
