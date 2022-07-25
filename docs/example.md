@@ -196,12 +196,15 @@ Used for example for referencing Content-ID images in html of email
 message = MessageSchema(
     subject='Fastapi-Mail module',
     recipients=recipients,
-    html="<img src='cid:logo_image'>",
+    html="<img src='cid:logo_image@fastapi-mail'>",
     subtype='html',
     attachments=[
             {
                 "file": "/path/to/file.png",
-                "headers": {"Content-ID": "<logo_image>"},
+                "headers": {
+                    "Content-ID": "<logo_image@fastapi-mail>",
+                    "Content-Disposition": "inline; filename=\"file.png\"",  # For inline images only
+                },
                 "mime_type": "image",
                 "mime_subtype": "png",
             }
