@@ -19,17 +19,11 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.6.2"
-fastapi = "0.*"
+python = "^3.7"
 Jinja2 = "^3.0.1"
 aiosmtplib = "^1.1.6"
 pydantic = "^1.8.2"
 email-validator = "^1.1.3"
-aioredis = "^2.0.0"
-httpx = "0.*"
-blinker = "^1.4"
-fakeredis = "^1.*"
-python-multipart = "^0.0.5"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
@@ -41,8 +35,15 @@ mkdocs-material = "^7.2.6"
 mkdocs-markdownextradata-plugin = "^0.2.4"
 isort = "^5.9.3"
 blue = "^0.7.0"
-mypy = "^0.910"
+mypy = "0.971"
 typed-ast = "^1.4.3"
+regex = "2022.7.9"
+fakeredis = "^1.8.2"
+blinker = "^1.5"
+httpx = "^0.23.0"
+aioredis = "^2.0.1"
+fastapi = "^0.79.0"
+uvicorn = "^0.18.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
