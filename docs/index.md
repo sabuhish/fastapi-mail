@@ -33,7 +33,7 @@ then the utility will save it in the list or set by default.
 ## Writing unittests using Fastapi-Mail
 Fastapi mails allows you to write unittest for your application without sending emails to
 non existent email address by mocking the email to be sent. To mock sending out mails, set
-the suppress configuraton to true. Suppress send defaults to False to prevent mocking within applications.
+the suppress configuration to true. Suppress send defaults to False to prevent mocking within applications.
 
 
 ## Support for Reply-To header is added
