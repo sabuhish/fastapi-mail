@@ -11,7 +11,6 @@ try:
     redis_lib = True
 except ImportError as error:
     redis_lib = False
-    print(error)
 
 try:
     import httpx
@@ -19,7 +18,6 @@ try:
     request_lib = True
 except ImportError as error:
     request_lib = False
-    print(error)
 
 from pydantic import EmailStr
 
