@@ -9,14 +9,14 @@ try:
     import aioredis
 
     redis_lib = True
-except ImportError as error:
+except ImportError:
     redis_lib = False
 
 try:
     import httpx
 
     request_lib = True
-except ImportError as error:
+except ImportError:
     request_lib = False
 
 from pydantic import EmailStr
