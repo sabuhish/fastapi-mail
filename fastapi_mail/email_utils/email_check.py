@@ -30,7 +30,7 @@ class AbstractEmailChecker(ABC):
         pass
 
     @abstractmethod
-    async def is_dispasoble(self, email: str):
+    async def is_disposable(self, email: str):
         pass
 
     @abstractmethod
@@ -231,7 +231,7 @@ class DefaultChecker(AbstractEmailChecker):
             self.TEMP_EMAIL_DOMAINS.remove(domain)
         return True
 
-    async def is_dispasoble(self, email: str) -> bool:
+    async def is_disposable(self, email: str) -> bool:
         """Check email address is temporary or not"""
         if self.validate_email(email):
             _, domain = email.split('@')
@@ -318,7 +318,7 @@ class WhoIsXmlApi:
         who_is = WhoIsXmlApi(token="Your access token", email = "your@mailaddress.com")
 
         print(who_is.smtp_check_())  # check smtp server
-        print(who_is.is_dispasoble()) # check email is disposable or not
+        print(who_is.is_disposable()) # check email is disposable or not
         print(who_is.check_mx_record()) # check domain mx records
         print(who_is.free_check()) # check email domain is free or not
     ```
@@ -387,7 +387,7 @@ class WhoIsXmlApi:
         """
         return self.smtp_check
 
-    def is_dispasoble(self):
+    def is_disposable(self):
         """
         Tells you whether or not the email address is disposable (created via a service like
         Mailinator).
