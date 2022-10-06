@@ -12,7 +12,7 @@ async def test_default_checker(default_checker):
     email = 'tural_m@hotmail.com'
     domain = email.split('@')[-1]
 
-    assert await default_checker.is_dispasoble(email) is False
+    assert await default_checker.is_disposable(email) is False
     assert await default_checker.is_blocked_domain(domain) is False
     assert await default_checker.is_blocked_address(email) is False
     assert await default_checker.check_mx_record(domain) is True
@@ -22,7 +22,7 @@ async def test_default_checker(default_checker):
 
     await default_checker.add_temp_domain([domain])
 
-    assert await default_checker.is_dispasoble(email) is True
+    assert await default_checker.is_disposable(email) is True
     assert await default_checker.is_blocked_domain(domain) is False
     assert await default_checker.is_blocked_address(email) is False
     assert await default_checker.check_mx_record(domain) is True

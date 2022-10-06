@@ -14,6 +14,6 @@ loop.run_until_complete(checker.close_connections())
 who_is = WhoIsXmlApi(token='Your access token', email='your@mailaddress.com')
 
 print(who_is.smtp_check_())  # check smtp server
-print(who_is.is_dispasoble())   # check email is disposable or not
+print(who_is.is_disposable())   # check email is disposable or not
 print(who_is.check_mx_record())   # check domain mx records
 print(who_is.free_check)   # check email domain is free or not
