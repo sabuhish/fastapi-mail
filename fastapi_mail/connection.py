@@ -25,8 +25,8 @@ conf = Connection(
     MAIL_FROM="your_from_email",
     MAIL_PORT=587,
     MAIL_SERVER="email_service",
-    MAIL_TLS=True,
-    MAIL_SSL=False
+    MAIL_STARTTLS=True,
+    MAIL_SSL_TLS=False
 )
 """
             )
@@ -46,8 +46,8 @@ conf = Connection(
             self.session = aiosmtplib.SMTP(
                 hostname=self.settings.get('MAIL_SERVER'),
                 port=self.settings.get('MAIL_PORT'),
-                use_tls=self.settings.get('MAIL_SSL'),
-                start_tls=self.settings.get('MAIL_TLS'),
+                use_tls=self.settings.get('MAIL_SSL_TLS'),
+                start_tls=self.settings.get('MAIL_STARTTLS'),
                 validate_certs=self.settings.get('VALIDATE_CERTS'),
             )
 

@@ -59,8 +59,8 @@ conf = ConnectionConfig(
     MAIL_FROM = "your@email.com",
     MAIL_PORT = 587,
     MAIL_SERVER = "your mail server",
-    MAIL_TLS = True,
-    MAIL_SSL = False,
+    MAIL_STARTTLS = True,
+    MAIL_SSL_TLS = False,
     USE_CREDENTIALS = True,
     VALIDATE_CERTS = True
 )
@@ -80,8 +80,7 @@ async def simple_send(email: EmailSchema) -> JSONResponse:
         subject="Fastapi-Mail module",
         recipients=email.dict().get("email"),  # List of recipients, as many as you can pass 
         body=html,
-        subtype="html"
-        )
+        subtype="html")
 
     fm = FastMail(conf)
     await fm.send_message(message)
@@ -103,7 +102,6 @@ Thanks goes to these wonderful people ([🚧](https://sabuhish.github.io/fastapi
 
 <table>
   <tr>
-    <td align="center"><a href="https://github.com/sabuhish"><img src="https://avatars.githubusercontent.com/u/46589585?v=3" width="100px;" alt=""/><br /><sub><b>Sabuhi Shukurov</b></sub></a><br /><a href="#maintenance-tbenning" title="Answering Questions">💬</a> <a href="https://github.com/sabuhish/fastapi-mail/" title="Reviewed Pull Requests">👀</a> <a href="#maintenance-jakebolam" title="Maintenance">🚧</a></td>
     <td align="center"><a href="https://github.com/Turall"><img src="https://avatars.githubusercontent.com/u/32899328?v=3" width="100px;" alt=""/><br /><sub><b>Tural Muradov</b></sub></a><br /><a href="https://github.com/sabuhish/fastapi-mail/" title="Documentation">📖</a> <a href="https://github.com/sabuhish/fastapi-mail/" title="Reviewed Pull Requests">👀</a> <a href="#tool-jfmengels" title="Tools">🔧</a></td>
     <td align="center"><a href="https://github.com/AliyevH"><img src="https://avatars.githubusercontent.com/u/5507950?v=3" width="100px;" alt=""/><br /><sub><b>Hasan Aliyev</b></sub></a><br /><a href="https://github.com/sabuhish/fastapi-mail/" title="Documentation">📖</a> <a href="#maintenance-jakebolam" title="Maintenance">🚧</a> <a href="https://github.com/sabuhish/fastapi-mail/" title="Reviewed Pull Requests">👀</a></td>
     <td align="center"><a href="https://github.com/imaskm"><img src="https://avatars.githubusercontent.com/u/20543833?v=3" width="100px;" alt=""/><br /><sub><b>Ashwani</b></sub></a><br /><a href="#maintenance-tbenning" title="Maintenance">🚧</a></td>

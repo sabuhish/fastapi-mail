@@ -21,8 +21,8 @@ conf = ConnectionConfig(
     MAIL_PORT = 587,
     MAIL_SERVER = "your mail server",
     MAIL_FROM_NAME="Desired Name",
-    MAIL_TLS = True,
-    MAIL_SSL = False,
+    MAIL_STARTTLS = True,
+    MAIL_SSL_TLS = False,
     USE_CREDENTIALS = True,
     VALIDATE_CERTS = True
 )
@@ -120,8 +120,8 @@ conf = ConnectionConfig(
     MAIL_FROM = "your@email.com",
     MAIL_PORT = 587,
     MAIL_SERVER = "your mail server",
-    MAIL_TLS = True,
-    MAIL_SSL = False,
+    MAIL_STARTTLS = True,
+    MAIL_SSL_TLS = False,
     TEMPLATE_FOLDER = Path(__file__).parent / 'templates',
 )
 
@@ -410,8 +410,8 @@ conf = ConnectionConfig(
     MAIL_FROM = "your@email.com",
     MAIL_PORT = 587,
     MAIL_SERVER = "your mail server",
-    MAIL_TLS = True,
-    MAIL_SSL = False,
+    MAIL_STARTTLS = True,
+    MAIL_SSL_TLS = False,
     TEMPLATE_FOLDER = Path(__file__).parent / 'templates',
 
     # if no indicated SUPPRESS_SEND defaults to 0 (false) as below

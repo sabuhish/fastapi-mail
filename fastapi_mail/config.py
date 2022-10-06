@@ -10,8 +10,8 @@ class ConnectionConfig(Settings):
     MAIL_PASSWORD: str
     MAIL_PORT: int = 465
     MAIL_SERVER: str
-    MAIL_TLS: bool = False
-    MAIL_SSL: bool = True
+    MAIL_STARTTLS: bool = False
+    MAIL_SSL_TLS: bool = True
     MAIL_DEBUG: conint(gt=-1, lt=2) = 0  # type: ignore
     MAIL_FROM: EmailStr
     MAIL_FROM_NAME: Optional[str] = None

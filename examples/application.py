@@ -12,8 +12,8 @@ conf = ConnectionConfig(
     MAIL_FROM='your@email.com',
     MAIL_PORT=587,
     MAIL_SERVER='your mail server',
-    MAIL_TLS=True,
-    MAIL_SSL=False,
+    MAIL_STARTTLS=True,
+    MAIL_SSL_TLS=False,
 )
 
 app = FastAPI()

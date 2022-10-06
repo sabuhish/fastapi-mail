@@ -26,8 +26,8 @@ class has following attributes
     - If you service does not provide username use sender address for connection.
 -  MAIL_PASSWORD : Password for authentication
 -  MAIL_SERVER  : SMTP Mail server.
--  MAIL_TLS : For TLS connection
--  MAIL_SSL : For TLS connection
+-  MAIL_STARTTLS : For STARTTLS connections
+-  MAIL_SSL_TLS : For connecting over TLS/SSL
 -  MAIL_DEBUG : Debug mode for while sending mails, defaults 0.
 -  MAIL_FROM : Sender address
 -  MAIL_FROM_NAME : Title for Mail
