@@ -51,9 +51,8 @@ blinker = "^1.5"
 httpx = "^0.23.0"
 aioredis = "^2.0.1"
 uvicorn = "^0.18.2"
-
-[tool.poetry.group.dev.dependencies]
 fastapi = "^0.85.0"
+
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
