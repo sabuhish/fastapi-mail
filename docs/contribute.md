@@ -1,14 +1,14 @@
-Contributing to fastapi-mail
+Contributing to fastapi-mail:
 =========================================
 
-We welcome contributions to [fastapi-mail](https://github.com/sabuhish/fastapi-mail)
+We welcome contributions to [FastAPI-Mail](https://github.com/sabuhish/fastapi-mail)
 
 Issues
 ------
 
 Feel free to submit issues and enhancement requests.
 
-[Fatapi-Mail Issues](https://github.com/sabuhish/fastapi-mail/issues)
+[FastAPI-Mail issues](https://github.com/sabuhish/fastapi-mail/issues)
 
 Contributing
 ------------
@@ -19,21 +19,5 @@ Please refer to each project's style and contribution guidelines for submitting 
  3. **Commit** changes to your own branch
  4. **Push** your work 
  5. Submit a **Pull request** so that we can review your changes
-
-
-### Before Start
-
-
-```sh
-$ bash fastapi-mail.sh install   
-$ source .venv/bin/activate
-$ cat app.py
-```
-
-```sh
-uvicorn app:app --port 8000 --reload
-```
-
-
 
 NOTE: Be sure to merge the latest from `upstream` before making a pull request!

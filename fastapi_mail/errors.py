@@ -16,3 +16,11 @@ class PydanticClassRequired(Exception):
 class TemplateFolderDoesNotExist(Exception):
     def __init__(self, expression):
         self.expression = expression
+
+
+class ApiError(Exception):
+    pass
+
+
+class DBProvaiderError(Exception):
+    pass

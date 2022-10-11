@@ -7,9 +7,7 @@ loop = asyncio.get_event_loop()
 loop.run_until_complete(checker.init_redis())
 res = loop.run_until_complete(checker.blacklist_rm_temp('promail1.net'))
 print(res)
-res = loop.run_until_complete(checker.temp_email_count())
-loop.run_until_complete(checker.close_connections())
-
+loop_until = loop.run_until_complete(checker.temp_email_count())
 
 who_is = WhoIsXmlApi(token='Your access token', email='your@mailaddress.com')
 

@@ -1,6 +1,6 @@
 import inspect
 from abc import ABC, abstractmethod
-from typing import Any, List, Set
+from typing import Any, Dict, List, Set, Union
 
 import dns.exception
 import dns.resolver
@@ -21,7 +21,7 @@ except ImportError:
 
 from pydantic import EmailStr
 
-from .errors import ApiError, DBProvaiderError
+from fastapi_mail.errors import ApiError, DBProvaiderError
 
 
 class AbstractEmailChecker(ABC):
@@ -128,7 +128,7 @@ class DefaultChecker(AbstractEmailChecker):
             f' for class {self.__class__.__name__}'
         )
 
-    async def init_redis(self):
+    async def init_redis(self) -> bool:
         if not self.redis_enabled:
             raise DBProvaiderError(self.redis_error_msg)
         if not hasattr(self, 'redis_client'):
@@ -165,7 +165,7 @@ class DefaultChecker(AbstractEmailChecker):
         EmailStr.validate(email)
         return True
 
-    async def fetch_temp_email_domains(self):
+    async def fetch_temp_email_domains(self) -> Union[List[str], Any]:
         """Async request to source param resource"""
         async with httpx.AsyncClient() as client:
             response = await client.get(self.source)
@@ -174,7 +174,9 @@ class DefaultChecker(AbstractEmailChecker):
 
             self.TEMP_EMAIL_DOMAINS.extend(response.text.split('\n'))
 
-    async def blacklist_add_domain(self, domain: str):
+        return None
+
+    async def blacklist_add_domain(self, domain: str) -> None:
         """Add domain to blacklist"""
         if self.redis_enabled:
             result = await self.redis_client.hget('blocked_domains', domain)
@@ -184,7 +186,7 @@ class DefaultChecker(AbstractEmailChecker):
         else:
             self.BLOCKED_DOMAINS.add(domain)
 
-    async def blacklist_rm_domain(self, domain: str):
+    async def blacklist_rm_domain(self, domain: str) -> None:
         if self.redis_enabled:
             res = await self.redis_client.hdel('blocked_domains', domain)
             if res:
@@ -192,7 +194,7 @@ class DefaultChecker(AbstractEmailChecker):
         else:
             self.BLOCKED_DOMAINS.remove(domain)
 
-    async def blacklist_add_email(self, email: str):
+    async def blacklist_add_email(self, email: str) -> None:
         """Add email address to blacklist"""
         if self.validate_email(email):
             if self.redis_enabled:
@@ -203,7 +205,7 @@ class DefaultChecker(AbstractEmailChecker):
             else:
                 self.BLOCKED_ADDRESSES.add(email)
 
-    async def blacklist_rm_email(self, email: str):
+    async def blacklist_rm_email(self, email: str) -> None:
         if self.redis_enabled:
             res = await self.redis_client.hdel('blocked_emails', email)
             if res:
@@ -211,7 +213,7 @@ class DefaultChecker(AbstractEmailChecker):
         else:
             self.BLOCKED_ADDRESSES.remove(email)
 
-    async def add_temp_domain(self, domain_lists: List[str]):
+    async def add_temp_domain(self, domain_lists: List[str]) -> None:
         """Manually add temporary email"""
         if self.redis_enabled:
             for domain in domain_lists:
@@ -222,7 +224,7 @@ class DefaultChecker(AbstractEmailChecker):
         else:
             self.TEMP_EMAIL_DOMAINS.extend(domain_lists)
 
-    async def blacklist_rm_temp(self, domain: str):
+    async def blacklist_rm_temp(self, domain: str) -> bool:
         if self.redis_enabled:
             res = await self.redis_client.hdel('temp_domains', domain)
             if res:
@@ -242,7 +244,7 @@ class DefaultChecker(AbstractEmailChecker):
             return domain in self.TEMP_EMAIL_DOMAINS
         return False
 
-    async def is_blocked_domain(self, domain: str):
+    async def is_blocked_domain(self, domain: str) -> bool:
         """Check blocked email domain"""
         if not self.redis_enabled:
             return domain in self.BLOCKED_DOMAINS
@@ -250,7 +252,7 @@ class DefaultChecker(AbstractEmailChecker):
         blocked_email = await self.redis_client.hget('blocked_domains', domain)
         return bool(blocked_email)
 
-    async def is_blocked_address(self, email: str):
+    async def is_blocked_address(self, email: str) -> bool:
         """Check blocked email address"""
         if self.validate_email(email):
             if not self.redis_enabled:
@@ -258,10 +260,12 @@ class DefaultChecker(AbstractEmailChecker):
 
             blocked_domain = await self.redis_client.hget('blocked_emails', email)
             return bool(blocked_domain)
+        return False
 
-    async def check_mx_record(self, domain: str, full_result: bool = False):
+    async def check_mx_record(
+        self, domain: str, full_result: bool = False
+    ) -> Union[Dict[str, Any], bool]:
         """Check domain MX records"""
-
         try:
             mx_records = dns.resolver.resolve(domain, 'MX')
             return (
@@ -278,25 +282,25 @@ class DefaultChecker(AbstractEmailChecker):
 
             return False
 
-    async def blocked_email_count(self):
+    async def blocked_email_count(self) -> int:
         """count all blocked emails in redis"""
         if self.redis_enabled:
             return await self.redis_client.get('email_counter')
         return len(self.BLOCKED_ADDRESSES)
 
-    async def blocked_domain_count(self):
+    async def blocked_domain_count(self) -> int:
         """count all blocked domains in redis"""
         if self.redis_enabled:
             return await self.redis_client.get('domain_counter')
         return len(self.BLOCKED_DOMAINS)
 
-    async def temp_email_count(self):
+    async def temp_email_count(self) -> int:
         """count all temporary emails in redis"""
         if self.redis_enabled:
             return await self.redis_client.get('temp_counter')
         return len(self.TEMP_EMAIL_DOMAINS)
 
-    async def close_connections(self):
+    async def close_connections(self) -> bool:
         """for correctly close connection from redis"""
         if self.redis_enabled:
             await self.redis_client.close()
@@ -336,13 +340,13 @@ class WhoIsXmlApi:
         self.mx_records: List[Any] = []
         self.host = 'https://emailverification.whoisxmlapi.com/api/v1'
 
-    async def fetch_info(self):
+    async def fetch_info(self) -> bool:
         async with httpx.AsyncClient() as client:
             params = {'apiKey': self.token, 'emailAddress': self.email}
             response = await client.get(self.host, params=params)
 
             if response.status_code == 200:
-                data = response.json
+                data = response.json()
                 self.smtp_check = data['smtpCheck']
                 self.dns_check = data['dnsCheck']
                 self.free_check = data['freeCheck']
@@ -356,12 +360,13 @@ class WhoIsXmlApi:
             'Response status code is {}, error msg {}'.format(response.status_code, response.text)
         )
 
-    def validate_email(self, email: str):
+    def validate_email(self, email: str) -> bool:
         """Validate email address"""
         if EmailStr.validate(email):
             return True
+        return False
 
-    def catch_all_check(self):
+    def catch_all_check(self) -> bool:
         """
         Tells you whether or not this mail server has a “catch-all” address.
         This refers to a special type of address that can receive emails for any number of
@@ -373,7 +378,7 @@ class WhoIsXmlApi:
         """
         return self.catch_all
 
-    def smtp_check_(self):
+    def smtp_check_(self) -> bool:
         """
         Checks if the email address exists and
         can receive emails by using SMTP connection and
@@ -387,7 +392,7 @@ class WhoIsXmlApi:
         """
         return self.smtp_check
 
-    def is_disposable(self):
+    def is_disposable(self) -> bool:
         """
         Tells you whether or not the email address is disposable (created via a service like
         Mailinator).
@@ -398,14 +403,14 @@ class WhoIsXmlApi:
         """
         return self.disposable
 
-    def check_mx_record(self):
+    def check_mx_record(self) -> List[Any]:
         """
         Mail servers list.
         May be absent for invalid or non-existing emails.
         """
         return self.mx_records
 
-    def check_dns(self):
+    def check_dns(self) -> bool:
         """
         Ensures that the domain in the email address, eg: gmail.com, is a valid domain.
         This value will be 'true' if the domain is good and 'false' otherwise.
@@ -414,7 +419,7 @@ class WhoIsXmlApi:
         """
         return self.dns_check
 
-    def check_free(self):
+    def check_free(self) -> bool:
         """
         Check to see if the email address is from a free email provider like Gmail or not.
         This value will be 'false' if the email address is not free, and 'true' otherwise.

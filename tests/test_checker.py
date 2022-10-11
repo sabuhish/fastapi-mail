@@ -1,7 +1,7 @@
 import pytest
 from pydantic import EmailError
 
-from fastapi_mail.email_utils.errors import DBProvaiderError
+from fastapi_mail.errors import DBProvaiderError
 
 
 @pytest.mark.asyncio

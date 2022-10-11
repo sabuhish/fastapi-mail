@@ -13,8 +13,32 @@ The fastapi-mail simple lightweight mail system, sending emails and attachments(
 
 ###  🔨  Installation ###
 
-```sh
- $ pip install fastapi-mail
+
+```bash
+python3 -m venv .venv
+
+source .venv/bin/activate
+
+pip install fastapi-mail
+
+for aioredis and httpx
+
+pip install 'fastapi-mail[aioredis]'
+pip install 'fastapi-mail[httpx]'
+
+```
+
+Alternatively, if you prefer to use `poetry` for package dependencies:
+
+```bash
+poetry shell
+
+python add fastapi-mail
+
+for aioredis and httpx
+
+python add 'fastapi-mail[aioredis]'
+python add 'fastapi-mail[httpx]'
 ```
 
 ---
@@ -40,12 +64,12 @@ More information on [Getting-Started](https://sabuhish.github.io/fastapi-mail/ge
 
 ```python
 
-from fastapi import FastAPI, BackgroundTasks, UploadFile, File, Form
-from starlette.responses import JSONResponse
-from starlette.requests import Request
-from fastapi_mail import FastMail, MessageSchema,ConnectionConfig
-from pydantic import BaseModel, EmailStr
 from typing import List
+
+from fastapi import BackgroundTasks, FastAPI
+from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
+from pydantic import BaseModel, EmailStr
+from starlette.responses import JSONResponse
 
 
 
@@ -54,13 +78,13 @@ class EmailSchema(BaseModel):
 
 
 conf = ConnectionConfig(
-    MAIL_USERNAME = "YourUsername",
-    MAIL_PASSWORD = "strong_password",
-    MAIL_FROM = "your@email.com",
-    MAIL_PORT = 587,
-    MAIL_SERVER = "your mail server",
-    MAIL_STARTTLS = True,
-    MAIL_SSL_TLS = False,
+    MAIL_USERNAME ="username",
+    MAIL_PASSWORD = "**********",
+    MAIL_FROM = "test@email.com",
+    MAIL_PORT = 465,
+    MAIL_SERVER = "mail server",
+    MAIL_STARTTLS = False,
+    MAIL_SSL_TLS = True,
     USE_CREDENTIALS = True,
     VALIDATE_CERTS = True
 )
@@ -78,9 +102,9 @@ async def simple_send(email: EmailSchema) -> JSONResponse:
 
     message = MessageSchema(
         subject="Fastapi-Mail module",
-        recipients=email.dict().get("email"),  # List of recipients, as many as you can pass 
+        recipients=email.dict().get("email"),
         body=html,
-        subtype="html")
+        subtype=MessageType.html)
 
     fm = FastMail(conf)
     await fm.send_message(message)
@@ -89,50 +113,20 @@ async def simple_send(email: EmailSchema) -> JSONResponse:
 
 ## List of Examples
 
-For more examples of using fastapi-mail please check [example](https://sabuhish.github.io/fastapi-mail/example/) section
-
-# Contributing
-Feel free to open issues and send pull requests.
+For more examples of using fastapi-mail please check: 
+[example](https://sabuhish.github.io/fastapi-mail/example/) section.
 
 
 ## Contributors ✨
 
-Thanks goes to these wonderful people ([🚧](https://sabuhish.github.io/fastapi-mail/example.html)):
+Thanks goes to these wonderful
+[People](https://sabuhish.github.io/fastapi-mail/contributors.txt)
 
 
-<table>
-  <tr>
-    <td align="center"><a href="https://github.com/Turall"><img src="https://avatars.githubusercontent.com/u/32899328?v=3" width="100px;" alt=""/><br /><sub><b>Tural Muradov</b></sub></a><br /><a href="https://github.com/sabuhish/fastapi-mail/" title="Documentation">📖</a> <a href="https://github.com/sabuhish/fastapi-mail/" title="Reviewed Pull Requests">👀</a> <a href="#tool-jfmengels" title="Tools">🔧</a></td>
-    <td align="center"><a href="https://github.com/AliyevH"><img src="https://avatars.githubusercontent.com/u/5507950?v=3" width="100px;" alt=""/><br /><sub><b>Hasan Aliyev</b></sub></a><br /><a href="https://github.com/sabuhish/fastapi-mail/" title="Documentation">📖</a> <a href="#maintenance-jakebolam" title="Maintenance">🚧</a> <a href="https://github.com/sabuhish/fastapi-mail/" title="Reviewed Pull Requests">👀</a></td>
-    <td align="center"><a href="https://github.com/imaskm"><img src="https://avatars.githubusercontent.com/u/20543833?v=3" width="100px;" alt=""/><br /><sub><b>Ashwani</b></sub></a><br /><a href="#maintenance-tbenning" title="Maintenance">🚧</a></td>
-    <td align="center"><a href="https://github.com/LLYX"><img src="https://avatars1.githubusercontent.com/u/10430633" width="100px;" alt=""/><br /><sub><b>Leon Xu</b></sub></a><br /><a href="#maintenance-tbenning" title="Maintenance">🚧</a></td>
-    <td align="center"><a href="https://github.com/gabrielponto"><img src="https://avatars.githubusercontent.com/u/7227328" width="100px;" alt=""/><br /><sub><b>Gabriel Oliveira</b></sub></a><br /><a href="https://github.com/sabuhish/fastapi-mail/" title="Documentation">📖</a> <a href="#maintenance-jakebolam" title="Maintenance">🚧</a></td>
-    <td align="center"><a href="https://github.com/maestro-1"><img src="https://avatars0.githubusercontent.com/u/40833254" width="100px;" alt=""/><br /><sub><b>Onothoja Marho</b></sub></a><br /><a href="https://github.com/sabuhish/fastapi-mail/" title="Documentation">📖</a> <a  href="#maintenance-jakebolam"  title="Maintenance">🚧</a> <a href="#tool-jfmengels" title="Tools">🔧</a></td>
-
-  </tr>
- <tr>
-    <td align="center"><a href="https://github.com/TheTimKiely"><img src="https://avatars1.githubusercontent.com/u/34795732" width="100px;" alt=""/><br /><sub><b>Tim Kiely</b></sub></a><br /><a href="#maintenance-tbenning" title="Maintenance">🚧</a></td>
-    <td align="center"><a href=https://github.com/DmitriySolodkiy"><img src="https://avatars1.githubusercontent.com/u/37667152" width="100px;" alt=""/><br/><sub><b>Dmitriy Solodkiy</b></sub></a><br /><a href="#maintenance-tbenning" title="Maintenance">🚧</a></td>
-    <td align="center"><a href="https://github.com/pboers1988"><img src="https://avatars1.githubusercontent.com/u/3235585" width="100px;" alt=""/><br /><sub><b>Peter Boers</b></sub></a><br /><a href="#maintenance-tbenning" title="Maintenance">🚧</a></td>
-    <td align="center"><a href="https://github.com/jdvalentine"><img src="https://avatars.githubusercontent.com/u/557514" width="100px;" alt=""/><br /><sub><b>James Valentine</b></sub></a><br /><a href="https://github.com/sabuhish/fastapi-mail/" title="Documentation">📖</a> <a  href="#maintenance-jakebolam"  title="Maintenance">🚧</a> <a href="#tool-jfmengels" title="Tools">🔧</a></td>
-    <td align="center"><a href="https://github.com/gogoku"><img src="https://avatars.githubusercontent.com/u/25707104" width="100px;" alt=""/><br /><sub><b>Gogoku</b></sub></a><br /><a href="https://github.com/sabuhish/fastapi-mail/" title="Documentation">📖</a> <a  href="#maintenance-jakebolam"  title="Maintenance">🚧</a> <a href="#tool-jfmengels" title="Tools">🔧</a></td>
-    <td align="center"><a href="https://github.com/kucera-lukas"><img src="https://avatars.githubusercontent.com/u/85391931" width="100px;" alt=""/><br /><sub><b>Kucera-Lukas</b></sub></a><br /><a href="https://github.com/sabuhish/fastapi-mail/" title="Documentation">📖</a> <a  href="#maintenance-jakebolam"  title="Maintenance">🚧</a> <a href="#tool-jfmengels" title="Tools">🔧</a></td>
-    <td align="center"><a href="https://github.com/LLYX"><img src="https://avatars.githubusercontent.com/u/10430633" width="100px;" alt=""/><br /><sub><b>LLYX</b></sub></a><br /><a href="https://github.com/sabuhish/fastapi-mail/" title="Documentation">📖</a> <a  href="#maintenance-jakebolam"  title="Maintenance">🚧</a> <a href="#tool-jfmengels" title="Tools">🔧</a></td></tr>
-  
-<tr>
-    <td align="center"><a href="https://github.com/floodpants"><img src="https://avatars.githubusercontent.com/u/37890036?" width="100px;" alt=""/><br /><sub><b>floodpants</b></sub></a><br /><a href="#maintenance-tbenning" title="Maintenance">🚧</a></td>
-    <td align="center"><a href="https://github.com/andredias"><img src="https://avatars.githubusercontent.com/u/902540" width="100px;" alt=""/><br /><sub><b>André Felipe Dias</b></sub></a><br /><a href="https://github.com/sabuhish/fastapi-mail/" title="Documentation">📖</a> <a href="https://github.com/sabuhish/fastapi-mail/" title="Reviewed Pull Requests">👀</a> <a href="#tool-jfmengels" title="Tools">🔧</a></td></b></sub></a><br /><a href="#maintenance-tbenning" title="Maintenance">🚧</a></td>
-    <td align="center"><a href="https://github.com/wjurkowlaniec"><img src="https://avatars.githubusercontent.com/u/1134323" width="100px;" alt=""/><br /><sub><b>Wojtek Jurkowlaniec</b></sub></a><br /><a href="https://github.com/sabuhish/fastapi-mail/" title="Documentation">📖</a> <a href="https://github.com/sabuhish/fastapi-mail/" title="Reviewed Pull Requests">👀</a> <a href="#tool-jfmengels" title="Tools">🔧</a></td></b></sub></a><br /><a href="#maintenance-tbenning" title="Maintenance">🚧</a></td>
-
-</tr>
-</table>
-
-
-This project follows the [all-contributors](https://allcontributors.org) specification.
+# Contributing
 Contributions of any kind are welcome!
 
-Before you start please read [CONTRIBUTING](https://github.com/sabuhish/fastapi-mail/blob/master/CONTRIBUTING.md)
-
+Before you start, please read [CONTRIBUTING](https://github.com/sabuhish/fastapi-mail/blob/master/CONTRIBUTING.md)
 
 
 ## LICENSE
