@@ -102,21 +102,30 @@ def test_empty_subject_header():
 
 
 def test_bcc():
-    msg = MessageSchema(subject='subject', recipients=[], bcc=['bcc@example.com'], subtype=MessageType.plain)
+    msg = MessageSchema(
+        subject='subject', recipients=[], bcc=['bcc@example.com'], subtype=MessageType.plain
+    )
 
     assert len(msg.bcc) == 1
     assert msg.bcc == ['bcc@example.com']
 
 
 def test_replyto():
-    msg = MessageSchema(subject='subject', recipients=[], reply_to=['replyto@example.com'], subtype=MessageType.plain)
+    msg = MessageSchema(
+        subject='subject',
+        recipients=[],
+        reply_to=['replyto@example.com'],
+        subtype=MessageType.plain,
+    )
 
     assert len(msg.reply_to) == 1
     assert msg.reply_to == ['replyto@example.com']
 
 
 def test_cc():
-    msg = MessageSchema(subject='subject', recipients=[], cc=['cc@example.com'], subtype=MessageType.plain)
+    msg = MessageSchema(
+        subject='subject', recipients=[], cc=['cc@example.com'], subtype=MessageType.plain
+    )
 
     assert len(msg.cc) == 1
     assert msg.cc == ['cc@example.com']
@@ -134,7 +143,10 @@ def test_multipart_subtype():
 
 def test_headers():
     message = MessageSchema(
-        subject='test subject', recipients=['to@example.com'], headers={'foo': 'bar'}, subtype=MessageType.plain
+        subject='test subject',
+        recipients=['to@example.com'],
+        headers={'foo': 'bar'},
+        subtype=MessageType.plain,
     )
 
     assert message.headers == {'foo': 'bar'}

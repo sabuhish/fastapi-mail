@@ -82,7 +82,9 @@ async def test_attachement_message(mail_config):
 async def test_message_with_headers(mail_config):
     subject = 'testing'
     to = 'to@example.com'
-    msg = MessageSchema(subject=subject, recipients=[to], headers={'foo': 'bar'}, subtype=MessageType.plain)
+    msg = MessageSchema(
+        subject=subject, recipients=[to], headers={'foo': 'bar'}, subtype=MessageType.plain
+    )
     conf = ConnectionConfig(**mail_config)
     fm = FastMail(conf)
 
@@ -257,7 +259,6 @@ async def test_jinja_message_with_html(mail_config):
     )
     conf = ConnectionConfig(**mail_config)
     fm = FastMail(conf)
-   
     await fm.send_message(message=msg, template_name='email.html')
 
     assert msg.template_body == ('\n    \n    \n        Andrej\n    \n\n\n')
