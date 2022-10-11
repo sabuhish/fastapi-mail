@@ -16,9 +16,6 @@ class has following attributes and methods
     - template_name : if you are using jinja2 consider template_name as well for passing HTML.
 
 
-
-
-
 ### ```ConnectionConfig``` class
 class has following attributes
 
@@ -26,8 +23,8 @@ class has following attributes
     - If you service does not provide username use sender address for connection.
 -  MAIL_PASSWORD : Password for authentication
 -  MAIL_SERVER  : SMTP Mail server.
--  MAIL_TLS : For TLS connection
--  MAIL_SSL : For TLS connection
+-  MAIL_STARTTLS : For STARTTLS connections
+-  MAIL_SSL_TLS : For connecting over TLS/SSL
 -  MAIL_DEBUG : Debug mode for while sending mails, defaults 0.
 -  MAIL_FROM : Sender address
 -  MAIL_FROM_NAME : Title for Mail
@@ -37,10 +34,8 @@ class has following attributes
 -  VALIDATE_CERTS: Defaults to `True`. It enables to choose whether to verify the mail server's certificate
 
 
-
 ### ```MessageSchema``` class
 class has following attributes
-
 
 -  recipients  : List of recipients.
 -  attachments : attachments within mail
@@ -52,8 +47,6 @@ class has following attributes
 -  charset : charset defaults to utf-8
 -  subtype : subtype of the mail defaults to plain
 
-   
-
 
 ### ```email_utils.DefaultChecker``` class
 Default class for checking email from collected public resource.
@@ -61,8 +54,6 @@ The class makes it possible to use redis to save data.
 
 -  source  : `optional` source for collected email data.
 -  db_provider  : switch to redis
-  
-
 
 
 ### ```email_utils.WhoIsXmlApi``` class
@@ -71,11 +62,3 @@ This service gives free 1000 request to checking email address per month.
 
 -  token  : token you can get from this [WhoIsXmlApi](https://www.whoisxmlapi.com) link
 -  email  : email for checking
-
-
-
-
-
-
-
-

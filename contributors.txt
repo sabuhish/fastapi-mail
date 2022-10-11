@@ -1,5 +1,28 @@
-Sabuhi Shukurov <sabuhi.shukurov@gmail.com>
-Tural Muradov <tural_m@hotmail.com>
-Hasan Aliyev <hasan.aliyev.555@gmail.com>
-Ashwani  <ashwanisharma686@gmail.com>
-
+Name     | Surname     |   Github account   
+Tural      Muradov         https://github.com/Turall 
+Hasan      Aliyev          https://github.com/AliyevH
+Onothoja   Marho           https://github.com/maestro-1
+André      Felipe Dias     https://github.com/andredias
+Dmitriy    Solodkiy        https://github.com/DmitriySolodkiy
+Peter      Boers           https://github.com/pboers1988
+Leon       Xu              https://github.com/LLYX
+SASAO      Takahiro        https://github.com/tsasao
+Lucas      Balieiro        https://github.com/lucasbalieiro
+floodpants                 https://github.com/floodpants
+Dusan      Vuckovic        https://github.com/dvuckovic
+Mike       Bamford         https://github.com/msb
+Siôn       Abraham         https://github.com/SionAbes
+Jansen A.  Simanullang     https://github.com/jansenicus
+Mariusz    Masztalerczuk   https://github.com/mmasztalerczuk
+Ikko       Ashimine        https://github.com/eltociear
+Wojtek     Jurkowlaniec    https://github.com/wjurkowlaniec
+gogoku                     https://github.com/gogoku
+Kristian Nymann Jakobsen   https://github.com/nymann
+trinqk                     https://github.com/trinqk
+IsaiahT-Tech               https://github.com/IsaiahT-Tech
+Satwik     Kansal          https://github.com/satwikkansal
+Tim        Kiely           https://github.com/TheTimKiely
+Gabriel    Oliveira        https://github.com/gabrielponto
+Ashwani                    https://github.com/imaskm
+Lukas      Kucera          https://github.com/kucera-lukas
+ 

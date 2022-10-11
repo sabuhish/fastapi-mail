@@ -1,12 +1,12 @@
 
 
-## Sending email with FastApi
+## Sending email with FastAPI-Mail
 
-### List of Useful Examples
+### Standart way of sending email with FastAPI
 ```python
 from fastapi import FastAPI
 from starlette.responses import JSONResponse
-from fastapi_mail import FastMail, MessageSchema,ConnectionConfig
+from fastapi_mail import FastMail, MessageSchema, ConnectionConfig, MessageType
 from pydantic import EmailStr, BaseModel
 from typing import List
 
@@ -15,14 +15,14 @@ class EmailSchema(BaseModel):
 
 
 conf = ConnectionConfig(
-    MAIL_USERNAME = "YourUsername",
-    MAIL_PASSWORD = "strong_password",
-    MAIL_FROM = "your@email.com",
+    MAIL_USERNAME = "username",
+    MAIL_PASSWORD = "**********",
+    MAIL_FROM = "test@email.com",
     MAIL_PORT = 587,
-    MAIL_SERVER = "your mail server",
+    MAIL_SERVER = "mail server",
     MAIL_FROM_NAME="Desired Name",
-    MAIL_TLS = True,
-    MAIL_SSL = False,
+    MAIL_STARTTLS = True,
+    MAIL_SSL_TLS = False,
     USE_CREDENTIALS = True,
     VALIDATE_CERTS = True
 )
@@ -30,22 +30,16 @@ conf = ConnectionConfig(
 app = FastAPI()
 
 
-html = """
-<p>Hi this test mail, thanks for using Fastapi-mail</p> 
-"""
-
 
 @app.post("/email")
-async def simple_send(
-    email: EmailSchema
-    ) -> JSONResponse:
+async def simple_send(email: EmailSchema) -> JSONResponse:
+    html = """<p>Hi this test mail, thanks for using Fastapi-mail</p> """
 
     message = MessageSchema(
         subject="Fastapi-Mail module",
-        recipients=email.dict().get("email"),  # List of recipients, as many as you can pass 
+        recipients=email.dict().get("email"),
         body=html,
-        subtype="html"
-        )
+        subtype=MessageType.html)
 
     fm = FastMail(conf)
     await fm.send_message(message)
@@ -66,7 +60,7 @@ async def send_in_background(
         subject="Fastapi mail module",
         recipients=email.dict().get("email"),
         body="Simple background task",
-        )
+        subtype=MessageType.plain)
 
     fm = FastMail(conf)
     
@@ -90,9 +84,9 @@ async def send_file(
     message = MessageSchema(
             subject="Fastapi mail module",
             recipients=[email],
-            body="Simple background task ",
-            attachments=[file]
-            )
+            body="Simple background task",
+            subtype=MessageType.html,
+            attachments=[file])
 
     fm = FastMail(conf)
         
@@ -120,8 +114,8 @@ conf = ConnectionConfig(
     MAIL_FROM = "your@email.com",
     MAIL_PORT = 587,
     MAIL_SERVER = "your mail server",
-    MAIL_TLS = True,
-    MAIL_SSL = False,
+    MAIL_STARTTLS = True,
+    MAIL_SSL_TLS = False,
     TEMPLATE_FOLDER = Path(__file__).parent / 'templates',
 )
 
@@ -131,8 +125,9 @@ async def send_with_template(email: EmailSchema) -> JSONResponse:
 
     message = MessageSchema(
         subject="Fastapi-Mail module",
-        recipients=email.dict().get("email"),  # List of recipients, as many as you can pass 
+        recipients=email.dict().get("email"),
         template_body=email.dict().get("body"),
+        subtype=MessageType.html,
         )
 
     fm = FastMail(conf)
@@ -183,8 +178,8 @@ Used for example for referencing Content-ID images in html of email
 message = MessageSchema(
     subject='Fastapi-Mail module',
     recipients=recipients,
-    html="<img src='cid:logo_image@fastapi-mail'>",
-    subtype='html',
+    body="<img src='cid:logo_image@fastapi-mail'>",
+    subtype=MessageType.html,
     attachments=[
             {
                 "file": "/path/to/file.png",
@@ -410,8 +405,8 @@ conf = ConnectionConfig(
     MAIL_FROM = "your@email.com",
     MAIL_PORT = 587,
     MAIL_SERVER = "your mail server",
-    MAIL_TLS = True,
-    MAIL_SSL = False,
+    MAIL_STARTTLS = True,
+    MAIL_SSL_TLS = False,
     TEMPLATE_FOLDER = Path(__file__).parent / 'templates',
 
     # if no indicated SUPPRESS_SEND defaults to 0 (false) as below
@@ -425,9 +420,9 @@ async def simple_send(email: EmailSchema) -> JSONResponse:
 
     message = MessageSchema(
         subject="Testing",
-        recipients=email.dict().get("email"),  # List of recipients, as many as you can pass 
+        recipients=email.dict().get("email"),
         body=html,
-        subtype="html"
+        subtype=MessageType.html,
         )
 
     await fm.send_message(message)

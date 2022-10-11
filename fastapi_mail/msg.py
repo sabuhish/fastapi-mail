@@ -1,48 +1,61 @@
 import sys
 import time
-import warnings
 from email.encoders import encode_base64
+from email.message import EmailMessage, Message
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formatdate, make_msgid
+from typing import Any, Union
 
 PY3 = sys.version_info[0] == 3
 
 
 class MailMsg:
     """
-    Preaparation of class for email text
+    Mail message parameters
 
-    :param subject: email subject header
-    :param recipients: list of email addresses
-    :param body: plain text message
-    :param template_body: Data to pass into chosen Jinja2 template
-    :param html: HTML message
-    :param subtype: type of body parameter - "plain" or "html". Ignored if
-    the html parameter is explicitly specified
-    :param sender: email sender address
-    :param cc: CC list
-    :param bcc: BCC list
-    :param reply_to: Reply-To list
-    :param attachments: list of Attachment instances
-    :param multipart_subtype: MultipartSubtypeEnum instance. Determines the
+    :param: subject: Email subject header
+    :param: recipients: List of email addresses
+    :param: body: Plain text message or HTML message
+    :param: template_body: Data to pass into chosen Jinja2 template
+    :param: subtype: MessageType class. Type of body parameter, either "plain" or "html"
+    :param: sender: Email sender address
+    :param: cc: CC list
+    :param: bcc: BCC list
+    :param: reply_to: Reply-To list
+    :param: attachments: List of attachment instances
+    :param: multipart_subtype: MultipartSubtypeEnum instance. Determines the
     nature of the parts of the message and their relationship to each other
     according to the MIME standard
-    :param: headers: dict of custom SMTP headers
+    :param: headers: Dict of custom SMTP headers
     """
 
-    def __init__(self, **entries):
-        self.__dict__.update(entries)
+    def __init__(self, entries) -> None:
+        self.recipients = entries.recipients
+        self.attachments = entries.attachments
+        self.subject = entries.subject
+        self.body = entries.body
+        self.template_body = entries.template_body
+        self.cc = entries.cc
+        self.bcc = entries.bcc
+        self.reply_to = entries.reply_to
+        self.charset = entries.charset
+        self.subtype = entries.subtype
+        self.multipart_subtype = entries.multipart_subtype
+        self.headers = entries.headers
         self.msgId = make_msgid()
 
-    def _mimetext(self, text, subtype='plain'):
-        """Creates a MIMEText object"""
-
+    def _mimetext(self, text: str, subtype: str) -> MIMEText:
+        """
+        Creates a MIMEText object
+        """
         return MIMEText(text, _subtype=subtype, _charset=self.charset)
 
-    async def attach_file(self, message, attachment):
-        """Creates a MIMEBase object"""
+    async def attach_file(self, message: MIMEMultipart, attachment: Any):
+        """
+        Creates a MIMEBase object
+        """
         for file, file_meta in attachment:
             if file_meta and 'mime_type' in file_meta and 'mime_subtype' in file_meta:
                 part = MIMEBase(
@@ -63,7 +76,6 @@ class MailMsg:
             #   More info here: https://github.com/sabuhish/fastapi-mail/issues/128
             if not part.get('Content-Disposition'):
                 filename = file.filename
-
                 try:
                     filename and filename.encode('ascii')
                 except UnicodeEncodeError:
@@ -75,11 +87,12 @@ class MailMsg:
 
             self.message.attach(part)
 
-    async def _message(self, sender):
-        """Creates the email message"""
+    async def _message(self, sender: str = None) -> Union[EmailMessage, Message]:
+        """
+        Creates the email message
+        """
 
         self.message = MIMEMultipart(self.multipart_subtype.value)
-
         self.message.set_charset(self.charset)
         self.message['Date'] = formatdate(time.time(), localtime=True)
         self.message['Message-ID'] = self.msgId
@@ -98,22 +111,11 @@ class MailMsg:
         if self.reply_to:
             self.message['Reply-To'] = ', '.join(self.reply_to)
 
-        if self.body:
-            self.message.attach(self._mimetext(self.body))
+        if self.template_body:
+            self.message.attach(self._mimetext(self.template_body, self.subtype.value))
 
-        if self.template_body or self.body:
-            if not self.html and self.subtype == 'html':
-                if self.body:
-                    warnings.warn(
-                        'Use ``template_body`` instead of ``body`` to pass data into Jinja2 '
-                        'template',
-                        DeprecationWarning,
-                    )
-                self.message.attach(self._mimetext(self.template_body or self.body, self.subtype))
-            elif self.template_body:
-                raise ValueError('tried to send jinja2 template and html')
-        elif self.html:
-            self.message.attach(self._mimetext(self.html, 'html'))
+        elif self.body:
+            self.message.attach(self._mimetext(self.body, self.subtype.value))
 
         if self.attachments:
             await self.attach_file(self.message, self.attachments)
@@ -124,14 +126,5 @@ class MailMsg:
 
         return self.message
 
-    async def as_string(self):
-        return await self._message().as_string()
-
-    def as_bytes(self):
-        return self._message().as_bytes()
-
-    def __str__(self):
-        return self.as_string()
-
-    def __bytes__(self):
-        return self.as_bytes()
+    async def as_string(self) -> Union[EmailMessage, Message]:
+        return await self._message()

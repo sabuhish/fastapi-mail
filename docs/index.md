@@ -10,7 +10,6 @@ The fastapi-mail simple lightweight mail system, sending emails and attachments(
 [![Downloads](https://pepy.tech/badge/fastapi-mail)](https://pepy.tech/project/fastapi-mail)
 
 
-
 ## Using Jinja2 HTML Templates
 
 In order to use Jinja template langauge, your must specify email folder within your applications working directory.

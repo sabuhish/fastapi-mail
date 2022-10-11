@@ -8,10 +8,10 @@ from pydantic import DirectoryPath, EmailStr, conint
 class ConnectionConfig(Settings):
     MAIL_USERNAME: str
     MAIL_PASSWORD: str
-    MAIL_PORT: int = 465
+    MAIL_PORT: int
     MAIL_SERVER: str
-    MAIL_TLS: bool = False
-    MAIL_SSL: bool = True
+    MAIL_STARTTLS: bool
+    MAIL_SSL_TLS: bool
     MAIL_DEBUG: conint(gt=-1, lt=2) = 0  # type: ignore
     MAIL_FROM: EmailStr
     MAIL_FROM_NAME: Optional[str] = None
@@ -21,7 +21,9 @@ class ConnectionConfig(Settings):
     VALIDATE_CERTS: bool = True
 
     def template_engine(self) -> Environment:
-        """Return template environment."""
+        """
+        Return template environment
+        """
         folder = self.TEMPLATE_FOLDER
         if not folder:
             raise ValueError(

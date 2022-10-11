@@ -11,8 +11,8 @@ from fastapi_mail.errors import WrongFile
 
 class MultipartSubtypeEnum(Enum):
     """
-    for more info about Multipart subtypes visit:
-        https://en.wikipedia.org/wiki/MIME#Multipart_subtypes
+    For more info about Multipart subtypes, visit:
+    https://en.wikipedia.org/wiki/MIME#Multipart_subtypes
     """
 
     mixed = 'mixed'
@@ -27,18 +27,22 @@ class MultipartSubtypeEnum(Enum):
     byterange = 'byterange'
 
 
+class MessageType(Enum):
+    plain = 'plain'
+    html = 'html'
+
+
 class MessageSchema(BaseModel):
     recipients: List[EmailStr]
     attachments: List[Union[UploadFile, Dict, str]] = []
     subject: str = ''
     body: Optional[Union[str, list]] = None
-    template_body: Optional[Union[list, dict]] = None
-    html: Optional[Union[str, List, Dict]] = None
+    template_body: Optional[Union[list, dict, str]] = None
     cc: List[EmailStr] = []
     bcc: List[EmailStr] = []
     reply_to: List[EmailStr] = []
     charset: str = 'utf-8'
-    subtype: Optional[str] = None
+    subtype: MessageType
     multipart_subtype: MultipartSubtypeEnum = MultipartSubtypeEnum.mixed
     headers: Optional[Dict] = None
 
@@ -73,16 +77,18 @@ class MessageSchema(BaseModel):
 
     @validator('subtype')
     def validate_subtype(cls, value, values, config, field):
-        """Validate subtype field."""
+        """
+        Validate subtype field
+        """
         if values['template_body']:
-            return 'html'
+            return MessageType.html
         return value
 
     class Config:
         arbitrary_types_allowed = True
 
 
-def validate_path(path):
+def validate_path(path: str) -> bool:
     cur_dir = os.path.abspath(os.curdir)
     requested_path = os.path.abspath(os.path.relpath(path, start=cur_dir))
     common_prefix = os.path.commonprefix([requested_path, cur_dir])

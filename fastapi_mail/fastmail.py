@@ -1,7 +1,10 @@
 from contextlib import contextmanager
+from email.message import EmailMessage, Message
+from typing import Any, Dict, Union
 
 import blinker
-from pydantic import BaseModel
+from jinja2 import Environment, Template
+from pydantic import EmailStr
 
 from fastapi_mail.config import ConnectionConfig
 from fastapi_mail.connection import Connection
@@ -40,72 +43,51 @@ class _MailMixin:
 
 class FastMail(_MailMixin):
     """
-    Fastapi mail system sending mails(individual, bulk) attachments(individual, bulk)
-
-    :param config: Connection config to be passed
-
+    FastMail builds the message from the config
     """
 
-    def __init__(self, config: ConnectionConfig):
-
+    def __init__(self, config: ConnectionConfig) -> None:
         self.config = config
 
-    async def get_mail_template(self, env_path, template_name):
+    async def get_mail_template(self, env_path: Environment, template_name: str) -> Template:
         return env_path.get_template(template_name)
 
     @staticmethod
-    def make_dict(data):
-        try:
-            return dict(data)
-        except ValueError:
+    def check_data(data: Union[Dict[Any, Any], str, None]) -> Dict[Any, Any]:
+        if not isinstance(data, dict):
             raise ValueError(
-                f'Unable to build template data dictionary - {type(data)} '
+                f'Unable to build template data dictionary - {type(data)}'
                 'is an invalid source data type'
             )
 
-    async def __prepare_message(self, message: MessageSchema, template=None):
-        if template is not None:
-            template_body = message.template_body
-            if template_body and not message.html:
-                if isinstance(template_body, list):
-                    message.template_body = template.render({'body': template_body})
-                else:
-                    template_data = self.make_dict(template_body)
-                    message.template_body = template.render(**template_data)
+        return data
 
-                message.subtype = 'html'
-            elif message.html:
-                if isinstance(template_body, list):
-                    message.template_body = template.render({'body': template_body})
-                else:
-                    template_data = self.make_dict(template_body)
-                    message.template_body = template.render(**template_data)
-        msg = MailMsg(**message.dict())
-        if self.config.MAIL_FROM_NAME is not None:
-            sender = f'{self.config.MAIL_FROM_NAME} <{self.config.MAIL_FROM}>'
-        else:
-            sender = self.config.MAIL_FROM
+    async def __prepare_message(
+        self, message: MessageSchema, template: Template = None
+    ) -> Union[EmailMessage, Message]:
+        if template and message.template_body is not None:
+            message.template_body = await self.__template_message_builder(message, template)
+        msg = MailMsg(message)
+        sender = await self.__sender()
         return await msg._message(sender)
 
-    async def send_message(self, message: MessageSchema, template_name=None):
+    async def __template_message_builder(self, message: MessageSchema, template: Template) -> str:
+        if isinstance(message.template_body, list):
+            return template.render({'body': message.template_body})
+        else:
+            template_data = self.check_data(message.template_body)
+            return template.render(**template_data)
 
-        if not issubclass(message.__class__, BaseModel):
+    async def __sender(self) -> Union[EmailStr, str]:
+        sender = self.config.MAIL_FROM
+        if self.config.MAIL_FROM_NAME is not None:
+            return f'{self.config.MAIL_FROM_NAME} <{self.config.MAIL_FROM}>'
+        return sender
+
+    async def send_message(self, message: MessageSchema, template_name: str = None) -> None:
+        if not isinstance(message, MessageSchema):
             raise PydanticClassRequired(
-                """
-Message schema should be provided from MessageSchema class, check example below:
-
-from fastmail import MessageSchema
-
-message = MessageSchema(
-    subject="subject",
-    recipients=["list_of_recipients"],
-    body="Hello World",
-    cc=["list_of_recipients"],
-    bcc=["list_of_recipients"],
-    reply_to=["list_of_recipients"],
-    subtype="plain",
-)
-"""
+                'Message schema should be provided from MessageSchema class'
             )
 
         if self.config.TEMPLATE_FOLDER and template_name:

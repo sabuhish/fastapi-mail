@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from fastapi_mail import ConnectionConfig, FastMail, MessageSchema
+from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
 
 CONTENT = 'file test content'
 
@@ -13,7 +13,7 @@ async def test_connection(mail_config):
         subject='test subject',
         recipients=['sabuhi.shukurov@gmail.com'],
         body='test',
-        subtype='plain',
+        subtype=MessageType.plain,
     )
     conf = ConnectionConfig(**mail_config)
 
@@ -22,9 +22,8 @@ async def test_connection(mail_config):
     await fm.send_message(message)
 
     assert message.body == 'test'
-    assert message.subtype == 'plain'
+    assert message.subtype == MessageType.plain
     assert not message.template_body
-    assert not message.html
 
 
 @pytest.mark.asyncio
@@ -32,7 +31,9 @@ async def test_html_message(mail_config):
     sender = f"{mail_config['MAIL_FROM_NAME']} <{mail_config['MAIL_FROM']}>"
     subject = 'testing'
     to = 'to@example.com'
-    msg = MessageSchema(subject=subject, recipients=[to], html='html test')
+    msg = MessageSchema(
+        subject=subject, recipients=[to], body='html test', subtype=MessageType.plain
+    )
     conf = ConnectionConfig(**mail_config)
     fm = FastMail(conf)
 
@@ -44,8 +45,8 @@ async def test_html_message(mail_config):
         assert mail['To'] == to
         assert mail['From'] == sender
         assert mail['Subject'] == subject
-        assert not msg.subtype
-    assert msg.html == 'html test'
+        assert msg.subtype == MessageType.plain
+    assert msg.body == 'html test'
 
 
 @pytest.mark.asyncio
@@ -61,8 +62,8 @@ async def test_attachement_message(mail_config):
     msg = MessageSchema(
         subject=subject,
         recipients=[to],
-        html='html test',
-        subtype='html',
+        body='html test',
+        subtype='plain',
         attachments=[attachement],
     )
     conf = ConnectionConfig(**mail_config)
@@ -81,7 +82,9 @@ async def test_attachement_message(mail_config):
 async def test_message_with_headers(mail_config):
     subject = 'testing'
     to = 'to@example.com'
-    msg = MessageSchema(subject=subject, recipients=[to], headers={'foo': 'bar'})
+    msg = MessageSchema(
+        subject=subject, recipients=[to], headers={'foo': 'bar'}, subtype=MessageType.plain
+    )
     conf = ConnectionConfig(**mail_config)
     fm = FastMail(conf)
 
@@ -104,8 +107,8 @@ async def test_attachement_message_with_headers(mail_config):
     msg = MessageSchema(
         subject=subject,
         recipients=[to],
-        html='html test',
-        subtype='html',
+        body='html test',
+        subtype=MessageType.html,
         attachments=[
             {
                 'file': attachement,
@@ -156,7 +159,9 @@ async def test_jinja_message_list(mail_config):
     persons = [
         {'name': 'Andrej'},
     ]
-    msg = MessageSchema(subject=subject, recipients=[to], template_body=persons)
+    msg = MessageSchema(
+        subject=subject, recipients=[to], template_body=persons, subtype=MessageType.html
+    )
     conf = ConnectionConfig(**mail_config)
     fm = FastMail(conf)
 
@@ -168,7 +173,7 @@ async def test_jinja_message_list(mail_config):
         assert mail['To'] == to
         assert mail['From'] == sender
         assert mail['Subject'] == subject
-    assert msg.subtype == 'html'
+    assert msg.subtype == MessageType.html
     assert msg.template_body == ('\n    \n    \n        Andrej\n    \n\n\n')
 
 
@@ -179,7 +184,9 @@ async def test_jinja_message_dict(mail_config):
     to = 'to@example.com'
     persons = {'name': 'Andrej'}
 
-    msg = MessageSchema(subject=subject, recipients=[to], template_body=persons)
+    msg = MessageSchema(
+        subject=subject, recipients=[to], template_body=persons, subtype=MessageType.html
+    )
     conf = ConnectionConfig(**mail_config)
     fm = FastMail(conf)
 
@@ -191,13 +198,15 @@ async def test_jinja_message_dict(mail_config):
         assert mail['To'] == to
         assert mail['From'] == sender
         assert mail['Subject'] == subject
-    assert msg.subtype == 'html'
+    assert msg.subtype == MessageType.html
     assert msg.template_body == ('\n   Andrej\n\n')
 
 
 @pytest.mark.asyncio
 async def test_send_msg(mail_config):
-    msg = MessageSchema(subject='testing', recipients=['to@example.com'], body='html test')
+    msg = MessageSchema(
+        subject='testing', recipients=['to@example.com'], body='html test', subtype=MessageType.html
+    )
 
     sender = f"{mail_config['MAIL_FROM_NAME']} <{mail_config['MAIL_FROM']}>"
     conf = ConnectionConfig(**mail_config)
@@ -215,7 +224,10 @@ async def test_send_msg(mail_config):
 @pytest.mark.asyncio
 async def test_send_msg_with_subtype(mail_config):
     msg = MessageSchema(
-        subject='testing', recipients=['to@example.com'], body='<p html test </p>', subtype='html'
+        subject='testing',
+        recipients=['to@example.com'],
+        body='<p html test </p>',
+        subtype=MessageType.html,
     )
 
     sender = f"{mail_config['MAIL_FROM_NAME']} <{mail_config['MAIL_FROM']}>"
@@ -230,7 +242,7 @@ async def test_send_msg_with_subtype(mail_config):
         assert outbox[0]['from'] == sender
         assert outbox[0]['To'] == 'to@example.com'
     assert msg.body == '<p html test </p>'
-    assert msg.subtype == 'html'
+    assert msg.subtype == MessageType.html
 
 
 @pytest.mark.asyncio
@@ -240,13 +252,14 @@ async def test_jinja_message_with_html(mail_config):
     ]
 
     msg = MessageSchema(
-        subject='testing', recipients=['to@example.com'], template_body=persons, html='test html'
+        subject='testing',
+        recipients=['to@example.com'],
+        template_body=persons,
+        subtype=MessageType.html,
     )
     conf = ConnectionConfig(**mail_config)
     fm = FastMail(conf)
-
-    with pytest.raises(ValueError):
-        await fm.send_message(message=msg, template_name='email.html')
+    await fm.send_message(message=msg, template_name='email.html')
 
     assert msg.template_body == ('\n    \n    \n        Andrej\n    \n\n\n')
 
