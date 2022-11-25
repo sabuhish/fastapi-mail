@@ -1,5 +1,6 @@
 from typing import Optional
 
+from aiosmtplib.connection import DEFAULT_TIMEOUT
 from jinja2 import Environment, FileSystemLoader
 from pydantic import BaseSettings as Settings
 from pydantic import DirectoryPath, EmailStr, conint
@@ -19,6 +20,7 @@ class ConnectionConfig(Settings):
     SUPPRESS_SEND: conint(gt=-1, lt=2) = 0  # type: ignore
     USE_CREDENTIALS: bool = True
     VALIDATE_CERTS: bool = True
+    TIMEOUT: int = DEFAULT_TIMEOUT
 
     def template_engine(self) -> Environment:
         """

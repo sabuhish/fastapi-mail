@@ -6,7 +6,7 @@ import dns.exception
 import dns.resolver
 
 try:
-    import aioredis
+    from redis import asyncio as aioredis
 
     redis_lib = True
 except ImportError:
@@ -90,16 +90,17 @@ class DefaultChecker(AbstractEmailChecker):
         source: str = None,
         db_provider: str = None,
         *,
-        redis_host: str = 'redis://localhost',
+        redis_host: str = 'localhost',
         redis_port: int = 6379,
         redis_db: int = 0,
-        redis_pass: str = None,
+        redis_password: str = None,
+        username: str = None,
         **options: dict,
     ):
 
         if not redis_lib:
             raise ImportError(
-                'You must install aioredis from https://pypi.org/project/aioredis in order to run functionality'
+                'You must install redis from https://pypi.org/project/redis in order to run functionality'
             )
 
         if not request_lib:
@@ -115,30 +116,34 @@ class DefaultChecker(AbstractEmailChecker):
 
         if db_provider == 'redis':
             self.redis_enabled = True
+            self.username = username
             self.redis_host = redis_host
             self.redis_port = redis_port
             self.redis_db = redis_db
-            self.redis_pass = redis_pass
+            self.redis_password = redis_password
             self.options = options
         self.redis_error_msg = 'redis is not connected'
 
     def catch_all_check(self):
         raise NotImplementedError(
             f'Func named {inspect.currentframe().f_code.co_name} not implemented'
-            f' for class {self.__class__.__name__}'
+            f'for class {self.__class__.__name__}'
         )
 
     async def init_redis(self) -> bool:
         if not self.redis_enabled:
             raise DBProvaiderError(self.redis_error_msg)
         if not hasattr(self, 'redis_client'):
-            self.redis_client = await aioredis.from_url(
-                address=f'{self.redis_host}:{self.redis_port}',
-                db=self.redis_db,
-                password=self.redis_pass,
-                encoding='UTF-8',
-                **self.options,
-            )
+            if not self.username or not self.redis_password:
+                self.redis_client = await aioredis.from_url(
+                    url='redis://localhost', encoding='UTF-8', **self.options
+                )
+            else:
+                self.redis_client = await aioredis.from_url(
+                    url=f'redis://{self.username}:{self.redis_password}@localhost:{self.redis_port}/{self.redis_db}',  # noqa: E501
+                    encoding='UTF-8',
+                    **self.options,
+                )
 
         temp_counter = await self.redis_client.get('temp_counter')
         domain_counter = await self.redis_client.get('domain_counter')
@@ -156,7 +161,7 @@ class DefaultChecker(AbstractEmailChecker):
             kwargs = {
                 domain: await self.redis_client.incr('temp_counter') for domain in temp_domains
             }
-            await self.redis_client.hmset_dict('temp_domains', kwargs)
+            await self.redis_client.hset('temp_domains', mapping=kwargs)
 
         return True
 
