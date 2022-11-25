@@ -11,7 +11,7 @@ CONTENT = 'file test content'
 async def test_connection(mail_config):
     message = MessageSchema(
         subject='test subject',
-        recipients=['sabuhi.shukurov@gmail.com'],
+        recipients=['test@example.com'],
         body='test',
         subtype=MessageType.plain,
     )
@@ -24,6 +24,12 @@ async def test_connection(mail_config):
     assert message.body == 'test'
     assert message.subtype == MessageType.plain
     assert not message.template_body
+
+
+@pytest.mark.asyncio
+async def test_timeout(mail_config):
+    conf = ConnectionConfig(**mail_config)
+    assert conf.TIMEOUT == 60
 
 
 @pytest.mark.asyncio

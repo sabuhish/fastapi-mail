@@ -34,6 +34,7 @@ class Connection:
         try:
             self.session = aiosmtplib.SMTP(
                 hostname=self.settings.MAIL_SERVER,
+                timeout=self.settings.TIMEOUT,
                 port=self.settings.MAIL_PORT,
                 use_tls=self.settings.MAIL_SSL_TLS,
                 start_tls=self.settings.MAIL_STARTTLS,
