@@ -2,7 +2,7 @@
 
 ## Sending email with FastAPI-Mail
 
-### Standart way of sending email with FastAPI
+### Standard way of sending email with FastAPI
 ```python
 from fastapi import FastAPI
 from starlette.responses import JSONResponse
