@@ -58,7 +58,7 @@ The class makes it possible to use redis to save data.
 
 ### ```email_utils.WhoIsXmlApi``` class
 WhoIsXmlApi class provide working with api  [WhoIsXmlApi](https://www.whoisxmlapi.com)
-This service gives free 1000 request to checking email address per month.
+This service gives free 1000 requests for checking email address per month.
 
 -  token  : token you can get from this [WhoIsXmlApi](https://www.whoisxmlapi.com) link
 -  email  : email for checking
