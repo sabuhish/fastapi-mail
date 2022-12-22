@@ -34,10 +34,10 @@ httpx = ["httpx"]
 redis = ["redis"]
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^6.2"
-pytest-asyncio = "^0.15"
-pytest-mock = "^3.6"
-pytest-cov = "^2.12"
+pytest = "^7.0"
+pytest-asyncio = "^0.20"
+pytest-mock = "^3.10"
+pytest-cov = "^4.0"
 mkdocs = "^1.2"
 mkdocs-material = "^7.2"
 mkdocs-markdownextradata-plugin = "^0.2"
