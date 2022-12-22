@@ -49,7 +49,7 @@ regex = "2022.7.9"
 fakeredis = "^2.0"
 httpx = "^0.23"
 redis = "^4.3"
-uvicorn = "^0.18"
+uvicorn = "^0.20"
 fastapi = "^0.88"
 types-redis = "^4.3.21"
 
