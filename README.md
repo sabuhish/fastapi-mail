@@ -1,7 +1,7 @@
 
 # Fastapi-mail
 
-The fastapi-mail simple lightweight mail system, sending emails and attachments(individual && bulk)
+The fastapi-mail is a simple lightweight mail system, for sending emails and attachments(individual && bulk)
 
 
 [![MIT licensed](https://img.shields.io/github/license/sabuhish/fastapi-mail)](https://raw.githubusercontent.com/sabuhish/fastapi-mail/master/LICENSE)
@@ -48,7 +48,7 @@ python add 'fastapi-mail[httpx]'
 
 The key features are:
 
--  sending emails with either with FastApi or using asyncio module 
+-  sending emails either with FastApi or using asyncio module 
 -  sending emails using FastApi background task managment
 -  sending files either from form-data or files from server
 -  Using Jinja2 HTML Templates

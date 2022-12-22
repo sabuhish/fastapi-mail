@@ -1,6 +1,6 @@
 # Fastapi-mail
 
-The fastapi-mail simple lightweight mail system, sending emails and attachments(individual && bulk)
+The fastapi-mail is a simple lightweight mail system, for sending emails and attachments(individual && bulk)
 
 
 [![MIT licensed](https://img.shields.io/github/license/sabuhish/fastapi-mail)](https://raw.githubusercontent.com/sabuhish/fastapi-mail/master/LICENSE)
@@ -12,9 +12,9 @@ The fastapi-mail simple lightweight mail system, sending emails and attachments(
 
 ## Using Jinja2 HTML Templates
 
-In order to use Jinja template langauge, your must specify email folder within your applications working directory.
+In order to use Jinja template langauge, you must specify the email folder within your application's working directory.
 
-In sending HTML emails, the CSS expected by mail servers -outlook, google, etc- must be inline CSS. Fastapi mail passes _"body"_ to the rendered template. In creating the template for emails the dynamic objects should be used with the assumption that the variable is named "_body_" and that it is a python dict.
+When sending HTML emails, the CSS expected by mail servers -outlook, google, etc- must be inline CSS. Fastapi mail passes _"body"_ to the rendered template. In creating the template for emails the dynamic objects should be used with the assumption that the variable is named "_body_" and that it is a python dict.
 
 check out jinja2 for more details 
 [jinja2](https://jinja.palletsprojects.com/en/2.11.x/)
@@ -30,7 +30,7 @@ then the utility will save it in the list or set by default.
 
 
 ## Writing unittests using Fastapi-Mail
-Fastapi mails allows you to write unittest for your application without sending emails to
+Fastapi-mail allows you to write unittest for your application without sending emails to
 non existent email address by mocking the email to be sent. To mock sending out mails, set
 the suppress configuration to true. Suppress send defaults to False to prevent mocking within applications.
 
