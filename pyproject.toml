@@ -27,7 +27,7 @@ email-validator = "^1.1"
 blinker = "^1.5"
 httpx = {extras = ["httpx"], version = "^0.23", optional = true}
 redis = {extras = ["redis"], version = "^4.3", optional = true}
-starlette = "^0.21"
+starlette = "^0.22"
 
 [tool.poetry.extras]
 httpx = ["httpx"]
@@ -51,7 +51,7 @@ blinker = "^1.5"
 httpx = "^0.23"
 redis = "^4.3"
 uvicorn = "^0.18"
-fastapi = "^0.87"
+fastapi = "^0.88"
 types-redis = "^4.3.21"
 
 [build-system]
