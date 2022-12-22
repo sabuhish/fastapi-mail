@@ -1,6 +1,6 @@
 from typing import Optional
 
-from aiosmtplib.connection import DEFAULT_TIMEOUT
+from aiosmtplib.api import DEFAULT_TIMEOUT
 from jinja2 import Environment, FileSystemLoader
 from pydantic import BaseSettings as Settings
 from pydantic import DirectoryPath, EmailStr, conint

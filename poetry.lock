@@ -2,19 +2,19 @@
 
 [[package]]
 name = "aiosmtplib"
-version = "1.1.7"
+version = "2.0.0"
 description = "asyncio SMTP client"
 category = "main"
 optional = false
-python-versions = ">=3.5.2,<4.0.0"
+python-versions = ">=3.7,<4.0"
 files = [
-    {file = "aiosmtplib-1.1.7-py3-none-any.whl", hash = "sha256:c1403e70fce769643820cb2c5bf0bd4f7ea83a01c60e854c81a6f5d7ccff2656"},
-    {file = "aiosmtplib-1.1.7.tar.gz", hash = "sha256:5810657a86b19476c93fa280c499ca3ef88ce26f2b74dae202989ae06377d107"},
+    {file = "aiosmtplib-2.0.0-py3-none-any.whl", hash = "sha256:514defa668b13b5c00a98c21c49fd87816e046fb3692e7ac8bbdda2310287fde"},
+    {file = "aiosmtplib-2.0.0.tar.gz", hash = "sha256:188230c5baee6851244a87ebc3390b714815d7c15360953c672caf170acb5474"},
 ]
 
 [package.extras]
-docs = ["jinja2 (>=2.0,<3.1)", "sphinx (>=2,<4)", "sphinx_autodoc_typehints (>=1.7.0,<2.0.0)"]
-uvloop = ["uvloop (>=0.13,<0.15)"]
+docs = ["sphinx (>=4,<5)", "sphinx_autodoc_typehints (>=1.7.0,<2.0.0)"]
+uvloop = ["uvloop (>=0.14,<0.15)"]
 
 [[package]]
 name = "anyio"
@@ -1387,4 +1387,4 @@ redis = ["redis"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.7"
-content-hash = "935a921e8b7e46c3feabfc98db05220a723d207b415cfd4c4e17e68090be5eb7"
+content-hash = "8706a2d49f96a2f700c5cf594f520ca6a3bb8c7a3cf708e8b882af2974f7e896"
