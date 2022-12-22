@@ -33,7 +33,7 @@ starlette = "^0.21"
 httpx = ["httpx"]
 redis = ["redis"]
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 pytest = "^6.2"
 pytest-asyncio = "^0.15"
 pytest-mock = "^3.6"
@@ -52,9 +52,6 @@ httpx = "^0.23"
 redis = "^4.3"
 uvicorn = "^0.18"
 fastapi = "^0.87"
-
-
-[tool.poetry.group.dev.dependencies]
 types-redis = "^4.3.21"
 
 [build-system]
