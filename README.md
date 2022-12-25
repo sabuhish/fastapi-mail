@@ -33,12 +33,12 @@ Alternatively, if you prefer to use `poetry` for package dependencies:
 ```bash
 poetry shell
 
-python add fastapi-mail
+poetry add fastapi-mail
 
 for aioredis and httpx
 
-python add 'fastapi-mail[aioredis]'
-python add 'fastapi-mail[httpx]'
+poetry add 'fastapi-mail[aioredis]'
+poetry add 'fastapi-mail[httpx]'
 ```
 
 ---
