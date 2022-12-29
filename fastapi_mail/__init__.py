@@ -4,13 +4,13 @@ from fastapi_mail.schemas import MessageSchema, MessageType, MultipartSubtypeEnu
 
 from . import email_utils
 
-__author__ = 'sabuhi.shukurov@gmail.com'
+__author__ = "sabuhi.shukurov@gmail.com"
 
 __all__ = [
-    'FastMail',
-    'ConnectionConfig',
-    'MessageSchema',
-    'email_utils',
-    'MultipartSubtypeEnum',
-    'MessageType',
+    "FastMail",
+    "ConnectionConfig",
+    "MessageSchema",
+    "email_utils",
+    "MultipartSubtypeEnum",
+    "MessageType",
 ]

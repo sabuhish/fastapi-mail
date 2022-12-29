@@ -57,33 +57,33 @@ class MailMsg:
         Creates a MIMEBase object
         """
         for file, file_meta in attachment:
-            if file_meta and 'mime_type' in file_meta and 'mime_subtype' in file_meta:
+            if file_meta and "mime_type" in file_meta and "mime_subtype" in file_meta:
                 part = MIMEBase(
-                    _maintype=file_meta['mime_type'], _subtype=file_meta['mime_subtype']
+                    _maintype=file_meta["mime_type"], _subtype=file_meta["mime_subtype"]
                 )
             else:
-                part = MIMEBase(_maintype='application', _subtype='octet-stream')
+                part = MIMEBase(_maintype="application", _subtype="octet-stream")
 
             part.set_payload(await file.read())
             encode_base64(part)
 
-            if file_meta and 'headers' in file_meta:
-                for header in file_meta['headers'].keys():
-                    part.add_header(header, file_meta['headers'][header])
+            if file_meta and "headers" in file_meta:
+                for header in file_meta["headers"].keys():
+                    part.add_header(header, file_meta["headers"][header])
 
             # Add an implicit `Content-Disposition` attachment header,
             #   but only if it wasn't supplied explicitly.
             #   More info here: https://github.com/sabuhish/fastapi-mail/issues/128
-            if not part.get('Content-Disposition'):
+            if not part.get("Content-Disposition"):
                 filename = file.filename
                 try:
-                    filename and filename.encode('ascii')
+                    filename and filename.encode("ascii")
                 except UnicodeEncodeError:
                     if not PY3:
-                        filename = filename.encode('utf8')
+                        filename = filename.encode("utf8")
 
-                filename = ('UTF8', '', filename)
-                part.add_header('Content-Disposition', 'attachment', filename=filename)
+                filename = ("UTF8", "", filename)
+                part.add_header("Content-Disposition", "attachment", filename=filename)
 
             self.message.attach(part)
 
@@ -94,22 +94,22 @@ class MailMsg:
 
         self.message = MIMEMultipart(self.multipart_subtype.value)
         self.message.set_charset(self.charset)
-        self.message['Date'] = formatdate(time.time(), localtime=True)
-        self.message['Message-ID'] = self.msgId
-        self.message['To'] = ', '.join(self.recipients)
-        self.message['From'] = sender
+        self.message["Date"] = formatdate(time.time(), localtime=True)
+        self.message["Message-ID"] = self.msgId
+        self.message["To"] = ", ".join(self.recipients)
+        self.message["From"] = sender
 
         if self.subject:
-            self.message['Subject'] = self.subject
+            self.message["Subject"] = self.subject
 
         if self.cc:
-            self.message['Cc'] = ', '.join(self.cc)
+            self.message["Cc"] = ", ".join(self.cc)
 
         if self.bcc:
-            self.message['Bcc'] = ', '.join(self.bcc)
+            self.message["Bcc"] = ", ".join(self.bcc)
 
         if self.reply_to:
-            self.message['Reply-To'] = ', '.join(self.reply_to)
+            self.message["Reply-To"] = ", ".join(self.reply_to)
 
         if self.template_body:
             self.message.attach(self._mimetext(self.template_body, self.subtype.value))
