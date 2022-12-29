@@ -120,7 +120,7 @@ For more examples of using fastapi-mail please check:
 ## Contributors ✨
 
 Thanks goes to these wonderful
-[People](https://sabuhish.github.io/fastapi-mail/contributors.txt)
+[People](https://github.com/sabuhish/fastapi-mail/blob/master/contributors.txt)
 
 
 # Contributing

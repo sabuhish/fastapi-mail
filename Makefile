@@ -2,7 +2,7 @@ lint:
 	@echo
 	isort --diff -c --skip-glob '*.venv' .
 	@echo
-	blue --check --diff --color .
+	black .
 	@echo
 	flake8 .
 	@echo
@@ -11,11 +11,10 @@ lint:
 
 format_code:
 	isort .
-	blue .
+	black .
+	flake8 .
 
 
-test_only:
-	pytest -v --cov-report term-missing --cov-report html --cov-branch \
+test:
+	pytest -vvv --cov-report term-missing --cov-report html --cov-branch \
 			--cov fastapi_mail/
-
-test: lint test_only

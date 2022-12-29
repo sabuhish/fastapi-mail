@@ -19,7 +19,7 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.8.1"
 Jinja2 = "^3.0"
 aiosmtplib = "^2.0"
 pydantic = "^1.8"
@@ -27,7 +27,8 @@ email-validator = "^1.1"
 blinker = "^1.5"
 httpx = {extras = ["httpx"], version = "^0.23", optional = true}
 redis = {extras = ["redis"], version = "^4.3", optional = true}
-starlette = "^0.22"
+starlette = "0.22.0"
+black = "^22.12.0"
 
 [tool.poetry.extras]
 httpx = ["httpx"]
@@ -42,7 +43,6 @@ mkdocs = "^1.2"
 mkdocs-material = "^7.2"
 mkdocs-markdownextradata-plugin = "^0.2"
 isort = "^5.9"
-blue = "^0.7"
 mypy = "0.971"
 typed-ast = "^1.4"
 regex = "2022.7.9"
@@ -52,14 +52,22 @@ redis = "^4.3"
 uvicorn = "^0.20"
 fastapi = "^0.88"
 types-redis = "^4.3.21"
+flake8 = "^6.0.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
+
+[tool.black]
+line-length = 88
+
 [tool.isort]
 profile = "black"
 line_length = 100
+multi_line_output = 3
+include_trailing_comma = true
+py_version=39
+skip_glob = [".github/*", ".venv/*", "venv/*", ".vscode/*"]
+skip = [".gitignore", ".md", ".yaml", ".yml", ".lock",".toml"]
 
-[tool.blue]
-line-length = 100

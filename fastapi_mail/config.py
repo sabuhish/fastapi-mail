@@ -29,7 +29,7 @@ class ConnectionConfig(Settings):
         folder = self.TEMPLATE_FOLDER
         if not folder:
             raise ValueError(
-                'Class initialization did not include a ``TEMPLATE_FOLDER`` ``PathLike`` object.'
+                "Class initialization did not include a ``TEMPLATE_FOLDER`` ``PathLike`` object."
             )
         template_env = Environment(loader=FileSystemLoader(folder))
         return template_env
