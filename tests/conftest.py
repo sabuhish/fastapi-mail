@@ -2,6 +2,7 @@ from pathlib import Path
 
 import fakeredis.aioredis
 import pytest
+import pytest_asyncio
 
 from fastapi_mail.email_utils import DefaultChecker
 
@@ -13,8 +14,7 @@ def default_checker():
     del test
 
 
-@pytest.fixture
-@pytest.mark.asyncio
+@pytest_asyncio.fixture
 async def redis_checker(scope='redis_config'):
     test = DefaultChecker(db_provider='redis')
     test.redis_client = fakeredis.aioredis.FakeRedis()
