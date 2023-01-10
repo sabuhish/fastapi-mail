@@ -26,7 +26,7 @@ email-validator = "^1.1"
 blinker = "^1.5"
 httpx = {extras = ["httpx"], version = "^0.23", optional = true}
 redis = {extras = ["redis"], version = "^4.3", optional = true}
-starlette = "^0.22.0"
+starlette = ">=0.19,<1.0"  # caret behaviour on 0.x is to lock to 0.x.*
 black = "^22.12.0"
 
 [tool.poetry.extras]
