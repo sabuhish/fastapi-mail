@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fastapi-mail"
-version = "1.2.2"
+version = "1.2.5"
 description = "Simple lightweight mail library for FastApi"
 authors = ["Sabuhi Shukurov <sabuhi.shukurov@gmail.com>"]
 license = "MIT"
@@ -11,15 +11,14 @@ classifiers = [
     "Intended Audience :: Developers",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.6",
-    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3 :: Only",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
 
 [tool.poetry.dependencies]
-python = "^3.8.1"
+python = ">=3.8.1,<4.0"  # flake wants 3.8.1 minimum for some reason
 Jinja2 = "^3.0"
 aiosmtplib = "^2.0"
 pydantic = "^1.8"
@@ -27,8 +26,7 @@ email-validator = "^1.1"
 blinker = "^1.5"
 httpx = {extras = ["httpx"], version = "^0.23", optional = true}
 redis = {extras = ["redis"], version = "^4.3", optional = true}
-starlette = "^0.22.0"
-black = "^22.12.0"
+starlette = ">=0.19,<1.0"  # caret behaviour on 0.x is to lock to 0.x.*
 
 [tool.poetry.extras]
 httpx = ["httpx"]
@@ -52,10 +50,12 @@ redis = "^4.3"
 uvicorn = "^0.20"
 fastapi = "^0.88"
 types-redis = "^4.3.21"
-flake8 = "^6.0.0"
+flake8 = "^6.0"
+black = "^22.3"
+
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+requires = ["poetry-core>=1.2.0"]
 build-backend = "poetry.core.masonry.api"
 
 
