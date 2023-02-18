@@ -62,10 +62,9 @@ class MessageSchema(BaseModel):
                 file = file["file"]
             if isinstance(file, str):
                 if os.path.isfile(file) and os.access(file, os.R_OK):
-                    mime_type = mime.guess_type(file)
                     f = open(file, mode="rb")
                     _, file_name = os.path.split(f.name)
-                    u = UploadFile(file_name, f, content_type=mime_type[0])
+                    u = UploadFile(filename=file_name, file=f)
                     temp.append((u, file_meta))
                 else:
                     raise WrongFile(
