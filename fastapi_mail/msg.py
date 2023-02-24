@@ -7,6 +7,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formatdate, make_msgid
 from typing import Any, Union
+from .schemas import MessageType
 
 PY3 = sys.version_info[0] == 3
 
@@ -36,6 +37,7 @@ class MailMsg:
         self.attachments = entries.attachments
         self.subject = entries.subject
         self.body = entries.body
+        self.alternative_body = entries.alternative_body
         self.template_body = entries.template_body
         self.cc = entries.cc
         self.bcc = entries.bcc
@@ -94,6 +96,27 @@ class MailMsg:
 
         self.message = MIMEMultipart(self.multipart_subtype.value)
         self.message.set_charset(self.charset)
+        if self.alternative_body != None:
+            if self.subtype == MessageType.plain:
+                flipped_subtype = "html"
+            else:
+                flipped_subtype = "plain"
+            tmpmsg = MIMEMultipart(self.multipart_subtype.value)
+            tmpmsg.set_charset(self.charset)
+            if self.template_body:
+                tmpmsg.attach(self._mimetext(self.template_body, self.subtype.value))
+            elif self.body:
+                tmpmsg.attach(self._mimetext(self.body, self.subtype.value))
+            tmpmsg.attach(self._mimetext(self.alternative_body, flipped_subtype))
+            self.message.attach(tmpmsg)
+        else:
+            if self.template_body:
+                self.message.attach(
+                    self._mimetext(self.template_body, self.subtype.value)
+                )
+            elif self.body:
+                self.message.attach(self._mimetext(self.body, self.subtype.value))
+
         self.message["Date"] = formatdate(time.time(), localtime=True)
         self.message["Message-ID"] = self.msgId
         self.message["To"] = ", ".join(self.recipients)
@@ -110,12 +133,6 @@ class MailMsg:
 
         if self.reply_to:
             self.message["Reply-To"] = ", ".join(self.reply_to)
-
-        if self.template_body:
-            self.message.attach(self._mimetext(self.template_body, self.subtype.value))
-
-        elif self.body:
-            self.message.attach(self._mimetext(self.body, self.subtype.value))
 
         if self.attachments:
             await self.attach_file(self.message, self.attachments)

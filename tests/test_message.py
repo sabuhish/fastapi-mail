@@ -4,6 +4,7 @@ import pytest
 
 from fastapi_mail.msg import MailMsg
 from fastapi_mail.schemas import MessageSchema, MessageType, MultipartSubtypeEnum
+from pydantic.error_wrappers import ValidationError
 
 
 def test_initialize():
@@ -188,3 +189,26 @@ async def test_message_charset():
     msg_object = await msg._message("test@example.com")
     assert msg_object._charset is not None
     assert msg_object._charset == "utf-8"
+
+
+def test_message_with_alternative_body_but_wrong_multipart_subtype():
+    message = MessageSchema(
+        subject="test subject",
+        recipients=["test@gmail.com"],
+        body="test",
+        subtype=MessageType.plain,
+        alternative_body="alternative",
+    )
+    assert message.alternative_body == None
+
+
+def test_message_with_alternative_body():
+    message = MessageSchema(
+        subject="test subject",
+        recipients=["test@gmail.com"],
+        body="test",
+        subtype=MessageType.plain,
+        multipart_subtype=MultipartSubtypeEnum.alternative,
+        alternative_body="alternative",
+    )
+    assert message.alternative_body == "alternative"

@@ -2,7 +2,13 @@ import os
 
 import pytest
 
-from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
+from fastapi_mail import (
+    ConnectionConfig,
+    FastMail,
+    MessageSchema,
+    MessageType,
+    MultipartSubtypeEnum,
+)
 
 CONTENT = "This file contents some information."
 
@@ -291,3 +297,40 @@ async def test_jinja_message_with_html(mail_config):
     assert msg.template_body == ("\n    \n    \n        Andrej\n    \n\n")
 
     assert not msg.body
+
+
+@pytest.mark.asyncio
+async def test_send_msg_with_alternative_body(mail_config):
+    msg = MessageSchema(
+        subject="testing",
+        recipients=["to@example.com"],
+        body="<p Test data </p>",
+        subtype=MessageType.html,
+        alternative_body="Test data",
+        multipart_subtype=MultipartSubtypeEnum.alternative,
+    )
+
+    sender = f"{mail_config['MAIL_FROM_NAME']} <{mail_config['MAIL_FROM']}>"
+    conf = ConnectionConfig(**mail_config)
+    fm = FastMail(conf)
+    fm.config.SUPPRESS_SEND = 1
+    with fm.record_messages() as outbox:
+        await fm.send_message(message=msg)
+
+        mail = outbox[0]
+
+        print(mail._payload[1].__dict__)
+        print(mail._payload[0].__dict__)
+        assert 1 == 2
+        assert len(outbox) == 1
+        assert mail._payload[1].get_content_maintype() == "plain"
+        assert (
+            mail._payload[1].__dict__.get("_headers")[0][1]
+            == "application/octet-stream"
+        )
+        assert len(outbox) == 1
+        assert outbox[0]["subject"] == "testing"
+        assert outbox[0]["from"] == sender
+        assert outbox[0]["To"] == "to@example.com"
+    assert msg.body == "<p Test data </p>"
+    assert msg.subtype == MessageType.html
