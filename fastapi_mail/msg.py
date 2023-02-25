@@ -7,7 +7,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formatdate, make_msgid
 from typing import Any, Union
-from .schemas import MessageType
+from .schemas import MessageType, MultipartSubtypeEnum
 
 PY3 = sys.version_info[0] == 3
 
@@ -89,6 +89,21 @@ class MailMsg:
 
             self.message.attach(part)
 
+    def attach_alternative(self, message: MIMEMultipart) -> MIMEMultipart:
+        """
+        Attaches an alternative body to a given message
+        """
+        tmpmsg = message
+        if self.subtype == MessageType.plain:
+            flipped_subtype = "html"
+        else:
+            flipped_subtype = "plain"
+        tmpmsg.attach(self._mimetext(self.alternative_body, flipped_subtype))
+        message = MIMEMultipart(self.multipart_subtype.value)
+        message.set_charset(self.charset)
+        message.attach(tmpmsg)
+        return message
+
     async def _message(self, sender: str = None) -> Union[EmailMessage, Message]:
         """
         Creates the email message
@@ -96,26 +111,17 @@ class MailMsg:
 
         self.message = MIMEMultipart(self.multipart_subtype.value)
         self.message.set_charset(self.charset)
-        if self.alternative_body != None:
-            if self.subtype == MessageType.plain:
-                flipped_subtype = "html"
-            else:
-                flipped_subtype = "plain"
-            tmpmsg = MIMEMultipart(self.multipart_subtype.value)
-            tmpmsg.set_charset(self.charset)
-            if self.template_body:
-                tmpmsg.attach(self._mimetext(self.template_body, self.subtype.value))
-            elif self.body:
-                tmpmsg.attach(self._mimetext(self.body, self.subtype.value))
-            tmpmsg.attach(self._mimetext(self.alternative_body, flipped_subtype))
-            self.message.attach(tmpmsg)
-        else:
-            if self.template_body:
-                self.message.attach(
-                    self._mimetext(self.template_body, self.subtype.value)
-                )
-            elif self.body:
-                self.message.attach(self._mimetext(self.body, self.subtype.value))
+
+        if self.template_body:
+            self.message.attach(self._mimetext(self.template_body, self.subtype.value))
+        elif self.body:
+            self.message.attach(self._mimetext(self.body, self.subtype.value))
+
+        if (
+            self.alternative_body is not None
+            and self.multipart_subtype == MultipartSubtypeEnum.alternative
+        ):
+            self.message = self.attach_alternative(self.message)
 
         self.message["Date"] = formatdate(time.time(), localtime=True)
         self.message["Message-ID"] = self.msgId
