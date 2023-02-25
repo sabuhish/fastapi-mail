@@ -4,7 +4,7 @@ from mimetypes import MimeTypes
 from typing import Dict, List, Optional, Union
 
 from pydantic import BaseModel, EmailStr, validator
-from starlette.datastructures import UploadFile, Headers
+from starlette.datastructures import Headers, UploadFile
 
 from fastapi_mail.errors import WrongFile
 
