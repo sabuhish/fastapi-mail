@@ -19,6 +19,7 @@ class MailMsg:
     :param: subject: Email subject header
     :param: recipients: List of email addresses
     :param: body: Plain text message or HTML message
+    :param: alternative_body: Plain text message or HTML message
     :param: template_body: Data to pass into chosen Jinja2 template
     :param: subtype: MessageType class. Type of body parameter, either "plain" or "html"
     :param: sender: Email sender address
