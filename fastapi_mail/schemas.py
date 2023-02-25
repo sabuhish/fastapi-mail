@@ -3,7 +3,7 @@ from enum import Enum
 from mimetypes import MimeTypes
 from typing import Dict, List, Optional, Union
 
-from pydantic import BaseModel, EmailStr, validator
+from pydantic import BaseModel, EmailStr, validator, root_validator
 from starlette.datastructures import Headers, UploadFile
 
 from fastapi_mail.errors import WrongFile
