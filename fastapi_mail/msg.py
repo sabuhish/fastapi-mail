@@ -100,7 +100,7 @@ class MailMsg:
         else:
             flipped_subtype = "plain"
         tmpmsg.attach(self._mimetext(self.alternative_body, flipped_subtype))
-        message = MIMEMultipart(self.multipart_subtype.value)
+        message = MIMEMultipart(MultipartSubtypeEnum.related.value)
         message.set_charset(self.charset)
         message.attach(tmpmsg)
         return message
