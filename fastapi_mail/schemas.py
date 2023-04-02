@@ -1,8 +1,9 @@
 import os
 from enum import Enum
+from io import BytesIO
 from mimetypes import MimeTypes
 from typing import Dict, List, Optional, Union
-from io import BytesIO
+
 from pydantic import BaseModel, EmailStr, validator
 from starlette.datastructures import Headers, UploadFile
 
