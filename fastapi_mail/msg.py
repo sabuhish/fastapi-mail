@@ -66,6 +66,7 @@ class MailMsg:
 
             part.set_payload(await file.read())
             encode_base64(part)
+            await file.close()
 
             if file_meta and "headers" in file_meta:
                 for header in file_meta["headers"].keys():
