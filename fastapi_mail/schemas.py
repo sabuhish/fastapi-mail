@@ -2,7 +2,7 @@ import os
 from enum import Enum
 from mimetypes import MimeTypes
 from typing import Dict, List, Optional, Union
-
+from io import BytesIO
 from pydantic import BaseModel, EmailStr, validator
 from starlette.datastructures import Headers, UploadFile
 
@@ -63,14 +63,15 @@ class MessageSchema(BaseModel):
             if isinstance(file, str):
                 if os.path.isfile(file) and os.access(file, os.R_OK):
                     mime_type = mime.guess_type(file)
-                    f = open(file, mode="rb")
-                    _, file_name = os.path.split(f.name)
-                    content_type = mime_type[0]
-                    headers = None
-                    if content_type:
-                        headers = Headers({"content-type": content_type})
-                    u = UploadFile(filename=file_name, file=f, headers=headers)
-                    temp.append((u, file_meta))
+                    with open(file, mode="rb") as f:
+                        _, file_name = os.path.split(f.name)
+                        content_type = mime_type[0]
+                        headers = None
+                        if content_type:
+                            headers = Headers({"content-type": content_type})
+                        file_content = BytesIO(f.read())
+                        u = UploadFile(filename=file_name, file=file_content, headers=headers)
+                        temp.append((u, file_meta))
                 else:
                     raise WrongFile(
                         "incorrect file path for attachment or not readable"
