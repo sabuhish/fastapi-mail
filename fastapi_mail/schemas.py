@@ -71,7 +71,9 @@ class MessageSchema(BaseModel):
                         if content_type:
                             headers = Headers({"content-type": content_type})
                         file_content = BytesIO(f.read())
-                        u = UploadFile(filename=file_name, file=file_content, headers=headers)
+                        u = UploadFile(
+                            filename=file_name, file=file_content, headers=headers
+                        )
                         temp.append((u, file_meta))
                 else:
                     raise WrongFile(
@@ -84,15 +86,6 @@ class MessageSchema(BaseModel):
                     "attachments field type incorrect, must be UploadFile or path"
                 )
         return temp
-
-    @validator("subtype")
-    def validate_subtype(cls, value, values, config, field):
-        """
-        Validate subtype field
-        """
-        if values["template_body"]:
-            return MessageType.html
-        return value
 
     class Config:
         arbitrary_types_allowed = True
