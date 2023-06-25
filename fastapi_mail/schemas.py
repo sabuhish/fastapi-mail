@@ -4,7 +4,7 @@ from io import BytesIO
 from mimetypes import MimeTypes
 from typing import Dict, List, Optional, Union
 
-from pydantic import BaseModel, EmailStr, validator
+from pydantic import BaseModel, EmailStr, validator, root_validator
 from starlette.datastructures import Headers, UploadFile
 
 from fastapi_mail.errors import WrongFile
@@ -38,6 +38,7 @@ class MessageSchema(BaseModel):
     attachments: List[Union[UploadFile, Dict, str]] = []
     subject: str = ""
     body: Optional[Union[str, list]] = None
+    alternative_body: Optional[str] = None
     template_body: Optional[Union[list, dict, str]] = None
     cc: List[EmailStr] = []
     bcc: List[EmailStr] = []
@@ -93,6 +94,18 @@ class MessageSchema(BaseModel):
         if values["template_body"]:
             return MessageType.html
         return value
+
+    @root_validator
+    def validate_alternative_body(cls, values):
+        """
+        Validate alternative_body field
+        """
+        if (
+            values["multipart_subtype"] != MultipartSubtypeEnum.alternative
+            and values["alternative_body"]
+        ):
+            values["alternative_body"] = None
+        return values
 
     class Config:
         arbitrary_types_allowed = True

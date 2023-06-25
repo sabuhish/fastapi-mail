@@ -7,6 +7,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formatdate, make_msgid
 from typing import Any, Union
+from .schemas import MessageType, MultipartSubtypeEnum
 
 PY3 = sys.version_info[0] == 3
 
@@ -18,6 +19,7 @@ class MailMsg:
     :param: subject: Email subject header
     :param: recipients: List of email addresses
     :param: body: Plain text message or HTML message
+    :param: alternative_body: Plain text message or HTML message
     :param: template_body: Data to pass into chosen Jinja2 template
     :param: subtype: MessageType class. Type of body parameter, either "plain" or "html"
     :param: sender: Email sender address
@@ -36,6 +38,7 @@ class MailMsg:
         self.attachments = entries.attachments
         self.subject = entries.subject
         self.body = entries.body
+        self.alternative_body = entries.alternative_body
         self.template_body = entries.template_body
         self.cc = entries.cc
         self.bcc = entries.bcc
@@ -88,6 +91,21 @@ class MailMsg:
 
             self.message.attach(part)
 
+    def attach_alternative(self, message: MIMEMultipart) -> MIMEMultipart:
+        """
+        Attaches an alternative body to a given message
+        """
+        tmpmsg = message
+        if self.subtype == MessageType.plain:
+            flipped_subtype = "html"
+        else:
+            flipped_subtype = "plain"
+        tmpmsg.attach(self._mimetext(self.alternative_body, flipped_subtype))
+        message = MIMEMultipart(MultipartSubtypeEnum.related.value)
+        message.set_charset(self.charset)
+        message.attach(tmpmsg)
+        return message
+
     async def _message(self, sender: str = None) -> Union[EmailMessage, Message]:
         """
         Creates the email message
@@ -95,6 +113,18 @@ class MailMsg:
 
         self.message = MIMEMultipart(self.multipart_subtype.value)
         self.message.set_charset(self.charset)
+
+        if self.template_body:
+            self.message.attach(self._mimetext(self.template_body, self.subtype.value))
+        elif self.body:
+            self.message.attach(self._mimetext(self.body, self.subtype.value))
+
+        if (
+            self.alternative_body is not None
+            and self.multipart_subtype == MultipartSubtypeEnum.alternative
+        ):
+            self.message = self.attach_alternative(self.message)
+
         self.message["Date"] = formatdate(time.time(), localtime=True)
         self.message["Message-ID"] = self.msgId
         self.message["To"] = ", ".join(self.recipients)
@@ -111,12 +141,6 @@ class MailMsg:
 
         if self.reply_to:
             self.message["Reply-To"] = ", ".join(self.reply_to)
-
-        if self.template_body:
-            self.message.attach(self._mimetext(self.template_body, self.subtype.value))
-
-        elif self.body:
-            self.message.attach(self._mimetext(self.body, self.subtype.value))
 
         if self.attachments:
             await self.attach_file(self.message, self.attachments)
