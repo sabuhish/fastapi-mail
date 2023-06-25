@@ -1,10 +1,5 @@
-name: CI
-
-on: 
-  push:
-    branches: '**'
-  pull_request:
-    branches: '**'
+name: CI Linter
+on: [push, pull_request]
 
 jobs:
   ci:

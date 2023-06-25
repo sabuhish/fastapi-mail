@@ -7,6 +7,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formatdate, make_msgid
 from typing import Any, Union
+
 from .schemas import MessageType, MultipartSubtypeEnum
 
 PY3 = sys.version_info[0] == 3

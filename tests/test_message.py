@@ -4,7 +4,6 @@ import pytest
 
 from fastapi_mail.msg import MailMsg
 from fastapi_mail.schemas import MessageSchema, MessageType, MultipartSubtypeEnum
-from pydantic.error_wrappers import ValidationError
 
 
 def test_initialize():
@@ -199,7 +198,7 @@ def test_message_with_alternative_body_but_wrong_multipart_subtype():
         subtype=MessageType.plain,
         alternative_body="alternative",
     )
-    assert message.alternative_body == None
+    assert message.alternative_body is None
 
 
 def test_message_with_alternative_body():
