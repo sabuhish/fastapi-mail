@@ -2,7 +2,13 @@ import os
 
 import pytest
 
-from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
+from fastapi_mail import (
+    ConnectionConfig,
+    FastMail,
+    MessageSchema,
+    MessageType,
+    MultipartSubtypeEnum,
+)
 
 CONTENT = "This file contents some information."
 
@@ -251,7 +257,7 @@ async def test_send_msg_with_subtype(mail_config):
     msg = MessageSchema(
         subject="testing",
         recipients=["to@example.com"],
-        body="<p Test data </p>",
+        body="<p> Test data </p>",
         subtype=MessageType.html,
     )
 
@@ -266,7 +272,7 @@ async def test_send_msg_with_subtype(mail_config):
         assert outbox[0]["subject"] == "testing"
         assert outbox[0]["from"] == sender
         assert outbox[0]["To"] == "to@example.com"
-    assert msg.body == "<p Test data </p>"
+    assert msg.body == "<p> Test data </p>"
     assert msg.subtype == MessageType.html
 
 
@@ -291,3 +297,82 @@ async def test_jinja_message_with_html(mail_config):
     assert msg.template_body == ("\n    \n    \n        Andrej\n    \n\n")
 
     assert not msg.body
+
+
+@pytest.mark.asyncio
+async def test_send_msg_with_alternative_body(mail_config):
+    msg = MessageSchema(
+        subject="testing",
+        recipients=["to@example.com"],
+        body="<p> Test data </p>",
+        subtype=MessageType.html,
+        alternative_body="Test data",
+        multipart_subtype=MultipartSubtypeEnum.alternative,
+    )
+
+    sender = f"{mail_config['MAIL_FROM_NAME']} <{mail_config['MAIL_FROM']}>"
+    conf = ConnectionConfig(**mail_config)
+    fm = FastMail(conf)
+    fm.config.SUPPRESS_SEND = 1
+    with fm.record_messages() as outbox:
+        await fm.send_message(message=msg)
+
+        mail = outbox[0]
+        assert len(outbox) == 1
+        body = mail._payload[0]
+        assert len(body._payload) == 2
+        assert body._headers[1][1] == 'multipart/alternative; charset="utf-8"'
+        assert mail["subject"] == "testing"
+        assert mail["from"] == sender
+        assert mail["To"] == "to@example.com"
+
+        assert body._payload[0]._headers[0][1] == 'text/html; charset="utf-8"'
+        assert body._payload[1]._headers[0][1] == 'text/plain; charset="utf-8"'
+    assert msg.alternative_body == "Test data"
+    assert msg.multipart_subtype == MultipartSubtypeEnum.alternative
+
+
+@pytest.mark.asyncio
+async def test_send_msg_with_alternative_body_and_attachements(mail_config):
+    directory = os.getcwd()
+    text_file = directory + "/tests/txt_files/plain.txt"
+
+    with open(text_file, "w") as file:
+        file.write(CONTENT)
+
+    subject = "testing"
+    to = "to@example.com"
+    msg = MessageSchema(
+        subject=subject,
+        recipients=[to],
+        body="html test",
+        subtype="html",
+        attachments=[text_file],
+        alternative_body="plain test",
+        multipart_subtype="alternative",
+    )
+    sender = f"{mail_config['MAIL_FROM_NAME']} <{mail_config['MAIL_FROM']}>"
+    conf = ConnectionConfig(**mail_config)
+    fm = FastMail(conf)
+    fm.config.SUPPRESS_SEND = 1
+    with fm.record_messages() as outbox:
+        await fm.send_message(message=msg)
+
+        mail = outbox[0]
+
+        assert len(outbox) == 1
+        body = mail._payload[0]
+        assert len(body._payload) == 2
+        assert body._headers[1][1] == 'multipart/alternative; charset="utf-8"'
+        assert mail["subject"] == "testing"
+        assert mail["from"] == sender
+        assert mail["To"] == "to@example.com"
+
+        assert body._payload[0]._headers[0][1] == 'text/html; charset="utf-8"'
+        assert body._payload[1]._headers[0][1] == 'text/plain; charset="utf-8"'
+
+        assert mail._payload[1].get_content_maintype() == "application"
+        assert (
+            mail._payload[1].__dict__.get("_headers")[0][1]
+            == "application/octet-stream"
+        )
