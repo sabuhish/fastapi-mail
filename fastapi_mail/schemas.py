@@ -88,15 +88,6 @@ class MessageSchema(BaseModel):
                 )
         return temp
 
-    @validator("subtype")
-    def validate_subtype(cls, value, values, config, field):
-        """
-        Validate subtype field
-        """
-        if values["template_body"]:
-            return MessageType.html
-        return value
-
     @root_validator
     def validate_alternative_body(cls, values):
         """
