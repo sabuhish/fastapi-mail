@@ -4,6 +4,7 @@ from typing import Any, Dict, List, Set, Union
 
 import dns.exception
 import dns.resolver
+from email_validator import EmailNotValidError, validate_email
 
 try:
     from redis import asyncio as aioredis
@@ -18,8 +19,6 @@ try:
     request_lib = True
 except ImportError:
     request_lib = False
-
-from pydantic import EmailStr
 
 from fastapi_mail.errors import ApiError, DBProvaiderError
 
@@ -168,7 +167,11 @@ class DefaultChecker(AbstractEmailChecker):
 
     def validate_email(self, email: str) -> bool:
         """Validate email address"""
-        EmailStr.validate(email)
+        try:
+            emailinfo = validate_email(email, check_deliverability=False)
+            email = emailinfo.normalized
+        except EmailNotValidError:
+            raise EmailNotValidError
         return True
 
     async def fetch_temp_email_domains(self) -> Union[List[str], Any]:
@@ -370,9 +373,13 @@ class WhoIsXmlApi:
 
     def validate_email(self, email: str) -> bool:
         """Validate email address"""
-        if EmailStr.validate(email):
-            return True
-        return False
+
+        try:
+            emailinfo = validate_email(email, check_deliverability=False)
+            email = emailinfo.normalized
+        except EmailNotValidError:
+            return False
+        return True
 
     def catch_all_check(self) -> bool:
         """
