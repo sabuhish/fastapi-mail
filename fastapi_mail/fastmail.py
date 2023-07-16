@@ -1,6 +1,6 @@
 from contextlib import contextmanager
 from email.message import EmailMessage, Message
-from typing import Any, Dict, Union
+from typing import Any, Dict, Optional, Union
 
 import blinker
 from jinja2 import Environment, Template
@@ -65,7 +65,7 @@ class FastMail(_MailMixin):
         return data
 
     async def __prepare_message(
-        self, message: MessageSchema, template: Template = None
+        self, message: MessageSchema, template: Optional[Template] = None
     ) -> Union[EmailMessage, Message]:
         if template and message.template_body is not None:
             message.template_body = await self.__template_message_builder(
@@ -91,7 +91,7 @@ class FastMail(_MailMixin):
         return sender
 
     async def send_message(
-        self, message: MessageSchema, template_name: str = None
+        self, message: MessageSchema, template_name: Optional[str] = None
     ) -> None:
         if not isinstance(message, MessageSchema):
             raise PydanticClassRequired(

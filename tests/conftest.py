@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Generator
 
 import fakeredis.aioredis
 import pytest
@@ -24,7 +25,7 @@ async def redis_checker(scope="redis_config"):
 
 
 @pytest.fixture(autouse=True)
-def mail_config():
+def mail_config() -> Generator:
     home: Path = Path(__file__).parent.parent
     html = home / "tests/html"
     env = {
