@@ -1,6 +1,6 @@
 import inspect
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Set, Union
+from typing import Any, Dict, List, Optional, Set, Union
 
 import dns.exception
 import dns.resolver
@@ -86,14 +86,14 @@ class DefaultChecker(AbstractEmailChecker):
 
     def __init__(
         self,
-        source: str = None,
-        db_provider: str = None,
+        source: Optional[str] = None,
+        db_provider: Optional[str] = None,
         *,
         redis_host: str = "localhost",
         redis_port: int = 6379,
         redis_db: int = 0,
-        redis_password: str = None,
-        username: str = None,
+        redis_password: Optional[str] = None,
+        username: Optional[str] = None,
         **options: dict,
     ):
 
@@ -294,19 +294,25 @@ class DefaultChecker(AbstractEmailChecker):
     async def blocked_email_count(self) -> int:
         """count all blocked emails in redis"""
         if self.redis_enabled:
-            return await self.redis_client.get("email_counter")
+            result = await self.redis_client.get("email_counter")
+            if result is not None:
+                return result
         return len(self.BLOCKED_ADDRESSES)
 
     async def blocked_domain_count(self) -> int:
         """count all blocked domains in redis"""
         if self.redis_enabled:
-            return await self.redis_client.get("domain_counter")
+            result = await self.redis_client.get("domain_counter")
+            if result is not None:
+                return result
         return len(self.BLOCKED_DOMAINS)
 
     async def temp_email_count(self) -> int:
         """count all temporary emails in redis"""
         if self.redis_enabled:
-            return await self.redis_client.get("temp_counter")
+            result = await self.redis_client.get("temp_counter")
+            if result is not None:
+                return result
         return len(self.TEMP_EMAIL_DOMAINS)
 
     async def close_connections(self) -> bool:
