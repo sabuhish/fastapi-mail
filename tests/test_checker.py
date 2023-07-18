@@ -1,5 +1,5 @@
 import pytest
-from pydantic import EmailError
+from email_validator import EmailNotValidError
 
 from fastapi_mail.errors import DBProvaiderError
 
@@ -40,7 +40,7 @@ async def test_default_checker(default_checker):
 
     assert default_checker.validate_email(email) is True
 
-    with pytest.raises(EmailError):
+    with pytest.raises(EmailNotValidError):
         default_checker.validate_email("test#mail.com")
 
     with pytest.raises(DBProvaiderError):
