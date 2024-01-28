@@ -1,4 +1,5 @@
 from contextlib import contextmanager
+from email.utils import formataddr
 from email.message import EmailMessage, Message
 from typing import Any, Dict, Optional, Union
 
@@ -87,7 +88,7 @@ class FastMail(_MailMixin):
     async def __sender(self) -> Union[EmailStr, str]:
         sender = self.config.MAIL_FROM
         if self.config.MAIL_FROM_NAME is not None:
-            return f"{self.config.MAIL_FROM_NAME} <{self.config.MAIL_FROM}>"
+            return formataddr((self.config.MAIL_FROM_NAME, self.config.MAIL_FROM))
         return sender
 
     async def send_message(
