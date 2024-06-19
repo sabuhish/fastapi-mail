@@ -46,7 +46,7 @@ class Connection:
 
                 if self.settings.USE_CREDENTIALS:
                     await self.session.login(
-                        self.settings.MAIL_USERNAME, self.settings.MAIL_PASSWORD
+                        self.settings.MAIL_USERNAME, self.settings.MAIL_PASSWORD.get_secret_value()
                     )
 
         except Exception as error:
