@@ -2,13 +2,13 @@ from typing import Optional
 
 from aiosmtplib.api import DEFAULT_TIMEOUT
 from jinja2 import Environment, FileSystemLoader
-from pydantic import DirectoryPath, EmailStr, conint
+from pydantic import DirectoryPath, EmailStr, SecretStr, conint
 from pydantic_settings import BaseSettings as Settings
 
 
 class ConnectionConfig(Settings):
     MAIL_USERNAME: str
-    MAIL_PASSWORD: str
+    MAIL_PASSWORD: SecretStr
     MAIL_PORT: int
     MAIL_SERVER: str
     MAIL_STARTTLS: bool
