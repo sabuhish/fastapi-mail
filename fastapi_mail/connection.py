@@ -39,6 +39,7 @@ class Connection:
                 use_tls=self.settings.MAIL_SSL_TLS,
                 start_tls=self.settings.MAIL_STARTTLS,
                 validate_certs=self.settings.VALIDATE_CERTS,
+                local_hostname=self.settings.LOCAL_HOSTNAME,
             )
 
             if not self.settings.SUPPRESS_SEND:  # for test environ

@@ -32,6 +32,7 @@ class has following attributes
 -  SUPPRESS_SEND:  To mock sending out mail, defaults 0.
 -  USE_CREDENTIALS: Defaults to `True`. However it enables users to choose whether or not to login to their SMTP server.
 -  VALIDATE_CERTS: Defaults to `True`. It enables to choose whether to verify the mail server's certificate
+-  LOCAL_HOSTNAME: It enables to set the hostname of the local machine, which is used to connect to the SMTP server.
 
 
 ### ```MessageSchema``` class
