@@ -20,14 +20,14 @@ classifiers = [
 [tool.poetry.dependencies]
 python = ">=3.8.1,<4.0"  # flake wants 3.8.1 minimum for some reason
 Jinja2 = "^3.0"
-aiosmtplib = "^2.0"
-pydantic = "^2.0"
-pydantic_settings = "^2.0"
-email-validator = "^2.0"
 blinker = "^1.5"
 httpx = {extras = ["httpx"], version = "^0.23", optional = true}
 redis = {extras = ["redis"], version = "^4.3", optional = true}
 starlette = ">=0.24,<1.0"  # caret behaviour on 0.x is to lock to 0.x.*
+aiosmtplib = "^3.0.2"
+pydantic = "^2.10.1"
+email-validator = "^2.2.0"
+pydantic-settings = "^2.6.1"
 
 [tool.poetry.extras]
 httpx = ["httpx"]
