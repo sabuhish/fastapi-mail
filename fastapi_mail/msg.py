@@ -108,7 +108,7 @@ class MailMsg:
         return message
 
     async def _message(
-        self, sender: Optional[str] = None
+        self, sender: str
     ) -> Union[EmailMessage, Message]:
         """
         Creates the email message
@@ -153,6 +153,3 @@ class MailMsg:
                 self.message.add_header(header_name, header_content)
 
         return self.message
-
-    async def as_string(self) -> Union[EmailMessage, Message]:
-        return await self._message()
