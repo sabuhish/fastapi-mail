@@ -6,7 +6,7 @@ from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formatdate, make_msgid
-from typing import Any, Optional, Union
+from typing import Any, Union
 
 from .schemas import MessageType, MultipartSubtypeEnum
 
@@ -107,9 +107,7 @@ class MailMsg:
         message.attach(tmpmsg)
         return message
 
-    async def _message(
-        self, sender: str
-    ) -> Union[EmailMessage, Message]:
+    async def _message(self, sender: str) -> Union[EmailMessage, Message]:
         """
         Creates the email message
         """
