@@ -1,6 +1,6 @@
 from contextlib import contextmanager
-from email.utils import formataddr
 from email.message import EmailMessage, Message
+from email.utils import formataddr
 from typing import Any, Dict, Optional, Union
 
 import blinker
