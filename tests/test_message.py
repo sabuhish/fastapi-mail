@@ -71,7 +71,7 @@ def test_message_str():
         subtype=MessageType.plain,
     )
 
-    assert isinstance(message.body) == str
+    assert isinstance(message.body, str)
 
 
 def test_plain_message_with_attachments():
