@@ -12,6 +12,7 @@ from fastapi_mail.connection import Connection
 from fastapi_mail.errors import PydanticClassRequired
 from fastapi_mail.msg import MailMsg
 from fastapi_mail.schemas import MessageSchema
+from fastapi_mail.queue import EmailQueue
 
 
 class _MailMixin:
@@ -49,6 +50,14 @@ class FastMail(_MailMixin):
 
     def __init__(self, config: ConnectionConfig) -> None:
         self.config = config
+        self._queue: Optional[EmailQueue] = None
+
+    @property
+    def queue(self) -> EmailQueue:
+        """Get or create email queue"""
+        if self._queue is None:
+            self._queue = EmailQueue(self)
+        return self._queue
 
     async def get_mail_template(
         self, env_path: Environment, template_name: str
@@ -92,8 +101,23 @@ class FastMail(_MailMixin):
         return sender
 
     async def send_message(
+        self, message: MessageSchema, template_name: Optional[str] = None,
+        queue: bool = False, schedule_time: Optional[datetime] = None
+    ) -> Optional[str]:
+        """
+        Send email message with optional queueing
+        Returns queue ID if queued, None if sent immediately
+        """
+        if not queue:
+            await self._send_message(message, template_name)
+            return None
+            
+        return await self.queue.add_to_queue(message, template_name, schedule_time)
+
+    async def _send_message(
         self, message: MessageSchema, template_name: Optional[str] = None
     ) -> None:
+        """Internal method for sending message"""
         if not isinstance(message, MessageSchema):
             raise PydanticClassRequired(
                 "Message schema should be provided from MessageSchema class"
