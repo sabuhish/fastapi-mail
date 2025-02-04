@@ -2,6 +2,7 @@ from contextlib import contextmanager
 from email.message import EmailMessage, Message
 from email.utils import formataddr
 from typing import Any, Dict, Optional, Union
+from datetime import datetime
 
 import blinker
 from jinja2 import Environment, Template
@@ -12,6 +13,8 @@ from fastapi_mail.connection import Connection
 from fastapi_mail.errors import PydanticClassRequired
 from fastapi_mail.msg import MailMsg
 from fastapi_mail.schemas import MessageSchema
+from fastapi_mail.queue import EmailQueue
+from fastapi_mail.signals import email_dispatched
 
 
 class _MailMixin:
@@ -49,6 +52,13 @@ class FastMail(_MailMixin):
 
     def __init__(self, config: ConnectionConfig) -> None:
         self.config = config
+        self._queue: Optional[EmailQueue] = None
+
+    @property
+    def queue(self) -> EmailQueue:
+        if self._queue is None:
+            self._queue = EmailQueue(self)
+        return self._queue
 
     async def get_mail_template(
         self, env_path: Environment, template_name: str
@@ -92,25 +102,28 @@ class FastMail(_MailMixin):
         return sender
 
     async def send_message(
-        self, message: MessageSchema, template_name: Optional[str] = None
-    ) -> None:
-        if not isinstance(message, MessageSchema):
-            raise PydanticClassRequired(
-                "Message schema should be provided from MessageSchema class"
-            )
+        self,
+        message: MessageSchema,
+        template_name: Optional[str] = None,
+        queue: bool = False,
+        schedule_time: Optional[datetime] = None
+    ) -> Optional[str]:
+        if not queue:
+            await self._send_message(message, template_name)
+            return None
+        return await self.queue.add_to_queue(message, template_name, schedule_time)
 
+    async def _send_message(self, message: MessageSchema, template_name: Optional[str] = None) -> None:
+        if not isinstance(message, MessageSchema):
+            raise PydanticClassRequired("Message schema should be provided from MessageSchema class")
         if self.config.TEMPLATE_FOLDER and template_name:
-            template = await self.get_mail_template(
-                self.config.template_engine(), template_name
-            )
+            template = await self.get_mail_template(self.config.template_engine(), template_name)
             msg = await self.__prepare_message(message, template)
         else:
             msg = await self.__prepare_message(message)
-
         async with Connection(self.config) as session:
             if not self.config.SUPPRESS_SEND:
                 await session.session.send_message(msg)
-
             email_dispatched.send(msg)
 
 
