@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Sequence, Union
 
 from aiosmtplib.api import DEFAULT_TIMEOUT
 from jinja2 import Environment, FileSystemLoader
@@ -16,7 +16,7 @@ class ConnectionConfig(Settings):
     MAIL_DEBUG: conint(gt=-1, lt=2) = 0  # type: ignore
     MAIL_FROM: EmailStr
     MAIL_FROM_NAME: Optional[str] = None
-    TEMPLATE_FOLDER: Optional[DirectoryPath] = None
+    TEMPLATE_FOLDER: Union[None, DirectoryPath, Sequence[DirectoryPath]] = None
     SUPPRESS_SEND: conint(gt=-1, lt=2) = 0  # type: ignore
     USE_CREDENTIALS: bool = True
     VALIDATE_CERTS: bool = True
