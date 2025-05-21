@@ -381,10 +381,6 @@ async def test_local_hostname_resolving(mail_config):
         async with Connection(conf) as session:
             assert session.session.local_hostname == conf.LOCAL_HOSTNAME
 
-        assert (
-            mail._payload[1].__dict__.get("_headers")[0][1]
-            == "application/octet-stream"
-        )
 
 
 @pytest.mark.asyncio

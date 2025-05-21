@@ -95,7 +95,7 @@ class FastMail(_MailMixin):
             message.alternative_body = html
 
         msg = MailMsg(message)
-        sender = await self.__sender()
+        sender = await self.__sender(message)
         return await msg._message(sender)
 
     async def __template_message_builder(
