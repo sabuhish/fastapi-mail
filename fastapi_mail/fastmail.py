@@ -56,14 +56,16 @@ class FastMail(_MailMixin):
         return env_path.get_template(template_name)
 
     @staticmethod
-    def check_data(data: Union[Dict[Any, Any], str, None]) -> Dict[Any, Any]:
-        if not isinstance(data, dict):
+    def check_data(data: Union[Dict[Any, Any], str, None, list[Any]]) -> Dict[Any, Any]:
+        if isinstance(data, dict):
+            return data
+        elif isinstance(data, list):
+            return {"body": data}
+        else:
             raise ValueError(
                 f"Unable to build template data dictionary - {type(data)}"
                 "is an invalid source data type"
             )
-
-        return data
 
     async def __prepare_message(
         self, message: MessageSchema, template: Optional[Template] = None
@@ -129,19 +131,19 @@ class FastMail(_MailMixin):
             template_name or (html_template and plain_template)
         ):
             if template_name:
-                template = await self.get_mail_template(
-                    self.config.template_engine(), template_name
+                template_obj = await self.get_mail_template(
+                    self.config.template_engine(), template_name  # type: ignore
                 )
-                msg = await self.__prepare_message(message, template)
+                msg = await self.__prepare_message(message, template_obj)
             else:
-                html_template = await self.get_mail_template(
-                    self.config.template_engine(), html_template
+                html_template_obj = await self.get_mail_template(
+                    self.config.template_engine(), html_template or ""  # type: ignore
                 )
-                plain_template = await self.get_mail_template(
-                    self.config.template_engine(), plain_template
+                plain_template_obj = await self.get_mail_template(
+                    self.config.template_engine(), plain_template or ""  # type: ignore
                 )
                 msg = await self.__prepare_html_and_plain_message(
-                    message, html_template, plain_template
+                    message, html_template_obj, plain_template_obj
                 )
         else:
             msg = await self.__prepare_message(message)

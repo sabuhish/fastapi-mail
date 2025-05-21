@@ -89,7 +89,10 @@ async def test_attachement_message(mail_config):
 
         assert len(outbox) == 1
         assert mail._payload[1].get_content_maintype() == "application"
-        assert mail._payload[1].__dict__.get("_headers")[0][1] == "application/octet-stream"
+        assert (
+            mail._payload[1].__dict__.get("_headers")[0][1]
+            == "application/octet-stream"
+        )
 
 
 @pytest.mark.asyncio
@@ -151,16 +154,20 @@ async def test_attachement_message_with_headers(mail_config):
 
         assert len(outbox) == 1
         mail = outbox[0]
-        assert mail._payload[1].get_content_maintype() == msg.attachments[0][1].get("mime_type")
-        assert mail._payload[1].get_content_subtype() == msg.attachments[0][1].get("mime_subtype")
+        assert mail._payload[1].get_content_maintype() == msg.attachments[0][1].get(
+            "mime_type"
+        )
+        assert mail._payload[1].get_content_subtype() == msg.attachments[0][1].get(
+            "mime_subtype"
+        )
 
         assert mail._payload[1].__dict__.get("_headers")[0][1] == "image/png"
-        assert mail._payload[1].__dict__.get("_headers")[3][1] == msg.attachments[0][1].get(
-            "headers"
-        ).get("Content-ID")
-        assert mail._payload[1].__dict__.get("_headers")[4][1] == msg.attachments[0][1].get(
-            "headers"
-        ).get("Content-Disposition")
+        assert mail._payload[1].__dict__.get("_headers")[3][1] == msg.attachments[0][
+            1
+        ].get("headers").get("Content-ID")
+        assert mail._payload[1].__dict__.get("_headers")[4][1] == msg.attachments[0][
+            1
+        ].get("headers").get("Content-Disposition")
 
         assert (
             mail._payload[2].__dict__.get("_headers")[3][1] == "attachment; "
@@ -184,7 +191,9 @@ async def test_jinja_message_list(mail_config):
     fm = FastMail(conf)
 
     with fm.record_messages() as outbox:
-        await fm.send_message(message=msg, template_name="array_iteration_jinja_template.html")
+        await fm.send_message(
+            message=msg, template_name="array_iteration_jinja_template.html"
+        )
 
         assert len(outbox) == 1
         mail = outbox[0]
@@ -283,7 +292,9 @@ async def test_jinja_message_with_html(mail_config):
     )
     conf = ConnectionConfig(**mail_config)
     fm = FastMail(conf)
-    await fm.send_message(message=msg, template_name="array_iteration_jinja_template.html")
+    await fm.send_message(
+        message=msg, template_name="array_iteration_jinja_template.html"
+    )
 
     assert msg.template_body == ("\n    \n    \n        Andrej\n    \n\n")
 
@@ -364,7 +375,10 @@ async def test_send_msg_with_alternative_body_and_attachements(mail_config):
 
         assert mail._payload[1].get_content_maintype() == "application"
 
-        assert mail._payload[1].__dict__.get("_headers")[0][1] == "application/octet-stream"
+        assert (
+            mail._payload[1].__dict__.get("_headers")[0][1]
+            == "application/octet-stream"
+        )
 
 
 @pytest.mark.asyncio
@@ -380,7 +394,6 @@ async def test_local_hostname_resolving(mail_config):
         conf.LOCAL_HOSTNAME = "localhost"
         async with Connection(conf) as session:
             assert session.session.local_hostname == conf.LOCAL_HOSTNAME
-
 
 
 @pytest.mark.asyncio
@@ -443,4 +456,3 @@ async def test_jinja_plain_and_html_message(mail_config):
     assert msg.subtype == MessageType.plain
     assert msg.template_body == "Andrej"
     assert msg.alternative_body == "<b>Andrej</b>"
-
