@@ -1,5 +1,12 @@
-name: CI Tests
-on: [push, pull_request]
+name: Lint
+
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ "**" ]
+
+jobs:
 
 jobs:
   ci:
@@ -21,5 +28,5 @@ jobs:
           poetry-version: ${{ matrix.poetry-version }}
       - name: Install dependencies
         run: poetry install
-      - name: Run tests
-        run: poetry run make test
+      - name: Run linter
+        run: poetry run make lint
