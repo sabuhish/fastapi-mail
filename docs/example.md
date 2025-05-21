@@ -95,6 +95,21 @@ async def send_file(
     return JSONResponse(status_code=200, content={"message": "email has been sent"})
 ```
 
+### Sending Multipart messages with HTML and plain text
+
+You can send multipart emails with both HTML and Plain text content by passing in the `multipart_subtype` parameter of `MultipartSubtypeEnum.alternative`, and supplying a value for the `alternative_body` parameter in `MessageSchema`:
+
+```python
+message = MessageSchema(
+    subject="Fastapi-Mail module",
+    recipients=["john@smith.com"],
+    template_body="<b>This is a test email</b>",
+    subtype=MessageType.html,
+    alternative_body="This is a test email",
+    multipart_subtype=MultipartSubtypeEnum.alternative,
+)
+await fm.send_message(message)
+```
 
 ### Using Jinja2 HTML Templates
 
@@ -152,6 +167,39 @@ We can reference the variables in our Jinja templates as per normal:
 ...
 <span>Hello, {{ first_name }}!</span>
 ...
+```
+
+### Sending multipart messages with HTML and Text Jinja2 Templates
+
+You can send multipart emails with both HTML and Plain text content by passing in two templates to the send_message call. The same template_body dict will be used for both templates.
+
+```python
+
+class EmailSchema(BaseModel):
+    email: List[EmailStr]
+    body: Dict[str, Any]
+
+conf = ConnectionConfig(
+    TEMPLATE_FOLDER = Path(__file__).parent / 'templates',
+    # ... other config options
+)
+
+
+@app.post("/email")
+async def send_with_template(email: EmailSchema) -> JSONResponse:
+
+    message = MessageSchema(
+        subject="Fastapi-Mail module",
+        recipients=email.dict().get("email"),
+        template_body=email.dict().get("body"),
+        subtype=MessageType.html)
+
+    fm = FastMail(conf)
+    await fm.send_message(
+        message,
+        html_template="email_template.html",
+        plain_template="email_template.txt")
+    return JSONResponse(status_code=200, content={"message": "email has been sent"})
 ```
 
 #### Legacy Behaviour (<= 0.4.0)

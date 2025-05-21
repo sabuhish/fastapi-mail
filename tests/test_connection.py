@@ -363,6 +363,7 @@ async def test_send_msg_with_alternative_body_and_attachements(mail_config):
         assert body._payload[1]._headers[0][1] == 'text/plain; charset="utf-8"'
 
         assert mail._payload[1].get_content_maintype() == "application"
+
         assert mail._payload[1].__dict__.get("_headers")[0][1] == "application/octet-stream"
 
 
@@ -379,3 +380,71 @@ async def test_local_hostname_resolving(mail_config):
         conf.LOCAL_HOSTNAME = "localhost"
         async with Connection(conf) as session:
             assert session.session.local_hostname == conf.LOCAL_HOSTNAME
+
+        assert (
+            mail._payload[1].__dict__.get("_headers")[0][1]
+            == "application/octet-stream"
+        )
+
+
+@pytest.mark.asyncio
+async def test_jinja_html_and_plain_message(mail_config):
+    sender = f"{mail_config['MAIL_FROM_NAME']} <{mail_config['MAIL_FROM']}>"
+    subject = "testing"
+    to = "to@example.com"
+    persons = {"name": "Andrej"}
+
+    msg = MessageSchema(
+        subject=subject,
+        recipients=[to],
+        template_body=persons,
+        subtype=MessageType.html,
+    )
+    conf = ConnectionConfig(**mail_config)
+    fm = FastMail(conf)
+
+    with fm.record_messages() as outbox:
+        await fm.send_message(
+            message=msg, html_template="html.jinja", plain_template="text.jinja"
+        )
+
+        assert len(outbox) == 1
+        mail = outbox[0]
+        assert mail["To"] == to
+        assert mail["From"] == sender
+        assert mail["Subject"] == subject
+    assert msg.subtype == MessageType.html
+    assert msg.template_body == "<b>Andrej</b>"
+    assert msg.alternative_body == "Andrej"
+
+
+@pytest.mark.asyncio
+async def test_jinja_plain_and_html_message(mail_config):
+    sender = f"{mail_config['MAIL_FROM_NAME']} <{mail_config['MAIL_FROM']}>"
+    subject = "testing"
+    to = "to@example.com"
+    persons = {"name": "Andrej"}
+
+    msg = MessageSchema(
+        subject=subject,
+        recipients=[to],
+        template_body=persons,
+        subtype=MessageType.plain,
+    )
+    conf = ConnectionConfig(**mail_config)
+    fm = FastMail(conf)
+
+    with fm.record_messages() as outbox:
+        await fm.send_message(
+            message=msg, html_template="html.jinja", plain_template="text.jinja"
+        )
+
+        assert len(outbox) == 1
+        mail = outbox[0]
+        assert mail["To"] == to
+        assert mail["From"] == sender
+        assert mail["Subject"] == subject
+    assert msg.subtype == MessageType.plain
+    assert msg.template_body == "Andrej"
+    assert msg.alternative_body == "<b>Andrej</b>"
+
