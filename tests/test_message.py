@@ -128,6 +128,28 @@ def test_replyto():
     assert msg.reply_to == ["replyto@example.com"]
 
 
+def test_from_email():
+    msg = MessageSchema(
+        subject="subject",
+        recipients=[],
+        from_email="replyto@example.com",
+        subtype=MessageType.plain,
+    )
+
+    assert msg.from_email == "replyto@example.com"
+
+
+def test_from_name():
+    msg = MessageSchema(
+        subject="subject",
+        recipients=[],
+        from_name="No Reply",
+        subtype=MessageType.plain,
+    )
+
+    assert msg.from_name == "No Reply"
+
+
 def test_cc():
     msg = MessageSchema(
         subject="subject",

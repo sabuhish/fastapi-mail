@@ -73,7 +73,7 @@ class FastMail(_MailMixin):
                 message, template
             )
         msg = MailMsg(message)
-        sender = await self.__sender()
+        sender = await self.__sender(message)
         return await msg._message(sender)
 
     async def __prepare_html_and_plain_message(
@@ -107,10 +107,10 @@ class FastMail(_MailMixin):
             template_data = self.check_data(message.template_body)
             return template.render(**template_data)
 
-    async def __sender(self) -> Union[EmailStr, str]:
-        sender = self.config.MAIL_FROM
-        if self.config.MAIL_FROM_NAME is not None:
-            return formataddr((self.config.MAIL_FROM_NAME, self.config.MAIL_FROM))
+    async def __sender(self, message: MessageSchema) -> Union[EmailStr, str]:
+        sender = message.from_email or self.config.MAIL_FROM
+        if (from_name := message.from_name or self.config.MAIL_FROM_NAME) is not None:
+            return formataddr((from_name, sender))
         return sender
 
     async def send_message(
