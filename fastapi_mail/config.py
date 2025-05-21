@@ -21,6 +21,7 @@ class ConnectionConfig(Settings):
     USE_CREDENTIALS: bool = True
     VALIDATE_CERTS: bool = True
     TIMEOUT: int = DEFAULT_TIMEOUT
+    LOCAL_HOSTNAME: Optional[str] = None
 
     def template_engine(self) -> Environment:
         """
