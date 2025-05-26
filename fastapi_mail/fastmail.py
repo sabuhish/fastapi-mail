@@ -1,5 +1,6 @@
 from contextlib import contextmanager
 from email.message import EmailMessage, Message
+from email.utils import formataddr
 from typing import Any, Dict, Optional, Union
 
 import blinker
@@ -10,7 +11,7 @@ from fastapi_mail.config import ConnectionConfig
 from fastapi_mail.connection import Connection
 from fastapi_mail.errors import PydanticClassRequired
 from fastapi_mail.msg import MailMsg
-from fastapi_mail.schemas import MessageSchema
+from fastapi_mail.schemas import MessageSchema, MessageType, MultipartSubtypeEnum
 
 
 class _MailMixin:
@@ -55,14 +56,16 @@ class FastMail(_MailMixin):
         return env_path.get_template(template_name)
 
     @staticmethod
-    def check_data(data: Union[Dict[Any, Any], str, None]) -> Dict[Any, Any]:
-        if not isinstance(data, dict):
+    def check_data(data: Union[Dict[Any, Any], str, None, list[Any]]) -> Dict[Any, Any]:
+        if isinstance(data, dict):
+            return data
+        elif isinstance(data, list):
+            return {"body": data}
+        else:
             raise ValueError(
                 f"Unable to build template data dictionary - {type(data)}"
                 "is an invalid source data type"
             )
-
-        return data
 
     async def __prepare_message(
         self, message: MessageSchema, template: Optional[Template] = None
@@ -72,7 +75,29 @@ class FastMail(_MailMixin):
                 message, template
             )
         msg = MailMsg(message)
-        sender = await self.__sender()
+        sender = await self.__sender(message)
+        return await msg._message(sender)
+
+    async def __prepare_html_and_plain_message(
+        self,
+        message: MessageSchema,
+        html_template: Template,
+        plain_template: Template,
+    ) -> Union[EmailMessage, Message]:
+        template_data = self.check_data(message.template_body)
+        html = html_template.render(**template_data)
+        plain = plain_template.render(**template_data)
+
+        message.multipart_subtype = MultipartSubtypeEnum.alternative
+        if message.subtype == MessageType.html:
+            message.template_body = html
+            message.alternative_body = plain
+        else:
+            message.template_body = plain
+            message.alternative_body = html
+
+        msg = MailMsg(message)
+        sender = await self.__sender(message)
         return await msg._message(sender)
 
     async def __template_message_builder(
@@ -84,25 +109,42 @@ class FastMail(_MailMixin):
             template_data = self.check_data(message.template_body)
             return template.render(**template_data)
 
-    async def __sender(self) -> Union[EmailStr, str]:
-        sender = self.config.MAIL_FROM
-        if self.config.MAIL_FROM_NAME is not None:
-            return f"{self.config.MAIL_FROM_NAME} <{self.config.MAIL_FROM}>"
+    async def __sender(self, message: MessageSchema) -> Union[EmailStr, str]:
+        sender = message.from_email or self.config.MAIL_FROM
+        if (from_name := message.from_name or self.config.MAIL_FROM_NAME) is not None:
+            return formataddr((from_name, sender))
         return sender
 
     async def send_message(
-        self, message: MessageSchema, template_name: Optional[str] = None
+        self,
+        message: MessageSchema,
+        template_name: Optional[str] = None,
+        html_template: Optional[str] = None,
+        plain_template: Optional[str] = None,
     ) -> None:
         if not isinstance(message, MessageSchema):
             raise PydanticClassRequired(
                 "Message schema should be provided from MessageSchema class"
             )
 
-        if self.config.TEMPLATE_FOLDER and template_name:
-            template = await self.get_mail_template(
-                self.config.template_engine(), template_name
-            )
-            msg = await self.__prepare_message(message, template)
+        if self.config.TEMPLATE_FOLDER and (
+            template_name or (html_template and plain_template)
+        ):
+            if template_name:
+                template_obj = await self.get_mail_template(
+                    self.config.template_engine(), template_name  # type: ignore
+                )
+                msg = await self.__prepare_message(message, template_obj)
+            else:
+                html_template_obj = await self.get_mail_template(
+                    self.config.template_engine(), html_template or ""  # type: ignore
+                )
+                plain_template_obj = await self.get_mail_template(
+                    self.config.template_engine(), plain_template or ""  # type: ignore
+                )
+                msg = await self.__prepare_html_and_plain_message(
+                    message, html_template_obj, plain_template_obj
+                )
         else:
             msg = await self.__prepare_message(message)
 

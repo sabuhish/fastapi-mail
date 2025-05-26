@@ -8,7 +8,7 @@ from pydantic_settings import BaseSettings as Settings
 
 class ConnectionConfig(Settings):
     MAIL_USERNAME: str
-    MAIL_PASSWORD: str
+    MAIL_PASSWORD: SecretStr
     MAIL_PORT: int
     MAIL_SERVER: str
     MAIL_STARTTLS: bool
@@ -21,6 +21,7 @@ class ConnectionConfig(Settings):
     USE_CREDENTIALS: bool = True
     VALIDATE_CERTS: bool = True
     TIMEOUT: int = DEFAULT_TIMEOUT
+    LOCAL_HOSTNAME: Optional[str] = None      
     CERT_BUNDLE: Optional[FilePath] = None
 
     def template_engine(self) -> Environment:

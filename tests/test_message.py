@@ -71,7 +71,7 @@ def test_message_str():
         subtype=MessageType.plain,
     )
 
-    assert type(message.body) == str
+    assert isinstance(message.body, str)
 
 
 def test_plain_message_with_attachments():
@@ -126,6 +126,28 @@ def test_replyto():
 
     assert len(msg.reply_to) == 1
     assert msg.reply_to == ["replyto@example.com"]
+
+
+def test_from_email():
+    msg = MessageSchema(
+        subject="subject",
+        recipients=[],
+        from_email="replyto@example.com",
+        subtype=MessageType.plain,
+    )
+
+    assert msg.from_email == "replyto@example.com"
+
+
+def test_from_name():
+    msg = MessageSchema(
+        subject="subject",
+        recipients=[],
+        from_name="No Reply",
+        subtype=MessageType.plain,
+    )
+
+    assert msg.from_name == "No Reply"
 
 
 def test_cc():

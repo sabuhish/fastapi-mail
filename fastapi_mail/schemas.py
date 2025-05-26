@@ -43,6 +43,8 @@ class MessageSchema(BaseModel):
     cc: List[EmailStr] = []
     bcc: List[EmailStr] = []
     reply_to: List[EmailStr] = []
+    from_email: Optional[EmailStr] = None
+    from_name: Optional[str] = None
     charset: str = "utf-8"
     subtype: MessageType
     multipart_subtype: MultipartSubtypeEnum = MultipartSubtypeEnum.mixed
