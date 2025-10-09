@@ -91,6 +91,7 @@ class MessageSchema(BaseModel):
         return temp
 
     @model_validator(mode="after")
+    @classmethod
     def validate_alternative_body(cls, values):
         """
         Validate alternative_body field
