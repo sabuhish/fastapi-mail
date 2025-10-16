@@ -33,7 +33,7 @@ httpx = ["httpx"]
 redis = ["redis"]
 
 [tool.poetry.group.dev.dependencies]
-pytest-cov = "^4.0"
+pytest-cov = ">=4,<8"
 mkdocs = "^1.2"
 mkdocs-markdownextradata-plugin = "^0.2"
 isort = "^5.9"
