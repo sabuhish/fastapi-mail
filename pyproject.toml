@@ -13,7 +13,6 @@ python = "^3.10.0"
 Jinja2 = "^3.0"
 blinker = "^1.5"
 httpx = {extras = ["httpx"], version = "^0.23", optional = true}
-redis = {extras = ["redis"], version = "^4.3", optional = true}
 starlette = ">=0.24,<1.0"  # caret behaviour on 0.x is to lock to 0.x.*
 aiosmtplib = "^3.0.2"
 pydantic = "^2.10.1"
@@ -22,6 +21,7 @@ pydantic-settings = "^2.6.1"
 flake8 = "^7.3.0"
 pytest = "^8.4.2"
 pytest-asyncio = "^1.2.0"
+redis = "^6.4.0"
 
 [tool.poetry.extras]
 httpx = ["httpx"]
@@ -39,7 +39,6 @@ typed-ast = "^1.4"
 regex = "2022.7.9"
 fakeredis = "^2.0"
 httpx = "^0.23"
-redis = "^4.3"
 uvicorn = "^0.20"
 fastapi = "^0.100"
 types-redis = "^4.3.21"
