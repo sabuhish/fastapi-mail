@@ -95,13 +95,6 @@ class MessageSchema(BaseModel):
         """
         Validate alternative_body field
         """
-        # if (
-        #     values.multipart_subtype != MultipartSubtypeEnum.alternative
-        #     and values.alternative_body
-        # ):
-        #     values.alternative_body = None
-        # return values
-        # pydantic:v2 wants self to return:
         if (
             self.multipart_subtype != MultipartSubtypeEnum.alternative
             and self.alternative_body
@@ -110,3 +103,4 @@ class MessageSchema(BaseModel):
         return self
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
+
