@@ -7,6 +7,7 @@ import pytest_asyncio
 
 from fastapi_mail.email_utils import DefaultChecker
 
+
 @pytest.fixture
 def default_checker():
     test = DefaultChecker()
