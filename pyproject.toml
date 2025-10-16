@@ -31,7 +31,7 @@ redis = ["redis"]
 pytest-mock = "^3.10"
 pytest-cov = "^4.0"
 mkdocs = "^1.2"
-mkdocs-material = "^7.2"
+mkdocs-material = ">=7.2,<10.0"
 mkdocs-markdownextradata-plugin = "^0.2"
 isort = "^5.9"
 mypy = "^1.4"
