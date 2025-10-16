@@ -35,7 +35,7 @@ redis = ["redis"]
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.0"
-pytest-asyncio = "^0.20"
+pytest-asyncio = ">=0.20,<0.24"
 pytest-mock = "^3.10"
 pytest-cov = "^4.0"
 mkdocs = "^1.2"
