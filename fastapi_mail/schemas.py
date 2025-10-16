@@ -91,15 +91,16 @@ class MessageSchema(BaseModel):
         return temp
 
     @model_validator(mode="after")
-    def validate_alternative_body(cls, values):
+    def validate_alternative_body(self):
         """
         Validate alternative_body field
         """
         if (
-            values.multipart_subtype != MultipartSubtypeEnum.alternative
-            and values.alternative_body
+            self.multipart_subtype != MultipartSubtypeEnum.alternative
+            and self.alternative_body
         ):
-            values.alternative_body = None
-        return values
+            self.alternative_body = None
+        return self
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
+
