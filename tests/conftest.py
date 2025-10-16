@@ -7,7 +7,6 @@ import pytest_asyncio
 
 from fastapi_mail.email_utils import DefaultChecker
 
-
 @pytest.fixture
 def default_checker():
     test = DefaultChecker()
@@ -16,7 +15,8 @@ def default_checker():
 
 
 @pytest_asyncio.fixture
-async def redis_checker(scope="redis_config"):
+async def redis_checker():
+    """Fixture for DefaultChecker with Redis backend"""
     test = DefaultChecker(db_provider="redis")
     test.redis_client = fakeredis.aioredis.FakeRedis()
     yield test
