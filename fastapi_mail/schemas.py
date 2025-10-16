@@ -103,4 +103,3 @@ class MessageSchema(BaseModel):
         return self
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
-

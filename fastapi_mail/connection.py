@@ -40,7 +40,7 @@ class Connection:
                 start_tls=self.settings.MAIL_STARTTLS,
                 validate_certs=self.settings.VALIDATE_CERTS,
                 local_hostname=self.settings.LOCAL_HOSTNAME,
-                cert_bundle=self.settings.CERT_BUNDLE,              
+                cert_bundle=self.settings.CERT_BUNDLE,
             )
 
             if not self.settings.SUPPRESS_SEND:  # for test environ
