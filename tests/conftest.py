@@ -43,6 +43,7 @@ def mail_config() -> Generator:
         "USE_CREDENTIALS": False,
         "VALIDATE_CERTS": False,
         "TEMPLATE_FOLDER": html,
+        "LOCAL_HOSTNAME": "my.fake.domain.com",
     }
 
     yield env

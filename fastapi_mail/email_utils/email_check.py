@@ -62,7 +62,6 @@ class AbstractEmailChecker(ABC):
 
 
 class DefaultChecker(AbstractEmailChecker):
-
     """
     Default class for checking email from collected public resource.
     The class makes it possible to use redis to save data.
