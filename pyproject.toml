@@ -34,7 +34,7 @@ httpx = ["httpx"]
 redis = ["redis"]
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^7.0"
+pytest = ">=7,<9"
 pytest-asyncio = "^0.20"
 pytest-mock = "^3.10"
 pytest-cov = "^4.0"
