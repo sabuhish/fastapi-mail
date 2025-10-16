@@ -36,7 +36,7 @@ redis = ["redis"]
 pytest-cov = "^4.0"
 mkdocs = "^1.2"
 mkdocs-markdownextradata-plugin = "^0.2"
-isort = "^5.9"
+isort = ">=5.9,<8.0"
 mypy = "^1.4"
 typed-ast = "^1.4"
 regex = "2022.7.9"
