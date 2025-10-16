@@ -10,12 +10,9 @@ repository = "https://github.com/sabuhish/fastapi-mail"
 
 [tool.poetry.dependencies]
 python = "^3.10.0"
-Jinja2 = "^3.0"
 blinker = "^1.5"
 starlette = ">=0.24,<1.0"  # caret behaviour on 0.x is to lock to 0.x.*
 aiosmtplib = "^3.0.2"
-pydantic = "^2.10.1"
-email-validator = "^2.2.0"
 pydantic-settings = "^2.6.1"
 flake8 = "^7.3.0"
 pytest = "^8.4.2"
@@ -26,13 +23,16 @@ uvicorn = "^0.37.0"
 cryptography = "^46.0.3"
 httpx = "^0.28.1"
 typing-extensions = "^4.15.0"
+jinja2 = "^3.1.6"
+pytest-mock = "^3.15.1"
+pydantic = "^2.12.2"
+email-validator = "^2.3.0"
 
 [tool.poetry.extras]
 httpx = ["httpx"]
 redis = ["redis"]
 
 [tool.poetry.group.dev.dependencies]
-pytest-mock = "^3.10"
 pytest-cov = "^4.0"
 mkdocs = "^1.2"
 mkdocs-markdownextradata-plugin = "^0.2"
