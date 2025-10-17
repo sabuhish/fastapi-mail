@@ -4,7 +4,14 @@ from io import BytesIO
 from mimetypes import MimeTypes
 from typing import Dict, List, Optional, Union
 
-from pydantic import BaseModel, ConfigDict, EmailStr, field_validator, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    EmailStr,
+    NameEmail,
+    field_validator,
+    model_validator,
+)
 from starlette.datastructures import Headers, UploadFile
 
 from fastapi_mail.errors import WrongFile
@@ -34,15 +41,15 @@ class MessageType(Enum):
 
 
 class MessageSchema(BaseModel):
-    recipients: List[EmailStr]
+    recipients: List[NameEmail]
     attachments: List[Union[UploadFile, Dict, str]] = []
     subject: str = ""
     body: Optional[Union[str, list]] = None
     alternative_body: Optional[str] = None
     template_body: Optional[Union[list, dict, str]] = None
-    cc: List[EmailStr] = []
-    bcc: List[EmailStr] = []
-    reply_to: List[EmailStr] = []
+    cc: List[NameEmail] = []
+    bcc: List[NameEmail] = []
+    reply_to: List[NameEmail] = []
     from_email: Optional[EmailStr] = None
     from_name: Optional[str] = None
     charset: str = "utf-8"

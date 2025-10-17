@@ -52,6 +52,7 @@ The key features are:
 -  sending emails using FastApi background task managment
 -  sending files either from form-data or files from server
 -  Using Jinja2 HTML Templates
+-  **NameEmail support** - recipients can be specified as `"Name <email@domain.com>"` format
 -  email utils (utility allows you to check temporary email addresses, you can block any email or domain)
 -  email utils has two available classes ```DefaultChecker``` and  ```WhoIsXmlApi```
 -  Unittests using FastapiMail
@@ -67,14 +68,14 @@ More information on [Getting-Started](https://sabuhish.github.io/fastapi-mail/ge
 from typing import List
 
 from fastapi import BackgroundTasks, FastAPI
-from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
+from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType, NameEmail
 from pydantic import BaseModel, EmailStr
 from starlette.responses import JSONResponse
 
 
 
 class EmailSchema(BaseModel):
-    email: List[EmailStr]
+    email: List[NameEmail]  # Supports both "user@example.com" and "Name <user@example.com>" formats
 
 
 conf = ConnectionConfig(
@@ -102,7 +103,7 @@ async def simple_send(email: EmailSchema) -> JSONResponse:
 
     message = MessageSchema(
         subject="Fastapi-Mail module",
-        recipients=email.dict().get("email"),
+        recipients=email.dict().get("email"),  # Can include "Name <email@domain.com>" format
         body=html,
         subtype=MessageType.html)
 
