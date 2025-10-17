@@ -128,20 +128,22 @@ class MailMsg:
 
         self.message["Date"] = formatdate(time.time(), localtime=True)
         self.message["Message-ID"] = self.msgId
-        self.message["To"] = ", ".join(self.recipients)
+        self.message["To"] = ", ".join(str(recipient) for recipient in self.recipients)
         self.message["From"] = sender
 
         if self.subject:
             self.message["Subject"] = self.subject
 
         if self.cc:
-            self.message["Cc"] = ", ".join(self.cc)
+            self.message["Cc"] = ", ".join(str(recipient) for recipient in self.cc)
 
         if self.bcc:
-            self.message["Bcc"] = ", ".join(self.bcc)
+            self.message["Bcc"] = ", ".join(str(recipient) for recipient in self.bcc)
 
         if self.reply_to:
-            self.message["Reply-To"] = ", ".join(self.reply_to)
+            self.message["Reply-To"] = ", ".join(
+                str(recipient) for recipient in self.reply_to
+            )
 
         if self.attachments:
             await self.attach_file(self.message, self.attachments)

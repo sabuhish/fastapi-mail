@@ -111,6 +111,29 @@ message = MessageSchema(
 await fm.send_message(message)
 ```
 
+### Using NameEmail for Recipients
+
+You can use NameEmail format for recipients, CC, BCC, and reply-to fields. Specify both a name and email address in the format `"Name <email@domain.com>"`:
+
+```python
+message = MessageSchema(
+    subject="Fastapi-Mail module",
+    recipients=[
+        "john@smith.com",  # Simple email format
+        "Jane Doe <jane@example.com>",  # NameEmail format
+        "Support Team <support@company.com>"  # NameEmail format
+    ],
+    cc=["Manager <manager@company.com>"],
+    bcc=["Admin <admin@company.com>"],
+    reply_to=["No Reply <noreply@company.com>"],
+    body="This is a test email with named recipients",
+    subtype=MessageType.html,
+)
+await fm.send_message(message)
+```
+
+The NameEmail format is also supported in all recipient fields (recipients, cc, bcc, reply_to). You can mix simple email addresses and NameEmail formats in the same list.
+
 ### Using Jinja2 HTML Templates
 
 You can enable Jinja2 HTML Template emails by setting the `TEMPLATE_FOLDER` configuration option, and supplying a 
