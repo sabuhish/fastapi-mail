@@ -58,6 +58,14 @@ async def name_email_example():
     # Accessing name and email properties
     for recipient in message.recipients:
         print(f"Recipient: {recipient.name} <{recipient.email}>")
+    
+    print("\n" + "="*50)
+    print("COMMON ERRORS TO AVOID:")
+    print("❌ 'John Doe support@company.com' (missing angle brackets)")
+    print("❌ 'John Doe <support@company.com' (missing closing bracket)")
+    print("❌ 'John Doe <support @company.com>' (space in email part)")
+    print("✅ 'JohnDoe <support@company.com>' (correct format)")
+    print("✅ 'user@example.com' (simple email format)")
 
 
 if __name__ == "__main__":

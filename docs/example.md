@@ -132,7 +132,14 @@ message = MessageSchema(
 await fm.send_message(message)
 ```
 
-**Note:** For best compatibility, avoid spaces in the name part of NameEmail format. Use `"JohnDoe <john@example.com>"` instead of `"John Doe <john@example.com>"`.
+**Important Notes:**
+- **Correct format**: `"Name <email@domain.com>"` (with angle brackets)
+- **Avoid spaces in names**: Use `"JohnDoe <john@example.com>"` instead of `"John Doe <john@example.com>"`
+- **Common errors to avoid**:
+  - ❌ `"John Doe support@company.com"` (missing angle brackets)
+  - ❌ `"John Doe <support@company.com"` (missing closing bracket)
+  - ❌ `"John Doe <support @company.com>"` (space in email part)
+  - ✅ `"JohnDoe <support@company.com>"` (correct format)
 
 The NameEmail format is also supported in all recipient fields (recipients, cc, bcc, reply_to). You can mix simple email addresses and NameEmail formats in the same list.
 
