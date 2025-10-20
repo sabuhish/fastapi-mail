@@ -95,7 +95,6 @@ class DefaultChecker(AbstractEmailChecker):
         username: Optional[str] = None,
         **options: dict,
     ):
-
         if not redis_lib:
             raise ImportError(
                 "You must install redis from https://pypi.org/project/redis in order to run functionality"
@@ -287,7 +286,6 @@ class DefaultChecker(AbstractEmailChecker):
             dns.resolver.NoNameservers,
             dns.exception.Timeout,
         ):
-
             return False
 
     async def blocked_email_count(self) -> int:
