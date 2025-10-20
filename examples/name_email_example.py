@@ -60,12 +60,12 @@ async def name_email_example():
         print(f"Recipient: {recipient.name} <{recipient.email}>")
     
     print("\n" + "="*50)
-    print("COMMON ERRORS TO AVOID:")
-    print("❌ 'John Doe support@company.com' (missing angle brackets)")
+    print("Common mistakes to avoid:")
+    print("❌ 'John Doe support@company.com' (missing brackets)")
     print("❌ 'John Doe <support@company.com' (missing closing bracket)")
-    print("❌ 'John Doe <support @company.com>' (space in email part)")
-    print("✅ 'JohnDoe <support@company.com>' (correct format)")
-    print("✅ 'user@example.com' (simple email format)")
+    print("❌ 'John Doe <support @company.com>' (space in email)")
+    print("✅ 'JohnDoe <support@company.com>' (correct)")
+    print("✅ 'user@example.com' (simple format)")
 
 
 if __name__ == "__main__":

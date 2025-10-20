@@ -132,14 +132,31 @@ message = MessageSchema(
 await fm.send_message(message)
 ```
 
-**Important Notes:**
-- **Correct format**: `"Name <email@domain.com>"` (with angle brackets)
-- **Avoid spaces in names**: Use `"JohnDoe <john@example.com>"` instead of `"John Doe <john@example.com>"`
-- **Common errors to avoid**:
-  - ❌ `"John Doe support@company.com"` (missing angle brackets)
+**Using NameEmail objects directly:**
+```python
+from pydantic import NameEmail
+
+message = MessageSchema(
+    subject="Fastapi-Mail module",
+    recipients=[
+        "john@smith.com",  # Simple email format
+        NameEmail("JaneDoe <jane@example.com>"),
+        NameEmail("SupportTeam <support@company.com>")
+    ],
+    body="This is a test email with named recipients",
+    subtype=MessageType.html,
+)
+await fm.send_message(message)
+```
+
+**Format requirements:**
+- Use `"Name <email@domain.com>"` format with angle brackets
+- Avoid spaces in names: `"JohnDoe <john@example.com>"` works better than `"John Doe <john@example.com>"`
+- Common mistakes:
+  - ❌ `"John Doe support@company.com"` (missing brackets)
   - ❌ `"John Doe <support@company.com"` (missing closing bracket)
-  - ❌ `"John Doe <support @company.com>"` (space in email part)
-  - ✅ `"JohnDoe <support@company.com>"` (correct format)
+  - ❌ `"John Doe <support @company.com>"` (space in email)
+  - ✅ `"JohnDoe <support@company.com>"` (correct)
 
 The NameEmail format is also supported in all recipient fields (recipients, cc, bcc, reply_to). You can mix simple email addresses and NameEmail formats in the same list.
 
