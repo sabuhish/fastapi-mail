@@ -120,17 +120,19 @@ message = MessageSchema(
     subject="Fastapi-Mail module",
     recipients=[
         "john@smith.com",  # Simple email format
-        "Jane Doe <jane@example.com>",  # NameEmail format
-        "Support Team <support@company.com>"  # NameEmail format
+        "JaneDoe <jane@example.com>",  # NameEmail format
+        "SupportTeam <support@company.com>"  # NameEmail format
     ],
     cc=["Manager <manager@company.com>"],
     bcc=["Admin <admin@company.com>"],
-    reply_to=["No Reply <noreply@company.com>"],
+    reply_to=["NoReply <noreply@company.com>"],
     body="This is a test email with named recipients",
     subtype=MessageType.html,
 )
 await fm.send_message(message)
 ```
+
+**Note:** For best compatibility, avoid spaces in the name part of NameEmail format. Use `"JohnDoe <john@example.com>"` instead of `"John Doe <john@example.com>"`.
 
 The NameEmail format is also supported in all recipient fields (recipients, cc, bcc, reply_to). You can mix simple email addresses and NameEmail formats in the same list.
 

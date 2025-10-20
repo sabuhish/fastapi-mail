@@ -4,45 +4,44 @@ NameEmail example for FastAPI-Mail
 Usage example for NameEmail format in recipients.
 """
 
-from pydantic import NameEmail
-
-from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
+from fastapi_mail import MessageSchema, MessageType
 
 
 async def name_email_example():
     """NameEmail usage example"""
 
     # Configuration (replace with your actual email settings)
-    conf = ConnectionConfig(
-        MAIL_USERNAME="your_username",
-        MAIL_PASSWORD="your_password",
-        MAIL_FROM="your_email@example.com",
-        MAIL_PORT=587,
-        MAIL_SERVER="smtp.gmail.com",
-        MAIL_STARTTLS=True,
-        MAIL_SSL_TLS=False,
-        USE_CREDENTIALS=True,
-        VALIDATE_CERTS=True,
-    )
+    # conf = ConnectionConfig(
+    #     MAIL_USERNAME="your_username",
+    #     MAIL_PASSWORD="your_password",
+    #     MAIL_FROM="your_email@example.com",
+    #     MAIL_PORT=587,
+    #     MAIL_SERVER="smtp.gmail.com",
+    #     MAIL_STARTTLS=True,
+    #     MAIL_SSL_TLS=False,
+    #     USE_CREDENTIALS=True,
+    #     VALIDATE_CERTS=True,
+    # )
 
     # Create FastMail instance
-    fm = FastMail(conf)
+    # fm = FastMail(conf)
 
     # Mixed recipient formats
     message = MessageSchema(
         subject="NameEmail Example - Mixed Formats",
         recipients=[
             "user@example.com",  # Simple email format
-            "John Doe <john@example.com>",  # NameEmail format
-            "Support Team <support@company.com>",  # NameEmail format
+            "JohnDoe <john@example.com>",  # NameEmail format
+            "SupportTeam <support@company.com>",  # NameEmail format
         ],
         cc=["Manager <manager@company.com>"],
         bcc=["Admin <admin@company.com>"],
-        reply_to=["No Reply <noreply@company.com>"],
+        reply_to=["NoReply <noreply@company.com>"],
         body="""
         <h1>Hello!</h1>
         <p>This email demonstrates the NameEmail functionality.</p>
         <p>You can now specify recipients in the format "Name &lt;email@domain.com&gt;"</p>
+        <p><strong>Note:</strong> Avoid spaces in names for best compatibility.</p>
         """,
         subtype=MessageType.html,
     )

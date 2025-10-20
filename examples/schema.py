@@ -1,9 +1,10 @@
 from typing import List
 
-from pydantic import BaseModel, EmailStr, NameEmail
+from pydantic import BaseModel, NameEmail
 
 
 class EmailSchema(BaseModel):
     email: List[
         NameEmail
-    ]  # Now supports both "user@example.com" and "Name <user@example.com>" formats
+    ]  # Supports both "user@example.com" and "Name <user@example.com>" formats
+    # Note: Avoid spaces in names for best compatibility (e.g., "JohnDoe <john@example.com>")
