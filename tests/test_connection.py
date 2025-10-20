@@ -56,7 +56,7 @@ async def test_html_message(mail_config):
 
         assert len(outbox) == 1
         mail = outbox[0]
-        assert mail["To"] == to
+        assert mail["To"] == f"{to.split('@')[0]} <{to}>"
         assert mail["From"] == sender
         assert mail["Subject"] == subject
         assert msg.subtype == MessageType.plain
@@ -197,7 +197,7 @@ async def test_jinja_message_list(mail_config):
 
         assert len(outbox) == 1
         mail = outbox[0]
-        assert mail["To"] == to
+        assert mail["To"] == f"{to.split('@')[0]} <{to}>"
         assert mail["From"] == sender
         assert mail["Subject"] == subject
     assert msg.subtype == MessageType.html
@@ -225,7 +225,7 @@ async def test_jinja_message_dict(mail_config):
 
         assert len(outbox) == 1
         mail = outbox[0]
-        assert mail["To"] == to
+        assert mail["To"] == f"{to.split('@')[0]} <{to}>"
         assert mail["From"] == sender
         assert mail["Subject"] == subject
     assert msg.subtype == MessageType.html
@@ -251,7 +251,7 @@ async def test_send_msg(mail_config):
         assert len(outbox) == 1
         assert outbox[0]["subject"] == "testing"
         assert outbox[0]["from"] == sender
-        assert outbox[0]["To"] == "to@example.com"
+        assert outbox[0]["To"] == "to <to@example.com>"
 
 
 @pytest.mark.asyncio
@@ -273,7 +273,7 @@ async def test_send_msg_with_subtype(mail_config):
         assert len(outbox) == 1
         assert outbox[0]["subject"] == "testing"
         assert outbox[0]["from"] == sender
-        assert outbox[0]["To"] == "to@example.com"
+        assert outbox[0]["To"] == "to <to@example.com>"
     assert msg.body == "<p> Test data </p>"
     assert msg.subtype == MessageType.html
 
@@ -326,7 +326,7 @@ async def test_send_msg_with_alternative_body(mail_config):
         assert body._headers[1][1] == 'multipart/alternative; charset="utf-8"'
         assert mail["subject"] == "testing"
         assert mail["from"] == sender
-        assert mail["To"] == "to@example.com"
+        assert mail["To"] == "to <to@example.com>"
 
         assert body._payload[0]._headers[0][1] == 'text/html; charset="utf-8"'
         assert body._payload[1]._headers[0][1] == 'text/plain; charset="utf-8"'
@@ -368,7 +368,7 @@ async def test_send_msg_with_alternative_body_and_attachements(mail_config):
         assert body._headers[1][1] == 'multipart/alternative; charset="utf-8"'
         assert mail["subject"] == "testing"
         assert mail["from"] == sender
-        assert mail["To"] == "to@example.com"
+        assert mail["To"] == "to <to@example.com>"
 
         assert body._payload[0]._headers[0][1] == 'text/html; charset="utf-8"'
         assert body._payload[1]._headers[0][1] == 'text/plain; charset="utf-8"'
@@ -419,7 +419,7 @@ async def test_jinja_html_and_plain_message(mail_config):
 
         assert len(outbox) == 1
         mail = outbox[0]
-        assert mail["To"] == to
+        assert mail["To"] == f"{to.split('@')[0]} <{to}>"
         assert mail["From"] == sender
         assert mail["Subject"] == subject
     assert msg.subtype == MessageType.html
@@ -450,7 +450,7 @@ async def test_jinja_plain_and_html_message(mail_config):
 
         assert len(outbox) == 1
         mail = outbox[0]
-        assert mail["To"] == to
+        assert mail["To"] == f"{to.split('@')[0]} <{to}>"
         assert mail["From"] == sender
         assert mail["Subject"] == subject
     assert msg.subtype == MessageType.plain
