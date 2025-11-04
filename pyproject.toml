@@ -20,7 +20,7 @@ jinja2 = "^3.1.6"
 pydantic = "^2.12.2"
 email-validator = "^2.3.0"
 regex = "^2025.9.18"
-aiosmtplib = "^4.0.2"
+aiosmtplib = ">=4.0.2,<6.0.0"
 blinker = "^1.9.0"
 
 [tool.poetry.extras]
