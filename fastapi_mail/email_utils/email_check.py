@@ -68,7 +68,8 @@ class DefaultChecker(AbstractEmailChecker):
 
     :param source(optional): source for collected email data.
     :param db_provider: switch to redis
-    :param redis_client(optional): existing async Redis client to reuse (recommended for apps with existing Redis connections)
+    :param redis_client(optional): existing async Redis client to reuse (recommended for apps with existing
+                                    Redis connections)
     :param redis_host: Redis host (default: "localhost")
     :param redis_port: Redis port (default: 6379)
     :param redis_db: Redis database number (default: 0)
@@ -139,13 +140,15 @@ class DefaultChecker(AbstractEmailChecker):
 
         if db_provider == "redis":
             self.redis_enabled = True
-            self.username = username
-            self.redis_client = redis_client
-            self.redis_host = redis_host
-            self.redis_port = redis_port
-            self.redis_db = redis_db
-            self.redis_password = redis_password
-            self.options = options
+            if redis_client:
+                self.redis_client = redis_client
+            else:
+                self.username = username
+                self.redis_host = redis_host
+                self.redis_port = redis_port
+                self.redis_db = redis_db
+                self.redis_password = redis_password
+                self.options = options
         self.redis_error_msg = "redis is not connected"
 
     def catch_all_check(self):
@@ -177,7 +180,7 @@ class DefaultChecker(AbstractEmailChecker):
                     f"Received type: {type(self.redis_client)}. "
                     "Use: from redis.asyncio import Redis; client = Redis.from_url(...)"
                 )
-                
+
         temp_counter = await self.redis_client.get("temp_counter")
         domain_counter = await self.redis_client.get("domain_counter")
         blocked_emails = await self.redis_client.get("email_counter")
