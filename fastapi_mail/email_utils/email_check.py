@@ -131,16 +131,14 @@ class DefaultChecker(AbstractEmailChecker):
         if not self.redis_enabled:
             raise DBProvaiderError(self.redis_error_msg)
         if not hasattr(self, "redis_client"):
-            if not self.username or not self.redis_password:
-                self.redis_client = await aioredis.from_url(
-                    url=f"redis://{self.redis_host}", encoding="UTF-8", **self.options
-                )
-            else:
-                self.redis_client = await aioredis.from_url(
-                    url=f"redis://{self.username}:{self.redis_password}@{self.redis_host}:{self.redis_port}/{self.redis_db}",  # noqa: E501
-                    encoding="UTF-8",
-                    **self.options,
-                )
+            url = f"redis://{self.redis_host}:{self.redis_port}/{self.redis_db}"
+
+            self.redis_client = await aioredis.from_url(
+                url=url,
+                encoding="UTF-8",
+                username=self.username,
+                password=self.redis_password,
+                **self.options)
 
         temp_counter = await self.redis_client.get("temp_counter")
         domain_counter = await self.redis_client.get("domain_counter")
