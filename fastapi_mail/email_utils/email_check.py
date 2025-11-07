@@ -133,11 +133,11 @@ class DefaultChecker(AbstractEmailChecker):
         if not hasattr(self, "redis_client"):
             if not self.username or not self.redis_password:
                 self.redis_client = await aioredis.from_url(
-                    url="redis://localhost", encoding="UTF-8", **self.options
+                    url=f"redis://{self.redis_host}", encoding="UTF-8", **self.options
                 )
             else:
                 self.redis_client = await aioredis.from_url(
-                    url=f"redis://{self.username}:{self.redis_password}@localhost:{self.redis_port}/{self.redis_db}",  # noqa: E501
+                    url=f"redis://{self.username}:{self.redis_password}@{self.redis_host}:{self.redis_port}/{self.redis_db}",  # noqa: E501
                     encoding="UTF-8",
                     **self.options,
                 )
