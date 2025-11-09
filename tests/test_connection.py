@@ -560,8 +560,10 @@ async def test_send_messages_with_template(mail_config):
         assert outbox[0]["from"] == sender
         assert outbox[1]["from"] == sender
         # templated body gets rendered into message payload
-        assert "Alice" in outbox[0].get_payload()[0].get_payload()
-        assert "Bob" in outbox[1].get_payload()[0].get_payload()
+        alice_payload = outbox[0].get_payload()[0].get_payload(decode=True).decode()
+        bob_payload = outbox[1].get_payload()[0].get_payload(decode=True).decode()
+        assert "Alice" in alice_payload
+        assert "Bob" in bob_payload
 
     assert messages[0].template_body == ("\n   Alice\n")
     assert messages[1].template_body == ("\n   Bob\n")
