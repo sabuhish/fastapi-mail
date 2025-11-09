@@ -8,7 +8,7 @@ overhead.
 
 from typing import List
 
-from fastapi_mail import MessageSchema, MessageType
+from fastapi_mail import MessageSchema, MessageType, NameEmail
 
 
 async def main() -> None:
@@ -31,19 +31,19 @@ async def main() -> None:
     messages: List[MessageSchema] = [
         MessageSchema(
             subject="Welcome!",
-            recipients=["user1@example.com"],
+            recipients=[NameEmail(email="user1@example.com", name="John Doe")],
             body="<p>Thanks for joining us.</p>",
             subtype=MessageType.html,
         ),
         MessageSchema(
             subject="Verify your email",
-            recipients=["user2@example.com"],
+            recipients=[NameEmail(email="user2@example.com", name="Jane Doe")],
             body="<p>Please click the verification link.</p>",
             subtype=MessageType.html,
         ),
         MessageSchema(
             subject="Monthly update",
-            recipients=["user3@example.com"],
+            recipients=[NameEmail(email="user3@example.com", name="Jim Beam")],
             body="<p>Here are the latest updates.</p>",
             subtype=MessageType.html,
         ),
@@ -59,4 +59,3 @@ if __name__ == "__main__":
     import asyncio
 
     asyncio.run(main())
-

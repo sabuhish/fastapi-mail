@@ -218,6 +218,7 @@ class FastMail(_MailMixin):
         for prepared in prepared_messages:
             email_dispatched.send(prepared)
 
+
 signals = blinker.Namespace()
 
 email_dispatched = signals.signal(

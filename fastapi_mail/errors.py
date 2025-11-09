@@ -25,5 +25,6 @@ class ApiError(Exception):
 class DBProvaiderError(Exception):
     pass
 
+
 class EmptyMessagesList(Exception):
     pass
