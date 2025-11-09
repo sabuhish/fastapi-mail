@@ -8,7 +8,7 @@ overhead.
 
 from typing import List
 
-from fastapi_mail import FastMail, MessageSchema, MessageType
+from fastapi_mail import MessageSchema, MessageType
 
 
 async def main() -> None:
