@@ -160,6 +160,43 @@ await fm.send_message(message)
 
 The NameEmail format is also supported in all recipient fields (recipients, cc, bcc, reply_to). You can mix simple email addresses and NameEmail formats in the same list.
 
+### Sending Multiple Emails with a Single Connection
+
+If you need to send several emails at once, you can reuse one SMTP session by calling `send_messages()`:
+
+```python
+messages = [
+    MessageSchema(
+        subject="Welcome!",
+        recipients=["user1@example.com"],
+        body="<p>Thanks for joining.</p>",
+        subtype=MessageType.html,
+    ),
+    MessageSchema(
+        subject="Verify your account",
+        recipients=["user2@example.com"],
+        body="<p>Please click the link to verify.</p>",
+        subtype=MessageType.html,
+    ),
+    MessageSchema(
+        subject="Monthly updates",
+        recipients=["user3@example.com"],
+        body="<p>Here is what happened this month.</p>",
+        subtype=MessageType.html,
+    ),
+]
+
+fm = FastMail(conf)
+await fm.send_messages(messages)
+```
+
+**Why it helps**
+- Open the SMTP connection once, send all messages, then close it.
+- Avoid rate limits that trigger when reconnecting per email.
+- Reduces overhead compared to multiple `send_message()` calls.
+
+`send_messages()` accepts the same optional template arguments (`template_name`, `html_template`, `plain_template`) and prepares each message just like `send_message()`.
+
 ### Using Jinja2 HTML Templates
 
 You can enable Jinja2 HTML Template emails by setting the `TEMPLATE_FOLDER` configuration option, and supplying a 

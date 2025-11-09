@@ -9,7 +9,7 @@ from pydantic import EmailStr
 
 from fastapi_mail.config import ConnectionConfig
 from fastapi_mail.connection import Connection
-from fastapi_mail.errors import PydanticClassRequired
+from fastapi_mail.errors import PydanticClassRequired, EmptyMessagesList
 from fastapi_mail.msg import MailMsg
 from fastapi_mail.schemas import MessageSchema, MessageType, MultipartSubtypeEnum
 
@@ -154,6 +154,69 @@ class FastMail(_MailMixin):
 
             email_dispatched.send(msg)
 
+    async def send_messages(
+        self,
+        messages: list[MessageSchema],
+        template_name: Optional[str] = None,
+        html_template: Optional[str] = None,
+        plain_template: Optional[str] = None,
+    ) -> None:
+        if not isinstance(messages, list):
+            raise ValueError("messages must be a list of MessageSchema instances")
+
+        if not messages:
+            raise EmptyMessagesList("Messages list is empty")
+
+        prepared_messages: list[Union[EmailMessage, Message]] = []
+
+        template_env: Optional[Environment] = None
+        template_obj: Optional[Template] = None
+        html_template_obj: Optional[Template] = None
+        plain_template_obj: Optional[Template] = None
+
+        for message in messages:
+            if not isinstance(message, MessageSchema):
+                raise PydanticClassRequired(
+                    "All messages must be provided from MessageSchema class"
+                )
+
+            if self.config.TEMPLATE_FOLDER and (
+                template_name or (html_template and plain_template)
+            ):
+                if template_name:
+                    if template_env is None:
+                        template_env = self.config.template_engine()  # type: ignore
+                    if template_obj is None:
+                        template_obj = await self.get_mail_template(
+                            template_env, template_name
+                        )
+                    prepared = await self.__prepare_message(message, template_obj)
+                else:
+                    if template_env is None:
+                        template_env = self.config.template_engine()  # type: ignore
+                    if html_template_obj is None:
+                        html_template_obj = await self.get_mail_template(
+                            template_env, html_template or ""
+                        )
+                    if plain_template_obj is None:
+                        plain_template_obj = await self.get_mail_template(
+                            template_env, plain_template or ""
+                        )
+                    prepared = await self.__prepare_html_and_plain_message(
+                        message, html_template_obj, plain_template_obj
+                    )
+            else:
+                prepared = await self.__prepare_message(message)
+
+            prepared_messages.append(prepared)
+
+        async with Connection(self.config) as session:
+            if not self.config.SUPPRESS_SEND:
+                for prepared in prepared_messages:
+                    await session.session.send_message(prepared)
+
+        for prepared in prepared_messages:
+            email_dispatched.send(prepared)
 
 signals = blinker.Namespace()
 

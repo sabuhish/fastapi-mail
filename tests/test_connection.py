@@ -11,6 +11,7 @@ from fastapi_mail import (
     MultipartSubtypeEnum,
 )
 from fastapi_mail.connection import Connection
+from fastapi_mail.errors import EmptyMessagesList, PydanticClassRequired
 
 CONTENT = "This file contents some information."
 
@@ -456,3 +457,148 @@ async def test_jinja_plain_and_html_message(mail_config):
     assert msg.subtype == MessageType.plain
     assert msg.template_body == "Andrej"
     assert msg.alternative_body == "<b>Andrej</b>"
+
+
+@pytest.mark.asyncio
+async def test_send_messages_bulk(mail_config):
+    sender = f"{mail_config['MAIL_FROM_NAME']} <{mail_config['MAIL_FROM']}>"
+    messages = [
+        MessageSchema(
+            subject="Test 1",
+            recipients=["user1@example.com"],
+            body="Body 1",
+            subtype=MessageType.plain,
+        ),
+        MessageSchema(
+            subject="Test 2",
+            recipients=["user2@example.com"],
+            body="Body 2",
+            subtype=MessageType.html,
+        ),
+        MessageSchema(
+            subject="Test 3",
+            recipients=["user3@example.com"],
+            body="Body 3",
+            subtype=MessageType.plain,
+        ),
+    ]
+
+    conf = ConnectionConfig(**mail_config)
+    fm = FastMail(conf)
+    fm.config.SUPPRESS_SEND = 1
+
+    with fm.record_messages() as outbox:
+        await fm.send_messages(messages)
+
+        assert len(outbox) == 3
+        assert outbox[0]["subject"] == "Test 1"
+        assert outbox[0]["from"] == sender
+        assert outbox[0]["To"] == "user1 <user1@example.com>"
+
+        assert outbox[1]["subject"] == "Test 2"
+        assert outbox[1]["from"] == sender
+        assert outbox[1]["To"] == "user2 <user2@example.com>"
+
+        assert outbox[2]["subject"] == "Test 3"
+        assert outbox[2]["from"] == sender
+        assert outbox[2]["To"] == "user3 <user3@example.com>"
+
+
+@pytest.mark.asyncio
+async def test_send_messages_empty_list(mail_config):
+    conf = ConnectionConfig(**mail_config)
+    fm = FastMail(conf)
+
+    with pytest.raises(EmptyMessagesList, match="Messages list is empty"):
+        await fm.send_messages([])
+
+
+@pytest.mark.asyncio
+async def test_send_messages_invalid_type(mail_config):
+    conf = ConnectionConfig(**mail_config)
+    fm = FastMail(conf)
+
+    with pytest.raises(ValueError, match="messages must be a list"):
+        await fm.send_messages("not-a-list")  # type: ignore[arg-type]
+
+
+@pytest.mark.asyncio
+async def test_send_messages_invalid_message_type(mail_config):
+    conf = ConnectionConfig(**mail_config)
+    fm = FastMail(conf)
+
+    with pytest.raises(PydanticClassRequired):
+        await fm.send_messages(["not-a-message"])  # type: ignore[list-item]
+
+
+@pytest.mark.asyncio
+async def test_send_messages_with_template(mail_config):
+    sender = f"{mail_config['MAIL_FROM_NAME']} <{mail_config['MAIL_FROM']}>"
+    messages = [
+        MessageSchema(
+            subject="Greeting",
+            recipients=["user1@example.com"],
+            template_body={"name": "Alice"},
+            subtype=MessageType.html,
+        ),
+        MessageSchema(
+            subject="Greeting",
+            recipients=["user2@example.com"],
+            template_body={"name": "Bob"},
+            subtype=MessageType.html,
+        ),
+    ]
+
+    conf = ConnectionConfig(**mail_config)
+    fm = FastMail(conf)
+    fm.config.SUPPRESS_SEND = 1
+
+    with fm.record_messages() as outbox:
+        await fm.send_messages(messages, template_name="simple_jinja_template.html")
+
+        assert len(outbox) == 2
+        assert outbox[0]["from"] == sender
+        assert outbox[1]["from"] == sender
+        # templated body gets rendered into message payload
+        assert "Alice" in outbox[0].get_payload()[0].get_payload()
+        assert "Bob" in outbox[1].get_payload()[0].get_payload()
+
+    assert messages[0].template_body == ("\n   Alice\n")
+    assert messages[1].template_body == ("\n   Bob\n")
+
+
+@pytest.mark.asyncio
+async def test_send_messages_with_attachments(mail_config):
+    directory = os.getcwd()
+    text_file = directory + "/tests/txt_files/plain.txt"
+
+    with open(text_file, "w") as file:
+        file.write(CONTENT)
+
+    messages = [
+        MessageSchema(
+            subject="Attachment 1",
+            recipients=["user1@example.com"],
+            body="Body 1",
+            subtype=MessageType.plain,
+            attachments=[text_file],
+        ),
+        MessageSchema(
+            subject="Attachment 2",
+            recipients=["user2@example.com"],
+            body="Body 2",
+            subtype=MessageType.plain,
+            attachments=[text_file],
+        ),
+    ]
+
+    conf = ConnectionConfig(**mail_config)
+    fm = FastMail(conf)
+    fm.config.SUPPRESS_SEND = 1
+
+    with fm.record_messages() as outbox:
+        await fm.send_messages(messages)
+
+        assert len(outbox) == 2
+        assert outbox[0]._payload[1].get_content_maintype() == "application"
+        assert outbox[1]._payload[1].get_content_maintype() == "application"
