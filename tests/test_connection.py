@@ -460,7 +460,7 @@ async def test_jinja_plain_and_html_message(mail_config):
 
 
 @pytest.mark.asyncio
-async def test_send_messages_bulk(mail_config):
+async def test_send_message_bulk(mail_config):
     sender = f"{mail_config['MAIL_FROM_NAME']} <{mail_config['MAIL_FROM']}>"
     messages = [
         MessageSchema(
@@ -488,7 +488,7 @@ async def test_send_messages_bulk(mail_config):
     fm.config.SUPPRESS_SEND = 1
 
     with fm.record_messages() as outbox:
-        await fm.send_messages(messages)
+        await fm.send_message(messages)
 
         assert len(outbox) == 3
         assert outbox[0]["subject"] == "Test 1"
@@ -505,34 +505,34 @@ async def test_send_messages_bulk(mail_config):
 
 
 @pytest.mark.asyncio
-async def test_send_messages_empty_list(mail_config):
+async def test_send_message_empty_list(mail_config):
     conf = ConnectionConfig(**mail_config)
     fm = FastMail(conf)
 
     with pytest.raises(EmptyMessagesList, match="Messages list is empty"):
-        await fm.send_messages([])
+        await fm.send_message([])
 
 
 @pytest.mark.asyncio
-async def test_send_messages_invalid_type(mail_config):
-    conf = ConnectionConfig(**mail_config)
-    fm = FastMail(conf)
-
-    with pytest.raises(ValueError, match="messages must be a list"):
-        await fm.send_messages("not-a-list")  # type: ignore[arg-type]
-
-
-@pytest.mark.asyncio
-async def test_send_messages_invalid_message_type(mail_config):
+async def test_send_message_invalid_type(mail_config):
     conf = ConnectionConfig(**mail_config)
     fm = FastMail(conf)
 
     with pytest.raises(PydanticClassRequired):
-        await fm.send_messages(["not-a-message"])  # type: ignore[list-item]
+        await fm.send_message("not-a-list")  # type: ignore[arg-type]
 
 
 @pytest.mark.asyncio
-async def test_send_messages_with_template(mail_config):
+async def test_send_message_invalid_message_type(mail_config):
+    conf = ConnectionConfig(**mail_config)
+    fm = FastMail(conf)
+
+    with pytest.raises(PydanticClassRequired):
+        await fm.send_message(["not-a-message"])  # type: ignore[list-item]
+
+
+@pytest.mark.asyncio
+async def test_send_message_list_with_template(mail_config):
     sender = f"{mail_config['MAIL_FROM_NAME']} <{mail_config['MAIL_FROM']}>"
     messages = [
         MessageSchema(
@@ -554,7 +554,7 @@ async def test_send_messages_with_template(mail_config):
     fm.config.SUPPRESS_SEND = 1
 
     with fm.record_messages() as outbox:
-        await fm.send_messages(messages, template_name="simple_jinja_template.html")
+        await fm.send_message(messages, template_name="simple_jinja_template.html")
 
         assert len(outbox) == 2
         assert outbox[0]["from"] == sender
@@ -570,7 +570,7 @@ async def test_send_messages_with_template(mail_config):
 
 
 @pytest.mark.asyncio
-async def test_send_messages_with_attachments(mail_config):
+async def test_send_message_list_with_attachments(mail_config):
     directory = os.getcwd()
     text_file = directory + "/tests/txt_files/plain.txt"
 
@@ -599,7 +599,7 @@ async def test_send_messages_with_attachments(mail_config):
     fm.config.SUPPRESS_SEND = 1
 
     with fm.record_messages() as outbox:
-        await fm.send_messages(messages)
+        await fm.send_message(messages)
 
         assert len(outbox) == 2
         assert outbox[0]._payload[1].get_content_maintype() == "application"

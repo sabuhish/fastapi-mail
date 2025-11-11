@@ -117,56 +117,47 @@ class FastMail(_MailMixin):
 
     async def send_message(
         self,
-        message: MessageSchema,
+        message: Union[MessageSchema, list[MessageSchema]],
         template_name: Optional[str] = None,
         html_template: Optional[str] = None,
         plain_template: Optional[str] = None,
     ) -> None:
-        if not isinstance(message, MessageSchema):
-            raise PydanticClassRequired(
-                "Message schema should be provided from MessageSchema class"
-            )
+        messages = self.__normalize_messages(message)
+        prepared_messages = await self.__prepare_messages_for_sending(
+            messages, template_name, html_template, plain_template
+        )
+        await self.__send_prepared_messages(prepared_messages)
 
-        if self.config.TEMPLATE_FOLDER and (
-            template_name or (html_template and plain_template)
-        ):
-            if template_name:
-                template_obj = await self.get_mail_template(
-                    self.config.template_engine(), template_name  # type: ignore
-                )
-                msg = await self.__prepare_message(message, template_obj)
-            else:
-                html_template_obj = await self.get_mail_template(
-                    self.config.template_engine(), html_template or ""  # type: ignore
-                )
-                plain_template_obj = await self.get_mail_template(
-                    self.config.template_engine(), plain_template or ""  # type: ignore
-                )
-                msg = await self.__prepare_html_and_plain_message(
-                    message, html_template_obj, plain_template_obj
-                )
+    def __normalize_messages(
+        self, message: Union[MessageSchema, list[MessageSchema]]
+    ) -> list[MessageSchema]:
+        if isinstance(message, list):
+            messages = message
         else:
-            msg = await self.__prepare_message(message)
-
-        async with Connection(self.config) as session:
-            if not self.config.SUPPRESS_SEND:
-                await session.session.send_message(msg)
-
-            email_dispatched.send(msg)
-
-    async def send_messages(
-        self,
-        messages: list[MessageSchema],
-        template_name: Optional[str] = None,
-        html_template: Optional[str] = None,
-        plain_template: Optional[str] = None,
-    ) -> None:
-        if not isinstance(messages, list):
-            raise ValueError("messages must be a list of MessageSchema instances")
+            if not isinstance(message, MessageSchema):
+                raise PydanticClassRequired(
+                    "Message schema should be provided from MessageSchema class"
+                )
+            messages = [message]
 
         if not messages:
             raise EmptyMessagesList("Messages list is empty")
 
+        for msg in messages:
+            if not isinstance(msg, MessageSchema):
+                raise PydanticClassRequired(
+                    "All messages must be provided from MessageSchema class"
+                )
+
+        return messages
+
+    async def __prepare_messages_for_sending(
+        self,
+        messages: list[MessageSchema],
+        template_name: Optional[str],
+        html_template: Optional[str],
+        plain_template: Optional[str],
+    ) -> list[Union[EmailMessage, Message]]:
         prepared_messages: list[Union[EmailMessage, Message]] = []
 
         template_env: Optional[Environment] = None
@@ -174,12 +165,7 @@ class FastMail(_MailMixin):
         html_template_obj: Optional[Template] = None
         plain_template_obj: Optional[Template] = None
 
-        for message in messages:
-            if not isinstance(message, MessageSchema):
-                raise PydanticClassRequired(
-                    "All messages must be provided from MessageSchema class"
-                )
-
+        for msg in messages:
             if self.config.TEMPLATE_FOLDER and (
                 template_name or (html_template and plain_template)
             ):
@@ -190,7 +176,7 @@ class FastMail(_MailMixin):
                         template_obj = await self.get_mail_template(
                             template_env, template_name
                         )
-                    prepared = await self.__prepare_message(message, template_obj)
+                    prepared = await self.__prepare_message(msg, template_obj)
                 else:
                     if template_env is None:
                         template_env = self.config.template_engine()  # type: ignore
@@ -203,13 +189,18 @@ class FastMail(_MailMixin):
                             template_env, plain_template or ""
                         )
                     prepared = await self.__prepare_html_and_plain_message(
-                        message, html_template_obj, plain_template_obj
+                        msg, html_template_obj, plain_template_obj
                     )
             else:
-                prepared = await self.__prepare_message(message)
+                prepared = await self.__prepare_message(msg)
 
             prepared_messages.append(prepared)
 
+        return prepared_messages
+
+    async def __send_prepared_messages(
+        self, prepared_messages: list[Union[EmailMessage, Message]]
+    ) -> None:
         async with Connection(self.config) as session:
             if not self.config.SUPPRESS_SEND:
                 for prepared in prepared_messages:

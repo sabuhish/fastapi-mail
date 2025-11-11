@@ -1,5 +1,5 @@
 """
-Bulk email example demonstrating FastAPI-Mail's `send_messages`.
+Bulk email example demonstrating FastAPI-Mail's ability to send multiple messages in one call.
 
 Run this file to see how you can prepare multiple MessageSchema instances and
 send them over a single SMTP connection to avoid rate limiting or connection
@@ -50,7 +50,7 @@ async def main() -> None:
     ]
 
     # Uncomment the following line once you configure FastMail above.
-    # await fm.send_messages(messages)
+    # await fm.send_message(messages)
 
     print("Prepared", len(messages), "messages for bulk sending.")
 
