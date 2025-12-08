@@ -12,7 +12,7 @@ repository = "https://github.com/sabuhish/fastapi-mail"
 python = "^3.10.0"
 starlette = ">=0.24,<1.0"  # caret behaviour on 0.x is to lock to 0.x.*
 pydantic-settings = "^2.6.1"
-redis = "^6.4.0"
+redis = ">=6.4,<8.0"
 cryptography = "^46.0.3"
 httpx = "^0.28.1"
 typing-extensions = "^4.15.0"
