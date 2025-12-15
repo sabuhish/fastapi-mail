@@ -48,7 +48,10 @@ class MailMsg:
         self.subtype = entries.subtype
         self.multipart_subtype = entries.multipart_subtype
         self.headers = entries.headers
-        self.msgId = make_msgid()
+        if self.headers and "message-id" in self.headers:
+            self.msgId = self.headers["message-id"]
+        else:
+            self.msgId = make_msgid()
 
     def _mimetext(self, text: str, subtype: str) -> MIMEText:
         """
