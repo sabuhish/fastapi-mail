@@ -95,6 +95,107 @@ async def send_file(
     return JSONResponse(status_code=200, content={"message": "email has been sent"})
 ```
 
+### Sending Multipart messages with HTML and plain text
+
+You can send multipart emails with both HTML and Plain text content by passing in the `multipart_subtype` parameter of `MultipartSubtypeEnum.alternative`, and supplying a value for the `alternative_body` parameter in `MessageSchema`:
+
+```python
+message = MessageSchema(
+    subject="Fastapi-Mail module",
+    recipients=["john@smith.com"],
+    template_body="<b>This is a test email</b>",
+    subtype=MessageType.html,
+    alternative_body="This is a test email",
+    multipart_subtype=MultipartSubtypeEnum.alternative,
+)
+await fm.send_message(message)
+```
+
+### Using NameEmail for Recipients
+
+You can use NameEmail format for recipients, CC, BCC, and reply-to fields. Specify both a name and email address in the format `"Name <email@domain.com>"`:
+
+```python
+message = MessageSchema(
+    subject="Fastapi-Mail module",
+    recipients=[
+        "john@smith.com",  # Simple email format
+        "JaneDoe <jane@example.com>",  # NameEmail format
+        "SupportTeam <support@company.com>"  # NameEmail format
+    ],
+    cc=["Manager <manager@company.com>"],
+    bcc=["Admin <admin@company.com>"],
+    reply_to=["NoReply <noreply@company.com>"],
+    body="This is a test email with named recipients",
+    subtype=MessageType.html,
+)
+await fm.send_message(message)
+```
+
+**Using NameEmail objects directly:**
+```python
+from pydantic import NameEmail
+
+message = MessageSchema(
+    subject="Fastapi-Mail module",
+    recipients=[
+        "john@smith.com",  # Simple email format
+        NameEmail("JaneDoe <jane@example.com>"),
+        NameEmail("SupportTeam <support@company.com>")
+    ],
+    body="This is a test email with named recipients",
+    subtype=MessageType.html,
+)
+await fm.send_message(message)
+```
+
+**Format requirements:**
+- Use `"Name <email@domain.com>"` format with angle brackets
+- Avoid spaces in names: `"JohnDoe <john@example.com>"` works better than `"John Doe <john@example.com>"`
+- Common mistakes:
+  - ❌ `"John Doe support@company.com"` (missing brackets)
+  - ❌ `"John Doe <support@company.com"` (missing closing bracket)
+  - ❌ `"John Doe <support @company.com>"` (space in email)
+  - ✅ `"JohnDoe <support@company.com>"` (correct)
+
+The NameEmail format is also supported in all recipient fields (recipients, cc, bcc, reply_to). You can mix simple email addresses and NameEmail formats in the same list.
+
+### Sending Multiple Emails with a Single Connection
+
+`FastMail.send_message()` accepts either a single `MessageSchema` or a list of them. Passing a list lets you reuse one SMTP session for every message:
+
+```python
+messages = [
+    MessageSchema(
+        subject="Welcome!",
+        recipients=["user1@example.com"],
+        body="<p>Thanks for joining.</p>",
+        subtype=MessageType.html,
+    ),
+    MessageSchema(
+        subject="Verify your account",
+        recipients=["user2@example.com"],
+        body="<p>Please click the link to verify.</p>",
+        subtype=MessageType.html,
+    ),
+    MessageSchema(
+        subject="Monthly updates",
+        recipients=["user3@example.com"],
+        body="<p>Here is what happened this month.</p>",
+        subtype=MessageType.html,
+    ),
+]
+
+fm = FastMail(conf)
+await fm.send_message(messages)
+```
+
+**Why it helps**
+- Open the SMTP connection once, send all messages, then close it.
+- Avoid rate limits that trigger when reconnecting per email.
+- Reduces overhead compared to multiple `send_message()` calls.
+
+When you call `send_message()` with a list you can still use the same optional template arguments (`template_name`, `html_template`, `plain_template`); each message is prepared just like the single-message case.
 
 ### Using Jinja2 HTML Templates
 
@@ -152,6 +253,39 @@ We can reference the variables in our Jinja templates as per normal:
 ...
 <span>Hello, {{ first_name }}!</span>
 ...
+```
+
+### Sending multipart messages with HTML and Text Jinja2 Templates
+
+You can send multipart emails with both HTML and Plain text content by passing in two templates to the send_message call. The same template_body dict will be used for both templates.
+
+```python
+
+class EmailSchema(BaseModel):
+    email: List[EmailStr]
+    body: Dict[str, Any]
+
+conf = ConnectionConfig(
+    TEMPLATE_FOLDER = Path(__file__).parent / 'templates',
+    # ... other config options
+)
+
+
+@app.post("/email")
+async def send_with_template(email: EmailSchema) -> JSONResponse:
+
+    message = MessageSchema(
+        subject="Fastapi-Mail module",
+        recipients=email.dict().get("email"),
+        template_body=email.dict().get("body"),
+        subtype=MessageType.html)
+
+    fm = FastMail(conf)
+    await fm.send_message(
+        message,
+        html_template="email_template.html",
+        plain_template="email_template.txt")
+    return JSONResponse(status_code=200, content={"message": "email has been sent"})
 ```
 
 #### Legacy Behaviour (<= 0.4.0)

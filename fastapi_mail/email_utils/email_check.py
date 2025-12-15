@@ -1,9 +1,10 @@
 import inspect
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Set, Union
+from typing import Any, Dict, List, Optional, Set, Union
 
 import dns.exception
 import dns.resolver
+from email_validator import EmailNotValidError, validate_email
 
 try:
     from redis import asyncio as aioredis
@@ -18,8 +19,6 @@ try:
     request_lib = True
 except ImportError:
     request_lib = False
-
-from pydantic import EmailStr
 
 from fastapi_mail.errors import ApiError, DBProvaiderError
 
@@ -63,22 +62,47 @@ class AbstractEmailChecker(ABC):
 
 
 class DefaultChecker(AbstractEmailChecker):
-
     """
     Default class for checking email from collected public resource.
     The class makes it possible to use redis to save data.
-    ```
+
     :param source(optional): source for collected email data.
     :param db_provider: switch to redis
+    :param redis_client(optional): existing async Redis client to reuse (recommended for apps with existing
+                                    Redis connections)
+    :param redis_host: Redis host (default: "localhost")
+    :param redis_port: Redis port (default: 6379)
+    :param redis_db: Redis database number (default: 0)
+    :param redis_password(optional): Redis password
+    :param username(optional): Redis username
+    :param options: Additional options to pass to Redis client
 
-    example:
-        from email_utils import DefaultChecker
+    Examples:
+        # Option 1: Create new Redis connection (creates new connection pool)
+        ```
+        from fastapi_mail.email_utils import DefaultChecker
         import asyncio
 
-        a = DefaultChecker(db_provider="redis") # if you use redis
+        checker = DefaultChecker(db_provider="redis") # if you use redis
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(a.init_redis()) # Connect to redis and create default values
-    ```
+        loop.run_until_complete(checker.init_redis()) # Connect to redis and create default values
+        ```
+
+        # Option 2: Reuse existing Redis client (recommended for better resource management)
+        ```
+        from redis.asyncio import Redis
+        from fastapi_mail.email_utils import DefaultChecker
+
+        # In your app startup
+        redis_client = Redis.from_url("redis://localhost:6379/0")
+
+        # Pass existing client to email checker
+        checker = DefaultChecker(
+            db_provider="redis",
+            redis_client=redis_client  # Reuses existing connection pool
+        )
+        await checker.init_redis()
+        ```
     """
 
     TEMP_EMAIL_DOMAINS: List[str] = []
@@ -87,17 +111,17 @@ class DefaultChecker(AbstractEmailChecker):
 
     def __init__(
         self,
-        source: str = None,
-        db_provider: str = None,
+        source: Optional[str] = None,
+        db_provider: Optional[str] = None,
         *,
+        redis_client: Optional["aioredis.Redis"] = None,
         redis_host: str = "localhost",
         redis_port: int = 6379,
         redis_db: int = 0,
-        redis_password: str = None,
-        username: str = None,
+        redis_password: Optional[str] = None,
+        username: Optional[str] = None,
         **options: dict,
     ):
-
         if not redis_lib:
             raise ImportError(
                 "You must install redis from https://pypi.org/project/redis in order to run functionality"
@@ -116,12 +140,15 @@ class DefaultChecker(AbstractEmailChecker):
 
         if db_provider == "redis":
             self.redis_enabled = True
-            self.username = username
-            self.redis_host = redis_host
-            self.redis_port = redis_port
-            self.redis_db = redis_db
-            self.redis_password = redis_password
-            self.options = options
+            if redis_client:
+                self.redis_client = redis_client
+            else:
+                self.username = username
+                self.redis_host = redis_host
+                self.redis_port = redis_port
+                self.redis_db = redis_db
+                self.redis_password = redis_password
+                self.options = options
         self.redis_error_msg = "redis is not connected"
 
     def catch_all_check(self):
@@ -133,7 +160,8 @@ class DefaultChecker(AbstractEmailChecker):
     async def init_redis(self) -> bool:
         if not self.redis_enabled:
             raise DBProvaiderError(self.redis_error_msg)
-        if not hasattr(self, "redis_client"):
+        if self.redis_client is None:
+            # Create new Redis connection pool
             if not self.username or not self.redis_password:
                 self.redis_client = await aioredis.from_url(
                     url="redis://localhost", encoding="UTF-8", **self.options
@@ -143,6 +171,14 @@ class DefaultChecker(AbstractEmailChecker):
                     url=f"redis://{self.username}:{self.redis_password}@localhost:{self.redis_port}/{self.redis_db}",  # noqa: E501
                     encoding="UTF-8",
                     **self.options,
+                )
+        else:
+            # Validate that the provided client is an async Redis client
+            if not isinstance(self.redis_client, aioredis.Redis):
+                raise DBProvaiderError(
+                    "Provided redis_client must be an async Redis client from redis.asyncio. "
+                    f"Received type: {type(self.redis_client)}. "
+                    "Use: from redis.asyncio import Redis; client = Redis.from_url(...)"
                 )
 
         temp_counter = await self.redis_client.get("temp_counter")
@@ -168,7 +204,11 @@ class DefaultChecker(AbstractEmailChecker):
 
     def validate_email(self, email: str) -> bool:
         """Validate email address"""
-        EmailStr.validate(email)
+        try:
+            emailinfo = validate_email(email, check_deliverability=False)
+            email = emailinfo.normalized
+        except EmailNotValidError:
+            raise EmailNotValidError
         return True
 
     async def fetch_temp_email_domains(self) -> Union[List[str], Any]:
@@ -285,25 +325,30 @@ class DefaultChecker(AbstractEmailChecker):
             dns.resolver.NoNameservers,
             dns.exception.Timeout,
         ):
-
             return False
 
     async def blocked_email_count(self) -> int:
         """count all blocked emails in redis"""
         if self.redis_enabled:
-            return await self.redis_client.get("email_counter")
+            result = await self.redis_client.get("email_counter")
+            if result is not None:
+                return result
         return len(self.BLOCKED_ADDRESSES)
 
     async def blocked_domain_count(self) -> int:
         """count all blocked domains in redis"""
         if self.redis_enabled:
-            return await self.redis_client.get("domain_counter")
+            result = await self.redis_client.get("domain_counter")
+            if result is not None:
+                return result
         return len(self.BLOCKED_DOMAINS)
 
     async def temp_email_count(self) -> int:
         """count all temporary emails in redis"""
         if self.redis_enabled:
-            return await self.redis_client.get("temp_counter")
+            result = await self.redis_client.get("temp_counter")
+            if result is not None:
+                return result
         return len(self.TEMP_EMAIL_DOMAINS)
 
     async def close_connections(self) -> bool:
@@ -370,9 +415,13 @@ class WhoIsXmlApi:
 
     def validate_email(self, email: str) -> bool:
         """Validate email address"""
-        if EmailStr.validate(email):
-            return True
-        return False
+
+        try:
+            emailinfo = validate_email(email, check_deliverability=False)
+            email = emailinfo.normalized
+        except EmailNotValidError:
+            return False
+        return True
 
     def catch_all_check(self) -> bool:
         """

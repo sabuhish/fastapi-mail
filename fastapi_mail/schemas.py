@@ -4,7 +4,14 @@ from io import BytesIO
 from mimetypes import MimeTypes
 from typing import Dict, List, Optional, Union
 
-from pydantic import BaseModel, EmailStr, validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    EmailStr,
+    NameEmail,
+    field_validator,
+    model_validator,
+)
 from starlette.datastructures import Headers, UploadFile
 
 from fastapi_mail.errors import WrongFile
@@ -34,20 +41,23 @@ class MessageType(Enum):
 
 
 class MessageSchema(BaseModel):
-    recipients: List[EmailStr]
+    recipients: List[NameEmail]
     attachments: List[Union[UploadFile, Dict, str]] = []
     subject: str = ""
     body: Optional[Union[str, list]] = None
+    alternative_body: Optional[str] = None
     template_body: Optional[Union[list, dict, str]] = None
-    cc: List[EmailStr] = []
-    bcc: List[EmailStr] = []
-    reply_to: List[EmailStr] = []
+    cc: List[NameEmail] = []
+    bcc: List[NameEmail] = []
+    reply_to: List[NameEmail] = []
+    from_email: Optional[EmailStr] = None
+    from_name: Optional[str] = None
     charset: str = "utf-8"
     subtype: MessageType
     multipart_subtype: MultipartSubtypeEnum = MultipartSubtypeEnum.mixed
     headers: Optional[Dict] = None
 
-    @validator("attachments")
+    @field_validator("attachments")
     def validate_file(cls, v):
         temp = []
         mime = MimeTypes()
@@ -71,7 +81,9 @@ class MessageSchema(BaseModel):
                         if content_type:
                             headers = Headers({"content-type": content_type})
                         file_content = BytesIO(f.read())
-                        u = UploadFile(filename=file_name, file=file_content, headers=headers)
+                        u = UploadFile(
+                            filename=file_name, file=file_content, headers=headers
+                        )
                         temp.append((u, file_meta))
                 else:
                     raise WrongFile(
@@ -85,14 +97,16 @@ class MessageSchema(BaseModel):
                 )
         return temp
 
-    @validator("subtype")
-    def validate_subtype(cls, value, values, config, field):
+    @model_validator(mode="after")
+    def validate_alternative_body(self):
         """
-        Validate subtype field
+        Validate alternative_body field
         """
-        if values["template_body"]:
-            return MessageType.html
-        return value
+        if (
+            self.multipart_subtype != MultipartSubtypeEnum.alternative
+            and self.alternative_body
+        ):
+            self.alternative_body = None
+        return self
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)

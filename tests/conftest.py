@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Generator
 
 import fakeredis.aioredis
 import pytest
@@ -15,7 +16,8 @@ def default_checker():
 
 
 @pytest_asyncio.fixture
-async def redis_checker(scope="redis_config"):
+async def redis_checker():
+    """Fixture for DefaultChecker with Redis backend"""
     test = DefaultChecker(db_provider="redis")
     test.redis_client = fakeredis.aioredis.FakeRedis()
     yield test
@@ -24,7 +26,7 @@ async def redis_checker(scope="redis_config"):
 
 
 @pytest.fixture(autouse=True)
-def mail_config():
+def mail_config() -> Generator:
     home: Path = Path(__file__).parent.parent
     html = home / "tests/html"
     env = {
@@ -41,6 +43,7 @@ def mail_config():
         "USE_CREDENTIALS": False,
         "VALIDATE_CERTS": False,
         "TEMPLATE_FOLDER": html,
+        "LOCAL_HOSTNAME": "my.fake.domain.com",
     }
 
     yield env

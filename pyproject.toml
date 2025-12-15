@@ -1,58 +1,48 @@
 [tool.poetry]
 name = "fastapi-mail"
-version = "1.2.5"
+version = "1.2.6"
 description = "Simple lightweight mail library for FastApi"
 authors = ["Sabuhi Shukurov <sabuhi.shukurov@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/sabuhish/fastapi-mail"
 repository = "https://github.com/sabuhish/fastapi-mail"
-classifiers = [
-    "Intended Audience :: Developers",
-    "Programming Language :: Python",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3 :: Only",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
-]
 
 [tool.poetry.dependencies]
-python = ">=3.8.1,<4.0"  # flake wants 3.8.1 minimum for some reason
-Jinja2 = "^3.0"
-aiosmtplib = "^2.0"
-pydantic = "^1.8"
-email-validator = "^1.1"
-blinker = "^1.5"
-httpx = {extras = ["httpx"], version = "^0.23", optional = true}
-redis = {extras = ["redis"], version = "^4.3", optional = true}
+python = "^3.10.0"
 starlette = ">=0.24,<1.0"  # caret behaviour on 0.x is to lock to 0.x.*
+pydantic-settings = "^2.6.1"
+redis = "^6.4.0"
+cryptography = "^46.0.3"
+httpx = "^0.28.1"
+typing-extensions = "^4.15.0"
+jinja2 = "^3.1.6"
+pydantic = "^2.12.5"
+email-validator = "^2.3.0"
+regex = "^2025.11.3"
+aiosmtplib = "^5.0.0"
+blinker = "^1.9.0"
 
 [tool.poetry.extras]
 httpx = ["httpx"]
 redis = ["redis"]
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^7.0"
-pytest-asyncio = "^0.20"
-pytest-mock = "^3.10"
-pytest-cov = "^4.0"
+flake8 = "^7.3.0"
+mkdocs-material = "^9.6.22"
+fakeredis = "^2.32.0"
+isort = "^7.0.0"
+fastapi = "^0.124.0"
+uvicorn = "^0.38.0"
 mkdocs = "^1.2"
-mkdocs-material = "^7.2"
 mkdocs-markdownextradata-plugin = "^0.2"
-isort = "^5.9"
-mypy = "0.971"
-typed-ast = "^1.4"
-regex = "2022.7.9"
-fakeredis = "^2.0"
-httpx = "^0.23"
-redis = "^4.3"
-uvicorn = "^0.20"
-fastapi = "^0.92"
+mypy = "^1.4"
 types-redis = "^4.3.21"
-flake8 = "^6.0"
-black = "^22.3"
-
+pytest-cov = "^7.0.0"
+black = "^25.9.0"
+pytest-mock = "^3.15.1"
+pytest = "^8.4.2"
+pytest-asyncio = "^1.2.0"
 
 [build-system]
 requires = ["poetry-core>=1.2.0"]

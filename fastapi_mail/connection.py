@@ -39,6 +39,8 @@ class Connection:
                 use_tls=self.settings.MAIL_SSL_TLS,
                 start_tls=self.settings.MAIL_STARTTLS,
                 validate_certs=self.settings.VALIDATE_CERTS,
+                local_hostname=self.settings.LOCAL_HOSTNAME,
+                cert_bundle=self.settings.CERT_BUNDLE,
             )
 
             if not self.settings.SUPPRESS_SEND:  # for test environ
@@ -46,7 +48,8 @@ class Connection:
 
                 if self.settings.USE_CREDENTIALS:
                     await self.session.login(
-                        self.settings.MAIL_USERNAME, self.settings.MAIL_PASSWORD
+                        self.settings.MAIL_USERNAME,
+                        self.settings.MAIL_PASSWORD.get_secret_value(),
                     )
 
         except Exception as error:
