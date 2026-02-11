@@ -41,15 +41,15 @@ class MessageType(Enum):
 
 
 class MessageSchema(BaseModel):
-    recipients: List[NameEmail]
+    recipients: List[Union[EmailStr, NameEmail]]
     attachments: List[Union[UploadFile, Dict, str]] = []
     subject: str = ""
     body: Optional[Union[str, list]] = None
     alternative_body: Optional[str] = None
     template_body: Optional[Union[list, dict, str]] = None
-    cc: List[NameEmail] = []
-    bcc: List[NameEmail] = []
-    reply_to: List[NameEmail] = []
+    cc: List[Union[EmailStr, NameEmail]] = []
+    bcc: List[Union[EmailStr, NameEmail]] = []
+    reply_to: List[Union[EmailStr, NameEmail]] = []
     from_email: Optional[EmailStr] = None
     from_name: Optional[str] = None
     charset: str = "utf-8"
@@ -108,5 +108,33 @@ class MessageSchema(BaseModel):
         ):
             self.alternative_body = None
         return self
+    
+    @field_validator("recipients", "cc", "bcc", "reply_to", mode="before")
+    @classmethod
+    def parse_email_recipients(cls, v):
+        """
+        Coerce email strings to NameEmail before Union validation.
+        """
+        if not isinstance(v, list):
+            return v
+        result = []
+        for item in v:
+            if isinstance(item, str):
+                item = item.strip()
+                if "<" in item and item.endswith(">"):
+                    name_part, email_part = item.rsplit("<", 1)
+                    result.append(NameEmail(
+                        name=name_part.strip(),
+                        email=email_part.rstrip(">").strip()
+                    ))
+                else:
+                    result.append(NameEmail(
+                        name=item.split("@")[0],
+                        email=item
+                    ))
+            else:
+                result.append(item)
+        return result
+
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
