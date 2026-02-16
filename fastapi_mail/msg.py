@@ -71,6 +71,7 @@ class MailMsg:
             else:
                 part = MIMEBase(_maintype="application", _subtype="octet-stream")
 
+            await file.seek(0) 
             part.set_payload(await file.read())
             encode_base64(part)
             await file.close()
