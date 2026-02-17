@@ -1,0 +1,1582 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="fastapi-mail">
+      
+      
+      
+      
+        <link rel="prev" href="../getting-started/">
+      
+      
+        <link rel="next" href="../contribute/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Example - FastApi-MAIL</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="purple">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#sending-email-with-fastapi-mail" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="FastApi-MAIL" class="md-header__button md-logo" aria-label="FastApi-MAIL" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            FastApi-MAIL
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Example
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/sabuhish/fastapi-mail" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    fastapi-mail
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="FastApi-MAIL" class="md-nav__button md-logo" aria-label="FastApi-MAIL" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    FastApi-MAIL
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/sabuhish/fastapi-mail" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    fastapi-mail
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FastApi MAIL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🔨 Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🕹 Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Example
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Example
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#sending-email-with-fastapi-mail" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sending email with FastAPI-Mail
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Sending email with FastAPI-Mail">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#standard-way-of-sending-email-with-fastapi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Standard way of sending email with FastAPI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#email-as-background-task" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Email as background task
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sending-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sending files
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sending-multipart-messages-with-html-and-plain-text" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sending Multipart messages with HTML and plain text
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-nameemail-for-recipients" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using NameEmail for Recipients
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sending-multiple-emails-with-a-single-connection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sending Multiple Emails with a Single Connection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-jinja2-html-templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using Jinja2 HTML Templates
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sending-multipart-messages-with-html-and-text-jinja2-templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sending multipart messages with HTML and Text Jinja2 Templates
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Sending multipart messages with HTML and Text Jinja2 Templates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#legacy-behaviour-040" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Legacy Behaviour (&lt;= 0.4.0)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#customizing-attachments-by-headers-and-mime-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Customizing attachments by headers and MIME type
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-custom-smtp-headers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding custom SMTP headers
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#guide-for-email-utils" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Guide for email utils
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Guide for email utils">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#check-disposable-email-address" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Check disposable email address
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-disposable-email-address" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Add disposable email address
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-domain-to-blocked-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Add domain to blocked list
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-domain-blocked-or-not" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Check domain blocked or not
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-email-address-to-blocked-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Add email address to blocked list
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-email-blocked-or-not" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Check email blocked or not
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-mx-record" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Check MX record
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remove-email-address-from-blocked-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Remove email address from blocked list
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remove-domain-from-blocked-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Remove domain from blocked list
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remove-domain-from-temporary-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Remove domain from temporary list
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use-email-utils-with-redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Use email utils with Redis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whoisxmlapi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        WhoIsXmlApi
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#unittests-using-fastapimail" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Unittests using FastapiMail
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contribute/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contribution
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#sending-email-with-fastapi-mail" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sending email with FastAPI-Mail
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Sending email with FastAPI-Mail">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#standard-way-of-sending-email-with-fastapi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Standard way of sending email with FastAPI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#email-as-background-task" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Email as background task
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sending-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sending files
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sending-multipart-messages-with-html-and-plain-text" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sending Multipart messages with HTML and plain text
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-nameemail-for-recipients" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using NameEmail for Recipients
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sending-multiple-emails-with-a-single-connection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sending Multiple Emails with a Single Connection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-jinja2-html-templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using Jinja2 HTML Templates
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sending-multipart-messages-with-html-and-text-jinja2-templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sending multipart messages with HTML and Text Jinja2 Templates
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Sending multipart messages with HTML and Text Jinja2 Templates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#legacy-behaviour-040" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Legacy Behaviour (&lt;= 0.4.0)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#customizing-attachments-by-headers-and-mime-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Customizing attachments by headers and MIME type
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-custom-smtp-headers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding custom SMTP headers
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#guide-for-email-utils" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Guide for email utils
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Guide for email utils">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#check-disposable-email-address" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Check disposable email address
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-disposable-email-address" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Add disposable email address
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-domain-to-blocked-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Add domain to blocked list
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-domain-blocked-or-not" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Check domain blocked or not
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-email-address-to-blocked-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Add email address to blocked list
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-email-blocked-or-not" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Check email blocked or not
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-mx-record" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Check MX record
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remove-email-address-from-blocked-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Remove email address from blocked list
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remove-domain-from-blocked-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Remove domain from blocked list
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remove-domain-from-temporary-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Remove domain from temporary list
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use-email-utils-with-redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Use email utils with Redis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whoisxmlapi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        WhoIsXmlApi
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#unittests-using-fastapimail" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Unittests using FastapiMail
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>Example</h1>
+
+<h2 id="sending-email-with-fastapi-mail">Sending email with FastAPI-Mail<a class="headerlink" href="#sending-email-with-fastapi-mail" title="Permanent link">&para;</a></h2>
+<h3 id="standard-way-of-sending-email-with-fastapi">Standard way of sending email with FastAPI<a class="headerlink" href="#standard-way-of-sending-email-with-fastapi" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastAPI</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">starlette.responses</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi_mail</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastMail</span><span class="p">,</span> <span class="n">MessageSchema</span><span class="p">,</span> <span class="n">ConnectionConfig</span><span class="p">,</span> <span class="n">MessageType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmailStr</span><span class="p">,</span> <span class="n">BaseModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">EmailSchema</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">email</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">EmailStr</span><span class="p">]</span>
+
+
+<span class="n">conf</span> <span class="o">=</span> <span class="n">ConnectionConfig</span><span class="p">(</span>
+    <span class="n">MAIL_USERNAME</span> <span class="o">=</span> <span class="s2">&quot;username&quot;</span><span class="p">,</span>
+    <span class="n">MAIL_PASSWORD</span> <span class="o">=</span> <span class="s2">&quot;**********&quot;</span><span class="p">,</span>
+    <span class="n">MAIL_FROM</span> <span class="o">=</span> <span class="s2">&quot;test@email.com&quot;</span><span class="p">,</span>
+    <span class="n">MAIL_PORT</span> <span class="o">=</span> <span class="mi">587</span><span class="p">,</span>
+    <span class="n">MAIL_SERVER</span> <span class="o">=</span> <span class="s2">&quot;mail server&quot;</span><span class="p">,</span>
+    <span class="n">MAIL_FROM_NAME</span><span class="o">=</span><span class="s2">&quot;Desired Name&quot;</span><span class="p">,</span>
+    <span class="n">MAIL_STARTTLS</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">MAIL_SSL_TLS</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">USE_CREDENTIALS</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">VALIDATE_CERTS</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">()</span>
+
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/email&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">simple_send</span><span class="p">(</span><span class="n">email</span><span class="p">:</span> <span class="n">EmailSchema</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JSONResponse</span><span class="p">:</span>
+    <span class="n">html</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;&lt;p&gt;Hi this test mail, thanks for using Fastapi-mail&lt;/p&gt; &quot;&quot;&quot;</span>
+
+    <span class="n">message</span> <span class="o">=</span> <span class="n">MessageSchema</span><span class="p">(</span>
+        <span class="n">subject</span><span class="o">=</span><span class="s2">&quot;Fastapi-Mail module&quot;</span><span class="p">,</span>
+        <span class="n">recipients</span><span class="o">=</span><span class="n">email</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">),</span>
+        <span class="n">body</span><span class="o">=</span><span class="n">html</span><span class="p">,</span>
+        <span class="n">subtype</span><span class="o">=</span><span class="n">MessageType</span><span class="o">.</span><span class="n">html</span><span class="p">)</span>
+
+    <span class="n">fm</span> <span class="o">=</span> <span class="n">FastMail</span><span class="p">(</span><span class="n">conf</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">fm</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">JSONResponse</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;email has been sent&quot;</span><span class="p">})</span>
+</code></pre></div>
+<h3 id="email-as-background-task">Email as background task<a class="headerlink" href="#email-as-background-task" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/emailbackground&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">send_in_background</span><span class="p">(</span>
+    <span class="n">background_tasks</span><span class="p">:</span> <span class="n">BackgroundTasks</span><span class="p">,</span>
+    <span class="n">email</span><span class="p">:</span> <span class="n">EmailSchema</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JSONResponse</span><span class="p">:</span>
+
+    <span class="n">message</span> <span class="o">=</span> <span class="n">MessageSchema</span><span class="p">(</span>
+        <span class="n">subject</span><span class="o">=</span><span class="s2">&quot;Fastapi mail module&quot;</span><span class="p">,</span>
+        <span class="n">recipients</span><span class="o">=</span><span class="n">email</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">),</span>
+        <span class="n">body</span><span class="o">=</span><span class="s2">&quot;Simple background task&quot;</span><span class="p">,</span>
+        <span class="n">subtype</span><span class="o">=</span><span class="n">MessageType</span><span class="o">.</span><span class="n">plain</span><span class="p">)</span>
+
+    <span class="n">fm</span> <span class="o">=</span> <span class="n">FastMail</span><span class="p">(</span><span class="n">conf</span><span class="p">)</span>
+
+    <span class="n">background_tasks</span><span class="o">.</span><span class="n">add_task</span><span class="p">(</span><span class="n">fm</span><span class="o">.</span><span class="n">send_message</span><span class="p">,</span><span class="n">message</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">JSONResponse</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;email has been sent&quot;</span><span class="p">})</span>
+</code></pre></div>
+<h3 id="sending-files">Sending files<a class="headerlink" href="#sending-files" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/file&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">send_file</span><span class="p">(</span>
+    <span class="n">background_tasks</span><span class="p">:</span> <span class="n">BackgroundTasks</span><span class="p">,</span>
+    <span class="n">file</span><span class="p">:</span> <span class="n">UploadFile</span> <span class="o">=</span> <span class="n">File</span><span class="p">(</span><span class="o">...</span><span class="p">),</span>
+    <span class="n">email</span><span class="p">:</span><span class="n">EmailStr</span> <span class="o">=</span> <span class="n">Form</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JSONResponse</span><span class="p">:</span>
+
+    <span class="n">message</span> <span class="o">=</span> <span class="n">MessageSchema</span><span class="p">(</span>
+            <span class="n">subject</span><span class="o">=</span><span class="s2">&quot;Fastapi mail module&quot;</span><span class="p">,</span>
+            <span class="n">recipients</span><span class="o">=</span><span class="p">[</span><span class="n">email</span><span class="p">],</span>
+            <span class="n">body</span><span class="o">=</span><span class="s2">&quot;Simple background task&quot;</span><span class="p">,</span>
+            <span class="n">subtype</span><span class="o">=</span><span class="n">MessageType</span><span class="o">.</span><span class="n">html</span><span class="p">,</span>
+            <span class="n">attachments</span><span class="o">=</span><span class="p">[</span><span class="n">file</span><span class="p">])</span>
+
+    <span class="n">fm</span> <span class="o">=</span> <span class="n">FastMail</span><span class="p">(</span><span class="n">conf</span><span class="p">)</span>
+
+    <span class="n">background_tasks</span><span class="o">.</span><span class="n">add_task</span><span class="p">(</span><span class="n">fm</span><span class="o">.</span><span class="n">send_message</span><span class="p">,</span><span class="n">message</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">JSONResponse</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;email has been sent&quot;</span><span class="p">})</span>
+</code></pre></div>
+<h3 id="sending-multipart-messages-with-html-and-plain-text">Sending Multipart messages with HTML and plain text<a class="headerlink" href="#sending-multipart-messages-with-html-and-plain-text" title="Permanent link">&para;</a></h3>
+<p>You can send multipart emails with both HTML and Plain text content by passing in the <code>multipart_subtype</code> parameter of <code>MultipartSubtypeEnum.alternative</code>, and supplying a value for the <code>alternative_body</code> parameter in <code>MessageSchema</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="n">message</span> <span class="o">=</span> <span class="n">MessageSchema</span><span class="p">(</span>
+    <span class="n">subject</span><span class="o">=</span><span class="s2">&quot;Fastapi-Mail module&quot;</span><span class="p">,</span>
+    <span class="n">recipients</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;john@smith.com&quot;</span><span class="p">],</span>
+    <span class="n">template_body</span><span class="o">=</span><span class="s2">&quot;&lt;b&gt;This is a test email&lt;/b&gt;&quot;</span><span class="p">,</span>
+    <span class="n">subtype</span><span class="o">=</span><span class="n">MessageType</span><span class="o">.</span><span class="n">html</span><span class="p">,</span>
+    <span class="n">alternative_body</span><span class="o">=</span><span class="s2">&quot;This is a test email&quot;</span><span class="p">,</span>
+    <span class="n">multipart_subtype</span><span class="o">=</span><span class="n">MultipartSubtypeEnum</span><span class="o">.</span><span class="n">alternative</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">await</span> <span class="n">fm</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="using-nameemail-for-recipients">Using NameEmail for Recipients<a class="headerlink" href="#using-nameemail-for-recipients" title="Permanent link">&para;</a></h3>
+<p>You can use NameEmail format for recipients, CC, BCC, and reply-to fields. Specify both a name and email address in the format <code>"Name &lt;email@domain.com&gt;"</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="n">message</span> <span class="o">=</span> <span class="n">MessageSchema</span><span class="p">(</span>
+    <span class="n">subject</span><span class="o">=</span><span class="s2">&quot;Fastapi-Mail module&quot;</span><span class="p">,</span>
+    <span class="n">recipients</span><span class="o">=</span><span class="p">[</span>
+        <span class="s2">&quot;john@smith.com&quot;</span><span class="p">,</span>  <span class="c1"># Simple email format</span>
+        <span class="s2">&quot;JaneDoe &lt;jane@example.com&gt;&quot;</span><span class="p">,</span>  <span class="c1"># NameEmail format</span>
+        <span class="s2">&quot;SupportTeam &lt;support@company.com&gt;&quot;</span>  <span class="c1"># NameEmail format</span>
+    <span class="p">],</span>
+    <span class="n">cc</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Manager &lt;manager@company.com&gt;&quot;</span><span class="p">],</span>
+    <span class="n">bcc</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Admin &lt;admin@company.com&gt;&quot;</span><span class="p">],</span>
+    <span class="n">reply_to</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;NoReply &lt;noreply@company.com&gt;&quot;</span><span class="p">],</span>
+    <span class="n">body</span><span class="o">=</span><span class="s2">&quot;This is a test email with named recipients&quot;</span><span class="p">,</span>
+    <span class="n">subtype</span><span class="o">=</span><span class="n">MessageType</span><span class="o">.</span><span class="n">html</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">await</span> <span class="n">fm</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Using NameEmail objects directly:</strong>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">NameEmail</span>
+
+<span class="n">message</span> <span class="o">=</span> <span class="n">MessageSchema</span><span class="p">(</span>
+    <span class="n">subject</span><span class="o">=</span><span class="s2">&quot;Fastapi-Mail module&quot;</span><span class="p">,</span>
+    <span class="n">recipients</span><span class="o">=</span><span class="p">[</span>
+        <span class="s2">&quot;john@smith.com&quot;</span><span class="p">,</span>  <span class="c1"># Simple email format</span>
+        <span class="n">NameEmail</span><span class="p">(</span><span class="s2">&quot;JaneDoe &lt;jane@example.com&gt;&quot;</span><span class="p">),</span>
+        <span class="n">NameEmail</span><span class="p">(</span><span class="s2">&quot;SupportTeam &lt;support@company.com&gt;&quot;</span><span class="p">)</span>
+    <span class="p">],</span>
+    <span class="n">body</span><span class="o">=</span><span class="s2">&quot;This is a test email with named recipients&quot;</span><span class="p">,</span>
+    <span class="n">subtype</span><span class="o">=</span><span class="n">MessageType</span><span class="o">.</span><span class="n">html</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">await</span> <span class="n">fm</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</code></pre></div></p>
+<p><strong>Format requirements:</strong>
+- Use <code>"Name &lt;email@domain.com&gt;"</code> format with angle brackets
+- Avoid spaces in names: <code>"JohnDoe &lt;john@example.com&gt;"</code> works better than <code>"John Doe &lt;john@example.com&gt;"</code>
+- Common mistakes:
+  - ❌ <code>"John Doe support@company.com"</code> (missing brackets)
+  - ❌ <code>"John Doe &lt;support@company.com"</code> (missing closing bracket)
+  - ❌ <code>"John Doe &lt;support @company.com&gt;"</code> (space in email)
+  - ✅ <code>"JohnDoe &lt;support@company.com&gt;"</code> (correct)</p>
+<p>The NameEmail format is also supported in all recipient fields (recipients, cc, bcc, reply_to). You can mix simple email addresses and NameEmail formats in the same list.</p>
+<h3 id="sending-multiple-emails-with-a-single-connection">Sending Multiple Emails with a Single Connection<a class="headerlink" href="#sending-multiple-emails-with-a-single-connection" title="Permanent link">&para;</a></h3>
+<p><code>FastMail.send_message()</code> accepts either a single <code>MessageSchema</code> or a list of them. Passing a list lets you reuse one SMTP session for every message:</p>
+<div class="highlight"><pre><span></span><code><span class="n">messages</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">MessageSchema</span><span class="p">(</span>
+        <span class="n">subject</span><span class="o">=</span><span class="s2">&quot;Welcome!&quot;</span><span class="p">,</span>
+        <span class="n">recipients</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;user1@example.com&quot;</span><span class="p">],</span>
+        <span class="n">body</span><span class="o">=</span><span class="s2">&quot;&lt;p&gt;Thanks for joining.&lt;/p&gt;&quot;</span><span class="p">,</span>
+        <span class="n">subtype</span><span class="o">=</span><span class="n">MessageType</span><span class="o">.</span><span class="n">html</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">MessageSchema</span><span class="p">(</span>
+        <span class="n">subject</span><span class="o">=</span><span class="s2">&quot;Verify your account&quot;</span><span class="p">,</span>
+        <span class="n">recipients</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;user2@example.com&quot;</span><span class="p">],</span>
+        <span class="n">body</span><span class="o">=</span><span class="s2">&quot;&lt;p&gt;Please click the link to verify.&lt;/p&gt;&quot;</span><span class="p">,</span>
+        <span class="n">subtype</span><span class="o">=</span><span class="n">MessageType</span><span class="o">.</span><span class="n">html</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">MessageSchema</span><span class="p">(</span>
+        <span class="n">subject</span><span class="o">=</span><span class="s2">&quot;Monthly updates&quot;</span><span class="p">,</span>
+        <span class="n">recipients</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;user3@example.com&quot;</span><span class="p">],</span>
+        <span class="n">body</span><span class="o">=</span><span class="s2">&quot;&lt;p&gt;Here is what happened this month.&lt;/p&gt;&quot;</span><span class="p">,</span>
+        <span class="n">subtype</span><span class="o">=</span><span class="n">MessageType</span><span class="o">.</span><span class="n">html</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">fm</span> <span class="o">=</span> <span class="n">FastMail</span><span class="p">(</span><span class="n">conf</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">fm</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">messages</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Why it helps</strong>
+- Open the SMTP connection once, send all messages, then close it.
+- Avoid rate limits that trigger when reconnecting per email.
+- Reduces overhead compared to multiple <code>send_message()</code> calls.</p>
+<p>When you call <code>send_message()</code> with a list you can still use the same optional template arguments (<code>template_name</code>, <code>html_template</code>, <code>plain_template</code>); each message is prepared just like the single-message case.</p>
+<h3 id="using-jinja2-html-templates">Using Jinja2 HTML Templates<a class="headerlink" href="#using-jinja2-html-templates" title="Permanent link">&para;</a></h3>
+<p>You can enable Jinja2 HTML Template emails by setting the <code>TEMPLATE_FOLDER</code> configuration option, and supplying a 
+value (which is just the name of the template file within the <code>TEMPLATE_FOLDER</code> dir) for the <code>template_name</code> parameter 
+in <code>FastMail.send_message()</code>. You then can pass a Dict as the <code>template_body</code> property of your <code>MessageSchema</code> object:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">EmailSchema</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">email</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">EmailStr</span><span class="p">]</span>
+    <span class="n">body</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+
+<span class="n">conf</span> <span class="o">=</span> <span class="n">ConnectionConfig</span><span class="p">(</span>
+    <span class="n">MAIL_USERNAME</span> <span class="o">=</span> <span class="s2">&quot;YourUsername&quot;</span><span class="p">,</span>
+    <span class="n">MAIL_PASSWORD</span> <span class="o">=</span> <span class="s2">&quot;strong_password&quot;</span><span class="p">,</span>
+    <span class="n">MAIL_FROM</span> <span class="o">=</span> <span class="s2">&quot;your@email.com&quot;</span><span class="p">,</span>
+    <span class="n">MAIL_PORT</span> <span class="o">=</span> <span class="mi">587</span><span class="p">,</span>
+    <span class="n">MAIL_SERVER</span> <span class="o">=</span> <span class="s2">&quot;your mail server&quot;</span><span class="p">,</span>
+    <span class="n">MAIL_STARTTLS</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">MAIL_SSL_TLS</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">TEMPLATE_FOLDER</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s1">&#39;templates&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/email&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">send_with_template</span><span class="p">(</span><span class="n">email</span><span class="p">:</span> <span class="n">EmailSchema</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JSONResponse</span><span class="p">:</span>
+
+    <span class="n">message</span> <span class="o">=</span> <span class="n">MessageSchema</span><span class="p">(</span>
+        <span class="n">subject</span><span class="o">=</span><span class="s2">&quot;Fastapi-Mail module&quot;</span><span class="p">,</span>
+        <span class="n">recipients</span><span class="o">=</span><span class="n">email</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">),</span>
+        <span class="n">template_body</span><span class="o">=</span><span class="n">email</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;body&quot;</span><span class="p">),</span>
+        <span class="n">subtype</span><span class="o">=</span><span class="n">MessageType</span><span class="o">.</span><span class="n">html</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="n">fm</span> <span class="o">=</span> <span class="n">FastMail</span><span class="p">(</span><span class="n">conf</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">fm</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">template_name</span><span class="o">=</span><span class="s2">&quot;email_template.html&quot;</span><span class="p">)</span> 
+    <span class="k">return</span> <span class="n">JSONResponse</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;email has been sent&quot;</span><span class="p">})</span>
+</code></pre></div>
+<p>For example, assume we pass a <code>template_body</code> of:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;first_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Fred&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;last_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Fredsson&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>We can reference the variables in our Jinja templates as per normal:</p>
+<div class="highlight"><pre><span></span><code>...
+&lt;span&gt;Hello, {{ first_name }}!&lt;/span&gt;
+...
+</code></pre></div>
+<h3 id="sending-multipart-messages-with-html-and-text-jinja2-templates">Sending multipart messages with HTML and Text Jinja2 Templates<a class="headerlink" href="#sending-multipart-messages-with-html-and-text-jinja2-templates" title="Permanent link">&para;</a></h3>
+<p>You can send multipart emails with both HTML and Plain text content by passing in two templates to the send_message call. The same template_body dict will be used for both templates.</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">EmailSchema</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">email</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">EmailStr</span><span class="p">]</span>
+    <span class="n">body</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+
+<span class="n">conf</span> <span class="o">=</span> <span class="n">ConnectionConfig</span><span class="p">(</span>
+    <span class="n">TEMPLATE_FOLDER</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s1">&#39;templates&#39;</span><span class="p">,</span>
+    <span class="c1"># ... other config options</span>
+<span class="p">)</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/email&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">send_with_template</span><span class="p">(</span><span class="n">email</span><span class="p">:</span> <span class="n">EmailSchema</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JSONResponse</span><span class="p">:</span>
+
+    <span class="n">message</span> <span class="o">=</span> <span class="n">MessageSchema</span><span class="p">(</span>
+        <span class="n">subject</span><span class="o">=</span><span class="s2">&quot;Fastapi-Mail module&quot;</span><span class="p">,</span>
+        <span class="n">recipients</span><span class="o">=</span><span class="n">email</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">),</span>
+        <span class="n">template_body</span><span class="o">=</span><span class="n">email</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;body&quot;</span><span class="p">),</span>
+        <span class="n">subtype</span><span class="o">=</span><span class="n">MessageType</span><span class="o">.</span><span class="n">html</span><span class="p">)</span>
+
+    <span class="n">fm</span> <span class="o">=</span> <span class="n">FastMail</span><span class="p">(</span><span class="n">conf</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">fm</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span>
+        <span class="n">message</span><span class="p">,</span>
+        <span class="n">html_template</span><span class="o">=</span><span class="s2">&quot;email_template.html&quot;</span><span class="p">,</span>
+        <span class="n">plain_template</span><span class="o">=</span><span class="s2">&quot;email_template.txt&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">JSONResponse</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;email has been sent&quot;</span><span class="p">})</span>
+</code></pre></div>
+<h4 id="legacy-behaviour-040">Legacy Behaviour (&lt;= 0.4.0)<a class="headerlink" href="#legacy-behaviour-040" title="Permanent link">&para;</a></h4>
+<p>The original behaviour in &lt;= 0.4.0 was to wrap the Dict you provide in a variable named <code>body</code> when it was provided to 
+Jinja behind the scenes. In these versions, you can then access your dict in your template like so:</p>
+<div class="highlight"><pre><span></span><code>...
+&lt;span&gt;Hello,  body.first_name !&lt;/span&gt;
+...
+</code></pre></div>
+<p>As you can see our keys in our dict are no longer the top level, they are part of the <code>body</code> variable. Nesting works 
+as per normal below this level also. </p>
+<h3 id="customizing-attachments-by-headers-and-mime-type">Customizing attachments by headers and MIME type<a class="headerlink" href="#customizing-attachments-by-headers-and-mime-type" title="Permanent link">&para;</a></h3>
+<p>Used for example for referencing Content-ID images in html of email</p>
+<div class="highlight"><pre><span></span><code><span class="n">message</span> <span class="o">=</span> <span class="n">MessageSchema</span><span class="p">(</span>
+    <span class="n">subject</span><span class="o">=</span><span class="s1">&#39;Fastapi-Mail module&#39;</span><span class="p">,</span>
+    <span class="n">recipients</span><span class="o">=</span><span class="n">recipients</span><span class="p">,</span>
+    <span class="n">body</span><span class="o">=</span><span class="s2">&quot;&lt;img src=&#39;cid:logo_image@fastapi-mail&#39;&gt;&quot;</span><span class="p">,</span>
+    <span class="n">subtype</span><span class="o">=</span><span class="n">MessageType</span><span class="o">.</span><span class="n">html</span><span class="p">,</span>
+    <span class="n">attachments</span><span class="o">=</span><span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;file&quot;</span><span class="p">:</span> <span class="s2">&quot;/path/to/file.png&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;headers&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;Content-ID&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;logo_image@fastapi-mail&gt;&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Content-Disposition&quot;</span><span class="p">:</span> <span class="s2">&quot;inline; filename=</span><span class="se">\&quot;</span><span class="s2">file.png</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">,</span>  <span class="c1"># For inline images only</span>
+                <span class="p">},</span>
+                <span class="s2">&quot;mime_type&quot;</span><span class="p">:</span> <span class="s2">&quot;image&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;mime_subtype&quot;</span><span class="p">:</span> <span class="s2">&quot;png&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">],</span>
+<span class="p">)</span>
+
+<span class="n">fm</span> <span class="o">=</span> <span class="n">FastMail</span><span class="p">(</span><span class="n">conf</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">fm</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="adding-custom-smtp-headers">Adding custom SMTP headers<a class="headerlink" href="#adding-custom-smtp-headers" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">message</span> <span class="o">=</span> <span class="n">MessageSchema</span><span class="p">(</span>
+    <span class="n">subject</span><span class="o">=</span><span class="s1">&#39;Fastapi-Mail module&#39;</span><span class="p">,</span>
+    <span class="n">recipients</span><span class="o">=</span><span class="n">recipients</span><span class="p">,</span>
+    <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;your custom header&quot;</span><span class="p">:</span> <span class="s2">&quot;your custom value&quot;</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="n">fm</span> <span class="o">=</span> <span class="n">FastMail</span><span class="p">(</span><span class="n">conf</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">fm</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="guide-for-email-utils">Guide for email utils<a class="headerlink" href="#guide-for-email-utils" title="Permanent link">&para;</a></h2>
+<p>The utility allows you to check temporary email addresses, you can block any email or domain. 
+You can connect Redis to save and check email addresses. If you do not provide a Redis configuration, 
+then the utility will save it in the list or set by default.</p>
+<h3 id="check-disposable-email-address">Check disposable email address<a class="headerlink" href="#check-disposable-email-address" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">default_checker</span><span class="p">():</span>
+    <span class="n">checker</span> <span class="o">=</span> <span class="n">DefaultChecker</span><span class="p">()</span>  <span class="c1"># you can pass source argument for your own email domains</span>
+    <span class="k">await</span> <span class="n">checker</span><span class="o">.</span><span class="n">fetch_temp_email_domains</span><span class="p">()</span> <span class="c1"># require to fetch temporary email domains</span>
+    <span class="k">return</span> <span class="n">checker</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/email/disposable&#39;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">simple_send</span><span class="p">(</span>
+    <span class="n">domain</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Query</span><span class="p">(</span><span class="o">...</span><span class="p">),</span> 
+    <span class="n">checker</span><span class="p">:</span> <span class="n">DefaultChecker</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">default_checker</span><span class="p">)</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JSONResponse</span><span class="p">:</span>
+
+    <span class="k">if</span> <span class="k">await</span> <span class="n">checker</span><span class="o">.</span><span class="n">is_disposable</span><span class="p">(</span><span class="n">domain</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">JSONResponse</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;this is disposable domain&#39;</span><span class="p">})</span>
+
+    <span class="k">return</span> <span class="n">JSONResponse</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;email has been sent&#39;</span><span class="p">})</span>
+</code></pre></div>
+<h3 id="add-disposable-email-address">Add disposable email address<a class="headerlink" href="#add-disposable-email-address" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;/email/disposable&#39;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">add_disp_domain</span><span class="p">(</span>
+    <span class="n">domains</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">Body</span><span class="p">(</span><span class="o">...</span><span class="p">,</span><span class="n">embed</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> 
+    <span class="n">checker</span><span class="p">:</span> <span class="n">DefaultChecker</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">default_checker</span><span class="p">)</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JSONResponse</span><span class="p">:</span>
+
+    <span class="n">res</span> <span class="o">=</span> <span class="k">await</span> <span class="n">checker</span><span class="o">.</span><span class="n">add_temp_domain</span><span class="p">(</span><span class="n">domains</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">JSONResponse</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="n">res</span><span class="p">})</span>
+</code></pre></div>
+<h3 id="add-domain-to-blocked-list">Add domain to blocked list<a class="headerlink" href="#add-domain-to-blocked-list" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;/email/blocked/domains&#39;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">block_domain</span><span class="p">(</span>
+    <span class="n">domain</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Query</span><span class="p">(</span><span class="o">...</span><span class="p">),</span> 
+    <span class="n">checker</span><span class="p">:</span> <span class="n">DefaultChecker</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">default_checker</span><span class="p">)</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JSONResponse</span><span class="p">:</span>
+
+    <span class="k">await</span> <span class="n">checker</span><span class="o">.</span><span class="n">blacklist_add_domain</span><span class="p">(</span><span class="n">domain</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">JSONResponse</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">domain</span><span class="si">}</span><span class="s1"> added to blacklist&#39;</span><span class="p">})</span>
+</code></pre></div>
+<h3 id="check-domain-blocked-or-not">Check domain blocked or not<a class="headerlink" href="#check-domain-blocked-or-not" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/email/blocked/domains&#39;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_blocked_domain</span><span class="p">(</span>
+    <span class="n">domain</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Query</span><span class="p">(</span><span class="o">...</span><span class="p">),</span> 
+    <span class="n">checker</span><span class="p">:</span> <span class="n">DefaultChecker</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">default_checker</span><span class="p">)</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JSONResponse</span><span class="p">:</span>
+
+    <span class="n">res</span> <span class="o">=</span> <span class="k">await</span> <span class="n">checker</span><span class="o">.</span><span class="n">is_blocked_domain</span><span class="p">(</span><span class="n">domain</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">JSONResponse</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="n">res</span><span class="p">})</span>
+</code></pre></div>
+<h3 id="add-email-address-to-blocked-list">Add email address to blocked list<a class="headerlink" href="#add-email-address-to-blocked-list" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;/email/blocked/address&#39;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">block_address</span><span class="p">(</span>
+    <span class="n">email</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Query</span><span class="p">(</span><span class="o">...</span><span class="p">),</span> 
+    <span class="n">checker</span><span class="p">:</span> <span class="n">DefaultChecker</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">default_checker</span><span class="p">)</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JSONResponse</span><span class="p">:</span>
+
+    <span class="k">await</span> <span class="n">checker</span><span class="o">.</span><span class="n">blacklist_add_email</span><span class="p">(</span><span class="n">email</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">JSONResponse</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+</code></pre></div>
+<h3 id="check-email-blocked-or-not">Check email blocked or not<a class="headerlink" href="#check-email-blocked-or-not" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/email/blocked/address&#39;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_block_address</span><span class="p">(</span>
+    <span class="n">email</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Query</span><span class="p">(</span><span class="o">...</span><span class="p">),</span> 
+    <span class="n">checker</span><span class="p">:</span> <span class="n">DefaultChecker</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">default_checker</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="n">JSONResponse</span><span class="p">:</span>
+
+    <span class="n">res</span> <span class="o">=</span> <span class="k">await</span> <span class="n">checker</span><span class="o">.</span><span class="n">is_blocked_address</span><span class="p">(</span><span class="n">email</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">JSONResponse</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="n">res</span><span class="p">})</span>
+</code></pre></div>
+<h3 id="check-mx-record">Check MX record<a class="headerlink" href="#check-mx-record" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/email/mx&#39;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_mx</span><span class="p">(</span>
+    <span class="n">email</span><span class="p">:</span> <span class="n">EmailStr</span> <span class="o">=</span> <span class="n">Query</span><span class="p">(</span><span class="o">...</span><span class="p">),</span>
+    <span class="n">full_result</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Query</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span> <span class="p">,</span>
+    <span class="n">checker</span><span class="p">:</span> <span class="n">DefaultChecker</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">default_checker</span><span class="p">)</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JSONResponse</span><span class="p">:</span>
+
+    <span class="n">domain</span> <span class="o">=</span> <span class="n">email</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;@&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="k">await</span> <span class="n">checker</span><span class="o">.</span><span class="n">check_mx_record</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span><span class="n">full_result</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">JSONResponse</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="n">res</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="remove-email-address-from-blocked-list">Remove email address from blocked list<a class="headerlink" href="#remove-email-address-from-blocked-list" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nd">@app</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s1">&#39;/email/blocked/address&#39;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">del_blocked_address</span><span class="p">(</span>
+    <span class="n">email</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Query</span><span class="p">(</span><span class="o">...</span><span class="p">),</span> 
+    <span class="n">checker</span><span class="p">:</span> <span class="n">DefaultChecker</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">default_checker</span><span class="p">)</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JSONResponse</span><span class="p">:</span>
+
+    <span class="n">res</span> <span class="o">=</span> <span class="k">await</span> <span class="n">checker</span><span class="o">.</span><span class="n">blacklist_rm_email</span><span class="p">(</span><span class="n">email</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">JSONResponse</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="n">res</span><span class="p">})</span>
+</code></pre></div>
+<h3 id="remove-domain-from-blocked-list">Remove domain from blocked list<a class="headerlink" href="#remove-domain-from-blocked-list" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nd">@app</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s1">&#39;/email/blocked/domains&#39;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">del_blocked_domain</span><span class="p">(</span>
+    <span class="n">domain</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Query</span><span class="p">(</span><span class="o">...</span><span class="p">),</span> 
+    <span class="n">checker</span><span class="p">:</span> <span class="n">DefaultChecker</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">default_checker</span><span class="p">)</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JSONResponse</span><span class="p">:</span>
+
+    <span class="n">res</span> <span class="o">=</span> <span class="k">await</span> <span class="n">checker</span><span class="o">.</span><span class="n">blacklist_rm_domain</span><span class="p">(</span><span class="n">domain</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">JSONResponse</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="n">res</span><span class="p">})</span>
+</code></pre></div>
+<h3 id="remove-domain-from-temporary-list">Remove domain from temporary list<a class="headerlink" href="#remove-domain-from-temporary-list" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nd">@app</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s1">&#39;/email/disposable&#39;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">del_disp_domain</span><span class="p">(</span>
+    <span class="n">domains</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">Body</span><span class="p">(</span><span class="o">...</span><span class="p">,</span><span class="n">embed</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> 
+    <span class="n">checker</span><span class="p">:</span> <span class="n">DefaultChecker</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">default_checker</span><span class="p">)</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JSONResponse</span><span class="p">:</span>
+
+    <span class="n">res</span> <span class="o">=</span> <span class="k">await</span> <span class="n">checker</span><span class="o">.</span><span class="n">blacklist_rm_temp</span><span class="p">(</span><span class="n">domains</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">JSONResponse</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="n">res</span><span class="p">})</span>
+</code></pre></div>
+<h3 id="use-email-utils-with-redis">Use email utils with Redis<a class="headerlink" href="#use-email-utils-with-redis" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">default_checker</span><span class="p">():</span>
+    <span class="n">checker</span> <span class="o">=</span> <span class="n">DefaultChecker</span><span class="p">(</span><span class="n">db_provider</span><span class="o">=</span><span class="s2">&quot;redis&quot;</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">checker</span><span class="o">.</span><span class="n">init_redis</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">checker</span>
+</code></pre></div>
+<h3 id="whoisxmlapi">WhoIsXmlApi<a class="headerlink" href="#whoisxmlapi" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">email_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">WhoIsXmlApi</span>
+
+<span class="n">who_is</span> <span class="o">=</span> <span class="n">WhoIsXmlApi</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="s2">&quot;Your access token&quot;</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="s2">&quot;your@mailaddress.com&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">who_is</span><span class="o">.</span><span class="n">smtp_check_</span><span class="p">())</span>    <span class="c1">#check smtp server</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">who_is</span><span class="o">.</span><span class="n">is_disposable</span><span class="p">())</span> <span class="c1"># check email is disposable or not</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">who_is</span><span class="o">.</span><span class="n">check_mx_record</span><span class="p">())</span> <span class="c1"># check domain mx records </span>
+<span class="nb">print</span><span class="p">(</span><span class="n">who_is</span><span class="o">.</span><span class="n">free_check</span><span class="p">)</span> <span class="c1"># check email domain is free or not</span>
+</code></pre></div>
+<h2 id="unittests-using-fastapimail">Unittests using FastapiMail<a class="headerlink" href="#unittests-using-fastapimail" title="Permanent link">&para;</a></h2>
+<p>Fastapi mails allows you to write unittest for your application without sending emails to
+non existent email address by mocking the email to be sent. To mock sending out mails, set
+the suppress configuraton to true. Suppress send defaults to False to prevent mocking within applications.</p>
+<p>application.py</p>
+<div class="highlight"><pre><span></span><code><span class="n">conf</span> <span class="o">=</span> <span class="n">ConnectionConfig</span><span class="p">(</span>
+    <span class="n">MAIL_USERNAME</span> <span class="o">=</span> <span class="s2">&quot;YourUsername&quot;</span><span class="p">,</span>
+    <span class="n">MAIL_PASSWORD</span> <span class="o">=</span> <span class="s2">&quot;strong_password&quot;</span><span class="p">,</span>
+    <span class="n">MAIL_FROM</span> <span class="o">=</span> <span class="s2">&quot;your@email.com&quot;</span><span class="p">,</span>
+    <span class="n">MAIL_PORT</span> <span class="o">=</span> <span class="mi">587</span><span class="p">,</span>
+    <span class="n">MAIL_SERVER</span> <span class="o">=</span> <span class="s2">&quot;your mail server&quot;</span><span class="p">,</span>
+    <span class="n">MAIL_STARTTLS</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">MAIL_SSL_TLS</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">TEMPLATE_FOLDER</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s1">&#39;templates&#39;</span><span class="p">,</span>
+
+    <span class="c1"># if no indicated SUPPRESS_SEND defaults to 0 (false) as below</span>
+    <span class="c1"># SUPPRESS_SEND=1</span>
+<span class="p">)</span>
+
+<span class="n">fm</span> <span class="o">=</span> <span class="n">FastMail</span><span class="p">(</span><span class="n">conf</span><span class="p">)</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/email&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">simple_send</span><span class="p">(</span><span class="n">email</span><span class="p">:</span> <span class="n">EmailSchema</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JSONResponse</span><span class="p">:</span>
+
+    <span class="n">message</span> <span class="o">=</span> <span class="n">MessageSchema</span><span class="p">(</span>
+        <span class="n">subject</span><span class="o">=</span><span class="s2">&quot;Testing&quot;</span><span class="p">,</span>
+        <span class="n">recipients</span><span class="o">=</span><span class="n">email</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">),</span>
+        <span class="n">body</span><span class="o">=</span><span class="n">html</span><span class="p">,</span>
+        <span class="n">subtype</span><span class="o">=</span><span class="n">MessageType</span><span class="o">.</span><span class="n">html</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">await</span> <span class="n">fm</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">JSONResponse</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;email has been sent&quot;</span><span class="p">})</span>
+</code></pre></div>
+<p>test.py
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">starlette.testclient</span><span class="w"> </span><span class="kn">import</span> <span class="n">TestClient</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.application</span><span class="w"> </span><span class="kn">import</span> <span class="n">app</span><span class="p">,</span> <span class="n">fm</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">TestClient</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_send_msg</span><span class="p">():</span>
+    <span class="n">fm</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">SUPPRESS_SEND</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">with</span> <span class="n">fm</span><span class="o">.</span><span class="n">record_messages</span><span class="p">()</span> <span class="k">as</span> <span class="n">outbox</span><span class="p">:</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="p">[</span> <span class="s2">&quot;user@example.com&quot;</span><span class="p">]}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/email&quot;</span><span class="p">,</span><span class="n">json</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">outbox</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="k">assert</span> <span class="n">outbox</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;from&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;your@email.com&quot;</span>
+        <span class="k">assert</span> <span class="n">outbox</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;To&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;user@example.com&quot;</span>
+</code></pre></div></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
