@@ -33,5 +33,5 @@ class ConnectionConfig(Settings):
             raise ValueError(
                 "Class initialization did not include a ``TEMPLATE_FOLDER`` ``PathLike`` object."
             )
-        template_env = Environment(loader=FileSystemLoader(folder))
+        template_env = Environment(loader=FileSystemLoader(folder), autoescape=True)
         return template_env
