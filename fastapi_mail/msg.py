@@ -68,6 +68,17 @@ class MailMsg:
                 part = MIMEBase(
                     _maintype=file_meta["mime_type"], _subtype=file_meta["mime_subtype"]
                 )
+            
+            # If the file-like object has a content-type header, use that to determine the MIME type of the attachment
+            elif hasattr(file, 'headers') and file.headers.get("content-type"):
+                content_type = file.headers.get("content-type")
+                if "/" in content_type:
+                    _maintype, _subtype = content_type.split("/", 1)
+                    _subtype = _subtype.split(";")[0].strip()
+                    part = MIMEBase(_maintype=_maintype, _subtype=_subtype)
+                else:
+                    part = MIMEBase(_maintype="application", _subtype="octet-stream")
+
             else:
                 part = MIMEBase(_maintype="application", _subtype="octet-stream")
 
