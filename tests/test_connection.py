@@ -89,10 +89,10 @@ async def test_attachement_message(mail_config):
         mail = outbox[0]
 
         assert len(outbox) == 1
-        assert mail._payload[1].get_content_maintype() == "application"
+        assert mail._payload[1].get_content_maintype() == "text"
         assert (
             mail._payload[1].__dict__.get("_headers")[0][1]
-            == "application/octet-stream"
+            == "text/plain"
         )
 
 
@@ -374,11 +374,11 @@ async def test_send_msg_with_alternative_body_and_attachements(mail_config):
         assert body._payload[0]._headers[0][1] == 'text/html; charset="utf-8"'
         assert body._payload[1]._headers[0][1] == 'text/plain; charset="utf-8"'
 
-        assert mail._payload[1].get_content_maintype() == "application"
+        assert mail._payload[1].get_content_maintype() == "text"
 
         assert (
             mail._payload[1].__dict__.get("_headers")[0][1]
-            == "application/octet-stream"
+            == "text/plain"
         )
 
 
@@ -602,5 +602,5 @@ async def test_send_message_list_with_attachments(mail_config):
         await fm.send_message(messages)
 
         assert len(outbox) == 2
-        assert outbox[0]._payload[1].get_content_maintype() == "application"
-        assert outbox[1]._payload[1].get_content_maintype() == "application"
+        assert outbox[0]._payload[1].get_content_maintype() == "text"
+        assert outbox[1]._payload[1].get_content_maintype() == "text"
