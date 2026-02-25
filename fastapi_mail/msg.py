@@ -69,7 +69,8 @@ class MailMsg:
                     _maintype=file_meta["mime_type"], _subtype=file_meta["mime_subtype"]
                 )
             
-            # If the file-like object has a content-type header, use that to determine the MIME type of the attachment
+            # If the file-like object has a content-type header,
+            # use that to determine the MIME type of the attachment
             elif hasattr(file, 'headers') and file.headers.get("content-type"):
                 content_type = file.headers.get("content-type")
                 if "/" in content_type:
