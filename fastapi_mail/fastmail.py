@@ -176,7 +176,7 @@ class FastMail(_MailMixin):
                         template_obj = await self.get_mail_template(
                             template_env, template_name
                         )
-                    prepared = await self.__prepare_message(msg, template_obj)
+                    prepared = await self._prepare_message(msg, template_obj)
                 else:
                     if template_env is None:
                         template_env = self.config.template_engine()  # type: ignore
@@ -192,7 +192,7 @@ class FastMail(_MailMixin):
                         msg, html_template_obj, plain_template_obj
                     )
             else:
-                prepared = await self.__prepare_message(msg)
+                prepared = await self._prepare_message(msg)
 
             prepared_messages.append(prepared)
 
