@@ -67,15 +67,15 @@ class FastMail(_MailMixin):
                 "is an invalid source data type"
             )
 
-    async def __prepare_message(
+    async def _prepare_message(
         self, message: MessageSchema, template: Optional[Template] = None
     ) -> Union[EmailMessage, Message]:
         if template and message.template_body is not None:
-            message.template_body = await self.__template_message_builder(
+            message.template_body = await self._template_message_builder(
                 message, template
             )
         msg = MailMsg(message)
-        sender = await self.__sender(message)
+        sender = await self._sender(message)
         return await msg._message(sender)
 
     async def __prepare_html_and_plain_message(
@@ -97,10 +97,10 @@ class FastMail(_MailMixin):
             message.alternative_body = html
 
         msg = MailMsg(message)
-        sender = await self.__sender(message)
+        sender = await self._sender(message)
         return await msg._message(sender)
 
-    async def __template_message_builder(
+    async def _template_message_builder(
         self, message: MessageSchema, template: Template
     ) -> str:
         if isinstance(message.template_body, list):
@@ -109,7 +109,7 @@ class FastMail(_MailMixin):
             template_data = self.check_data(message.template_body)
             return template.render(**template_data)
 
-    async def __sender(self, message: MessageSchema) -> Union[EmailStr, str]:
+    async def _sender(self, message: MessageSchema) -> Union[EmailStr, str]:
         sender = message.from_email or self.config.MAIL_FROM
         if (from_name := message.from_name or self.config.MAIL_FROM_NAME) is not None:
             return formataddr((from_name, sender))
@@ -176,7 +176,7 @@ class FastMail(_MailMixin):
                         template_obj = await self.get_mail_template(
                             template_env, template_name
                         )
-                    prepared = await self.__prepare_message(msg, template_obj)
+                    prepared = await self._prepare_message(msg, template_obj)
                 else:
                     if template_env is None:
                         template_env = self.config.template_engine()  # type: ignore
@@ -192,7 +192,7 @@ class FastMail(_MailMixin):
                         msg, html_template_obj, plain_template_obj
                     )
             else:
-                prepared = await self.__prepare_message(msg)
+                prepared = await self._prepare_message(msg)
 
             prepared_messages.append(prepared)
 
