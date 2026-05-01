@@ -8,8 +8,8 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v1
+    - uses: actions/checkout@v6
+    - uses: actions/setup-python@v6
       with:
         python-version: '3.11'
         architecture: x64
@@ -23,5 +23,3 @@ jobs:
         poetry version $(git describe --tags --abbrev=0)
         poetry build
         poetry publish --username ${{ secrets.PYPI_USERNAME }} --password ${{ secrets.PYPI_PASSWORD }}
-
-   
