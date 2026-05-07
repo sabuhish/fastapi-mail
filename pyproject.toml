@@ -19,13 +19,12 @@ dependencies = [
     "email-validator>=2.3.0",
     "regex>=2025.11.3",
     "aiosmtplib>=5.0.0",
-    "blinker>=1.9.0",
-    "redis (>=7.4.0,<8.0.0)"
+    "blinker>=1.9.0"
 ]
 
 [project.optional-dependencies]
 httpx = ["httpx"]
-redis = ["redis"]
+redis = ["redis>=7.4.0,<8.0.0"]
 
 [dependency-groups]
 dev = [
