@@ -48,7 +48,10 @@ class MailMsg:
         self.subtype = entries.subtype
         self.multipart_subtype = entries.multipart_subtype
         self.headers = entries.headers
-        self.msgId = make_msgid()
+        if self.headers and "message-id" in self.headers:
+            self.msgId = self.headers["message-id"]
+        else:
+            self.msgId = make_msgid()
 
     def _mimetext(self, text: str, subtype: str) -> MIMEText:
         """
@@ -65,9 +68,22 @@ class MailMsg:
                 part = MIMEBase(
                     _maintype=file_meta["mime_type"], _subtype=file_meta["mime_subtype"]
                 )
+
+            # If the file-like object has a content-type header,
+            # use that to determine the MIME type of the attachment
+            elif hasattr(file, 'headers') and file.headers.get("content-type"):
+                content_type = file.headers.get("content-type")
+                if "/" in content_type:
+                    _maintype, _subtype = content_type.split("/", 1)
+                    _subtype = _subtype.split(";")[0].strip()
+                    part = MIMEBase(_maintype=_maintype, _subtype=_subtype)
+                else:
+                    part = MIMEBase(_maintype="application", _subtype="octet-stream")
+
             else:
                 part = MIMEBase(_maintype="application", _subtype="octet-stream")
 
+            await file.seek(0)
             part.set_payload(await file.read())
             encode_base64(part)
             await file.close()
