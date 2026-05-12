@@ -137,10 +137,10 @@ class DefaultChecker(AbstractEmailChecker):
             or "https://gist.githubusercontent.com/Turall/3f32cb57270aed30d0c7f5e0800b2a92/raw/dcd9b47506e9da26d5772ccebf6913343e53cec9/temporary-email-address-domains"  # noqa: E501
         )
         self.redis_enabled = False
+        self.redis_client = redis_client
 
         if db_provider == "redis":
             self.redis_enabled = True
-            self.redis_client = redis_client
             self.username = username
             self.redis_host = redis_host
             self.redis_port = redis_port
@@ -154,6 +154,11 @@ class DefaultChecker(AbstractEmailChecker):
             f"Func named {inspect.currentframe().f_code.co_name} not implemented"
             f"for class {self.__class__.__name__}"
         )
+
+    def _get_redis_client(self) -> "aioredis.Redis":
+        if self.redis_client is None:
+            raise DBProvaiderError(self.redis_error_msg)
+        return self.redis_client
 
     async def init_redis(self) -> bool:
         if not self.redis_enabled:
@@ -176,24 +181,25 @@ class DefaultChecker(AbstractEmailChecker):
                     "Use: from redis.asyncio import Redis; client = Redis.from_url(...)"
                 )
 
-        temp_counter = await self.redis_client.get("temp_counter")
-        domain_counter = await self.redis_client.get("domain_counter")
-        blocked_emails = await self.redis_client.get("email_counter")
+        redis_client = self._get_redis_client()
+        temp_counter = await redis_client.get("temp_counter")
+        domain_counter = await redis_client.get("domain_counter")
+        blocked_emails = await redis_client.get("email_counter")
 
         if not temp_counter:
-            await self.redis_client.set("temp_counter", 0)
+            await redis_client.set("temp_counter", 0)
         if not domain_counter:
-            await self.redis_client.set("domain_counter", 0)
+            await redis_client.set("domain_counter", 0)
         if not blocked_emails:
-            await self.redis_client.set("email_counter", 0)
+            await redis_client.set("email_counter", 0)
         temp_domains = await self.fetch_temp_email_domains()
-        check_key = await self.redis_client.hgetall("temp_domains")
+        check_key = await redis_client.hgetall("temp_domains")
         if not check_key:
             kwargs = {
-                domain: await self.redis_client.incr("temp_counter")
+                domain: await redis_client.incr("temp_counter")
                 for domain in temp_domains
             }
-            await self.redis_client.hset("temp_domains", mapping=kwargs)
+            await redis_client.hset("temp_domains", mapping=kwargs)
 
         return True
 
@@ -220,18 +226,20 @@ class DefaultChecker(AbstractEmailChecker):
     async def blacklist_add_domain(self, domain: str) -> None:
         """Add domain to blacklist"""
         if self.redis_enabled:
-            result = await self.redis_client.hget("blocked_domains", domain)
+            redis_client = self._get_redis_client()
+            result = await redis_client.hget("blocked_domains", domain)
             if not result:
-                incr = await self.redis_client.incr("domain_counter")
-                await self.redis_client.hset("blocked_domains", domain, incr)
+                incr = await redis_client.incr("domain_counter")
+                await redis_client.hset("blocked_domains", domain, incr)
         else:
             self.BLOCKED_DOMAINS.add(domain)
 
     async def blacklist_rm_domain(self, domain: str) -> None:
         if self.redis_enabled:
-            res = await self.redis_client.hdel("blocked_domains", domain)
+            redis_client = self._get_redis_client()
+            res = await redis_client.hdel("blocked_domains", domain)
             if res:
-                await self.redis_client.decr("domain_counter")
+                await redis_client.decr("domain_counter")
         else:
             self.BLOCKED_DOMAINS.remove(domain)
 
@@ -239,37 +247,41 @@ class DefaultChecker(AbstractEmailChecker):
         """Add email address to blacklist"""
         if self.validate_email(email):
             if self.redis_enabled:
-                blocked_domain = await self.redis_client.hget("blocked_emails", email)
+                redis_client = self._get_redis_client()
+                blocked_domain = await redis_client.hget("blocked_emails", email)
                 if not blocked_domain:
-                    inc = await self.redis_client.incr("email_counter")
-                    await self.redis_client.hset("blocked_emails", email, inc)
+                    inc = await redis_client.incr("email_counter")
+                    await redis_client.hset("blocked_emails", email, inc)
             else:
                 self.BLOCKED_ADDRESSES.add(email)
 
     async def blacklist_rm_email(self, email: str) -> None:
         if self.redis_enabled:
-            res = await self.redis_client.hdel("blocked_emails", email)
+            redis_client = self._get_redis_client()
+            res = await redis_client.hdel("blocked_emails", email)
             if res:
-                await self.redis_client.decr("email_counter")
+                await redis_client.decr("email_counter")
         else:
             self.BLOCKED_ADDRESSES.remove(email)
 
     async def add_temp_domain(self, domain_lists: List[str]) -> None:
         """Manually add temporary email"""
         if self.redis_enabled:
+            redis_client = self._get_redis_client()
             for domain in domain_lists:
-                temp_email = await self.redis_client.hget("temp_domains", domain)
+                temp_email = await redis_client.hget("temp_domains", domain)
                 if not temp_email:
-                    incr = await self.redis_client.incr("temp_counter")
-                    await self.redis_client.hset("temp_domains", domain, incr)
+                    incr = await redis_client.incr("temp_counter")
+                    await redis_client.hset("temp_domains", domain, incr)
         else:
             self.TEMP_EMAIL_DOMAINS.extend(domain_lists)
 
     async def blacklist_rm_temp(self, domain: str) -> bool:
         if self.redis_enabled:
-            res = await self.redis_client.hdel("temp_domains", domain)
+            redis_client = self._get_redis_client()
+            res = await redis_client.hdel("temp_domains", domain)
             if res:
-                await self.redis_client.decr("temp_counter")
+                await redis_client.decr("temp_counter")
         else:
             self.TEMP_EMAIL_DOMAINS.remove(domain)
         return True
@@ -280,7 +292,8 @@ class DefaultChecker(AbstractEmailChecker):
             _, domain = email.split("@")
             result = None
             if self.redis_enabled:
-                result = await self.redis_client.hget("temp_domains", domain)
+                redis_client = self._get_redis_client()
+                result = await redis_client.hget("temp_domains", domain)
                 return bool(result)
             return domain in self.TEMP_EMAIL_DOMAINS
         return False
@@ -290,7 +303,8 @@ class DefaultChecker(AbstractEmailChecker):
         if not self.redis_enabled:
             return domain in self.BLOCKED_DOMAINS
 
-        blocked_email = await self.redis_client.hget("blocked_domains", domain)
+        redis_client = self._get_redis_client()
+        blocked_email = await redis_client.hget("blocked_domains", domain)
         return bool(blocked_email)
 
     async def is_blocked_address(self, email: str) -> bool:
@@ -299,7 +313,8 @@ class DefaultChecker(AbstractEmailChecker):
             if not self.redis_enabled:
                 return email in self.BLOCKED_ADDRESSES
 
-            blocked_domain = await self.redis_client.hget("blocked_emails", email)
+            redis_client = self._get_redis_client()
+            blocked_domain = await redis_client.hget("blocked_emails", email)
             return bool(blocked_domain)
         return False
 
@@ -325,7 +340,8 @@ class DefaultChecker(AbstractEmailChecker):
     async def blocked_email_count(self) -> int:
         """count all blocked emails in redis"""
         if self.redis_enabled:
-            result = await self.redis_client.get("email_counter")
+            redis_client = self._get_redis_client()
+            result = await redis_client.get("email_counter")
             if result is not None:
                 return result
         return len(self.BLOCKED_ADDRESSES)
@@ -333,7 +349,8 @@ class DefaultChecker(AbstractEmailChecker):
     async def blocked_domain_count(self) -> int:
         """count all blocked domains in redis"""
         if self.redis_enabled:
-            result = await self.redis_client.get("domain_counter")
+            redis_client = self._get_redis_client()
+            result = await redis_client.get("domain_counter")
             if result is not None:
                 return result
         return len(self.BLOCKED_DOMAINS)
@@ -341,7 +358,8 @@ class DefaultChecker(AbstractEmailChecker):
     async def temp_email_count(self) -> int:
         """count all temporary emails in redis"""
         if self.redis_enabled:
-            result = await self.redis_client.get("temp_counter")
+            redis_client = self._get_redis_client()
+            result = await redis_client.get("temp_counter")
             if result is not None:
                 return result
         return len(self.TEMP_EMAIL_DOMAINS)
@@ -349,7 +367,8 @@ class DefaultChecker(AbstractEmailChecker):
     async def close_connections(self) -> bool:
         """for correctly close connection from redis"""
         if self.redis_enabled:
-            await self.redis_client.aclose()  # type: ignore[attr-defined]  # aclose() exists in async Redis client
+            redis_client = self._get_redis_client()
+            await redis_client.aclose()  # type: ignore[attr-defined]
             return True
         raise DBProvaiderError(self.redis_error_msg)
 
