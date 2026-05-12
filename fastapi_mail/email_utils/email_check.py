@@ -349,7 +349,7 @@ class DefaultChecker(AbstractEmailChecker):
     async def close_connections(self) -> bool:
         """for correctly close connection from redis"""
         if self.redis_enabled:
-            await self.redis_client.aclose()  # type: ignore[attr-defined]  # aclose() exists in async Redis client 
+            await self.redis_client.aclose()  # type: ignore[attr-defined]  # aclose() exists in async Redis client
             return True
         raise DBProvaiderError(self.redis_error_msg)
 
