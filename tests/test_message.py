@@ -307,3 +307,47 @@ async def test_name_email_message_headers():
     assert msg_object["Cc"] == "CC User <cc@example.com>"
     assert msg_object["Bcc"] == "BCC User <bcc@example.com>"
     assert msg_object["Reply-To"] == "Reply User <reply@example.com>"
+
+
+@pytest.mark.asyncio
+async def test_non_ascii_names_are_rfc2047_encoded():
+    """Recipient display names with non-ASCII characters must be RFC 2047
+    encoded so the resulting headers are 7-bit-clean. Without encoding, the
+    raw UTF-8 reaches the SMTP server, which on some providers (e.g.
+    Office 365) strips it and rejects the message with
+    `550 5.2.254 InvalidRecipientsException`."""
+    from email.header import decode_header
+    from email.utils import getaddresses
+
+    message = MessageSchema(
+        subject="test subject",
+        recipients=["Lukas Böhm <lboehm@example.com>"],
+        cc=["René Méndez <rmendez@example.com>"],
+        bcc=["Straße Müller <strasse@example.com>"],
+        reply_to=["Renée Doe <reply@example.com>"],
+        body="test",
+        subtype=MessageType.plain,
+    )
+
+    msg = MailMsg(message)
+    msg_object = await msg._message("sender@example.com")
+
+    def _decode(header_value):
+        name, addr = getaddresses([header_value])[0]
+        parts = decode_header(name)
+        return (
+            "".join(
+                chunk.decode(charset or "ascii") if isinstance(chunk, bytes) else chunk
+                for chunk, charset in parts
+            ),
+            addr,
+        )
+
+    for header in ("To", "Cc", "Bcc", "Reply-To"):
+        raw = msg_object[header].encode("ascii")  # must not raise
+        assert b"=?utf-8?" in raw, f"{header} is not RFC 2047 encoded: {raw!r}"
+
+    assert _decode(msg_object["To"]) == ("Lukas Böhm", "lboehm@example.com")
+    assert _decode(msg_object["Cc"]) == ("René Méndez", "rmendez@example.com")
+    assert _decode(msg_object["Bcc"]) == ("Straße Müller", "strasse@example.com")
+    assert _decode(msg_object["Reply-To"]) == ("Renée Doe", "reply@example.com")

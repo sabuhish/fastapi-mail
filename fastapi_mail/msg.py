@@ -5,12 +5,16 @@ from email.message import EmailMessage, Message
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.utils import formatdate, make_msgid
+from email.utils import formataddr, formatdate, make_msgid
 from typing import Any, Union
 
 from .schemas import MessageType, MultipartSubtypeEnum
 
 PY3 = sys.version_info[0] == 3
+
+
+def _format_address(recipient: Any) -> str:
+    return formataddr((recipient.name, str(recipient.email)), charset="utf-8")
 
 
 class MailMsg:
@@ -144,21 +148,21 @@ class MailMsg:
 
         self.message["Date"] = formatdate(time.time(), localtime=True)
         self.message["Message-ID"] = self.msgId
-        self.message["To"] = ", ".join(str(recipient) for recipient in self.recipients)
+        self.message["To"] = ", ".join(_format_address(r) for r in self.recipients)
         self.message["From"] = sender
 
         if self.subject:
             self.message["Subject"] = self.subject
 
         if self.cc:
-            self.message["Cc"] = ", ".join(str(recipient) for recipient in self.cc)
+            self.message["Cc"] = ", ".join(_format_address(r) for r in self.cc)
 
         if self.bcc:
-            self.message["Bcc"] = ", ".join(str(recipient) for recipient in self.bcc)
+            self.message["Bcc"] = ", ".join(_format_address(r) for r in self.bcc)
 
         if self.reply_to:
             self.message["Reply-To"] = ", ".join(
-                str(recipient) for recipient in self.reply_to
+                _format_address(r) for r in self.reply_to
             )
 
         if self.attachments:

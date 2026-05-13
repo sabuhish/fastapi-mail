@@ -112,7 +112,7 @@ class FastMail(_MailMixin):
     async def _sender(self, message: MessageSchema) -> Union[EmailStr, str]:
         sender = message.from_email or self.config.MAIL_FROM
         if (from_name := message.from_name or self.config.MAIL_FROM_NAME) is not None:
-            return formataddr((from_name, sender))
+            return formataddr((from_name, sender), charset="utf-8")
         return sender
 
     async def send_message(
