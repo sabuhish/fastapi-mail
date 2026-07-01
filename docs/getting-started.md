@@ -15,6 +15,8 @@ class has following attributes and methods
     - message : where you define message sturcture for email
     - template_name : if you are using jinja2 consider template_name as well for passing HTML.
 
+- get_message : Builds and returns the prepared `email.message.Message` without sending it. It takes the same arguments as `send_message` (a single `MessageSchema` returns one message; a list returns a list). Useful when you need to sign the message (e.g. S/MIME or DKIM) or otherwise post-process it before delivering it through your own transport.
+
 
 ### ```ConnectionConfig``` class
 class has following attributes
