@@ -137,18 +137,16 @@ class DefaultChecker(AbstractEmailChecker):
             or "https://gist.githubusercontent.com/Turall/3f32cb57270aed30d0c7f5e0800b2a92/raw/dcd9b47506e9da26d5772ccebf6913343e53cec9/temporary-email-address-domains"  # noqa: E501
         )
         self.redis_enabled = False
+        self._redis_client = redis_client
 
         if db_provider == "redis":
             self.redis_enabled = True
-            if redis_client:
-                self.redis_client = redis_client
-            else:
-                self.username = username
-                self.redis_host = redis_host
-                self.redis_port = redis_port
-                self.redis_db = redis_db
-                self.redis_password = redis_password
-                self.options = options
+            self.username = username
+            self.redis_host = redis_host
+            self.redis_port = redis_port
+            self.redis_db = redis_db
+            self.redis_password = redis_password
+            self.options = options
         self.redis_error_msg = "redis is not connected"
 
     def catch_all_check(self):
@@ -157,27 +155,34 @@ class DefaultChecker(AbstractEmailChecker):
             f"for class {self.__class__.__name__}"
         )
 
+    @property
+    def redis_client(self) -> "aioredis.Redis":
+        if self._redis_client is None:
+            raise DBProvaiderError(self.redis_error_msg)
+        return self._redis_client
+
+    @redis_client.setter
+    def redis_client(self, value: Optional["aioredis.Redis"]) -> None:
+        self._redis_client = value
+
     async def init_redis(self) -> bool:
         if not self.redis_enabled:
             raise DBProvaiderError(self.redis_error_msg)
-        if self.redis_client is None:
-            # Create new Redis connection pool
-            if not self.username or not self.redis_password:
-                self.redis_client = await aioredis.from_url(
-                    url="redis://localhost", encoding="UTF-8", **self.options
-                )
-            else:
-                self.redis_client = await aioredis.from_url(
-                    url=f"redis://{self.username}:{self.redis_password}@localhost:{self.redis_port}/{self.redis_db}",  # noqa: E501
-                    encoding="UTF-8",
-                    **self.options,
-                )
+        if self._redis_client is None:
+            url = f"redis://{self.redis_host}:{self.redis_port}/{self.redis_db}"
+            self.redis_client = await aioredis.from_url(
+                url=url,
+                encoding="UTF-8",
+                username=self.username,
+                password=self.redis_password,
+                **self.options,
+            )
         else:
-            # Validate that the provided client is an async Redis client
-            if not isinstance(self.redis_client, aioredis.Redis):
+            # Validate that the provided client is an async Redis client.
+            if not isinstance(self._redis_client, aioredis.Redis):
                 raise DBProvaiderError(
                     "Provided redis_client must be an async Redis client from redis.asyncio. "
-                    f"Received type: {type(self.redis_client)}. "
+                    f"Received type: {type(self._redis_client)}. "
                     "Use: from redis.asyncio import Redis; client = Redis.from_url(...)"
                 )
 
@@ -354,7 +359,7 @@ class DefaultChecker(AbstractEmailChecker):
     async def close_connections(self) -> bool:
         """for correctly close connection from redis"""
         if self.redis_enabled:
-            await self.redis_client.close()
+            await self.redis_client.aclose()  # type: ignore[attr-defined]
             return True
         raise DBProvaiderError(self.redis_error_msg)
 

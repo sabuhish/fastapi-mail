@@ -90,10 +90,7 @@ async def test_attachement_message(mail_config):
 
         assert len(outbox) == 1
         assert mail._payload[1].get_content_maintype() == "text"
-        assert (
-            mail._payload[1].__dict__.get("_headers")[0][1]
-            == "text/plain"
-        )
+        assert mail._payload[1].__dict__.get("_headers")[0][1] == "text/plain"
 
 
 @pytest.mark.asyncio
@@ -376,10 +373,7 @@ async def test_send_msg_with_alternative_body_and_attachements(mail_config):
 
         assert mail._payload[1].get_content_maintype() == "text"
 
-        assert (
-            mail._payload[1].__dict__.get("_headers")[0][1]
-            == "text/plain"
-        )
+        assert mail._payload[1].__dict__.get("_headers")[0][1] == "text/plain"
 
 
 @pytest.mark.asyncio
