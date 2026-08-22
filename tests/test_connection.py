@@ -199,7 +199,7 @@ async def test_jinja_message_list(mail_config):
         assert mail["From"] == sender
         assert mail["Subject"] == subject
     assert msg.subtype == MessageType.html
-    assert msg.template_body == ("\n    \n    \n        Andrej\n    \n\n")
+    assert msg.template_body == persons
 
 
 @pytest.mark.asyncio
@@ -227,7 +227,7 @@ async def test_jinja_message_dict(mail_config):
         assert mail["From"] == sender
         assert mail["Subject"] == subject
     assert msg.subtype == MessageType.html
-    assert msg.template_body == ("\n   Andrej\n")
+    assert msg.template_body == persons
 
 
 @pytest.mark.asyncio
@@ -294,7 +294,7 @@ async def test_jinja_message_with_html(mail_config):
         message=msg, template_name="array_iteration_jinja_template.html"
     )
 
-    assert msg.template_body == ("\n    \n    \n        Andrej\n    \n\n")
+    assert msg.template_body == persons
 
     assert not msg.body
 
@@ -418,8 +418,8 @@ async def test_jinja_html_and_plain_message(mail_config):
         assert mail["From"] == sender
         assert mail["Subject"] == subject
     assert msg.subtype == MessageType.html
-    assert msg.template_body == "<b>Andrej</b>"
-    assert msg.alternative_body == "Andrej"
+    assert msg.template_body == persons
+    assert msg.alternative_body is None
 
 
 @pytest.mark.asyncio
@@ -449,8 +449,8 @@ async def test_jinja_plain_and_html_message(mail_config):
         assert mail["From"] == sender
         assert mail["Subject"] == subject
     assert msg.subtype == MessageType.plain
-    assert msg.template_body == "Andrej"
-    assert msg.alternative_body == "<b>Andrej</b>"
+    assert msg.template_body == persons
+    assert msg.alternative_body is None
 
 
 @pytest.mark.asyncio
@@ -559,8 +559,25 @@ async def test_send_message_list_with_template(mail_config):
         assert "Alice" in alice_payload
         assert "Bob" in bob_payload
 
-    assert messages[0].template_body == ("\n   Alice\n")
-    assert messages[1].template_body == ("\n   Bob\n")
+    assert messages[0].template_body == {"name": "Alice"}
+    assert messages[1].template_body == {"name": "Bob"}
+
+
+@pytest.mark.asyncio
+async def test_send_same_message_twice(mail_config):
+    """Regression test for issue #198 — reusing the same MessageSchema must not raise."""
+    msg = MessageSchema(
+        subject="Reuse test",
+        recipients=["to@example.com"],
+        template_body={"name": "Sabuhi"},
+        subtype=MessageType.html,
+    )
+    conf = ConnectionConfig(**mail_config)
+    fm = FastMail(conf)
+
+    await fm.send_message(msg, template_name="simple_jinja_template.html")
+    await fm.send_message(msg, template_name="simple_jinja_template.html")
+    assert msg.template_body == {"name": "Sabuhi"}
 
 
 @pytest.mark.asyncio

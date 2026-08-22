@@ -87,18 +87,13 @@ class FastMail(_MailMixin):
         html = html_template.render(**template_data)
         plain = plain_template.render(**template_data)
 
-        if message.subtype == MessageType.html:
-            message = message.model_copy(update={
-                "multipart_subtype": MultipartSubtypeEnum.alternative,
-                "template_body": html,
-                "alternative_body": plain,
-            })
-        else:
-            message = message.model_copy(update={
-                "multipart_subtype": MultipartSubtypeEnum.alternative,
-                "template_body": plain,
-                "alternative_body": html,
-            })
+        template_body = html if message.subtype == MessageType.html else plain
+        alternative_body = plain if message.subtype == MessageType.html else html
+        message = message.model_copy(update={
+            "multipart_subtype": MultipartSubtypeEnum.alternative,
+            "template_body": template_body,
+            "alternative_body": alternative_body,
+        })
 
         msg = MailMsg(message)
         sender = await self._sender(message)
