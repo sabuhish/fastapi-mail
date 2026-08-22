@@ -54,9 +54,7 @@ jobs:
 PR title: {pr_title}
 
 Diff (py, yml, toml, jinja, txt files):
-```diff
 {diff}
-```
 
 Provide a concise code review covering:
 1. **Summary** — what this PR does in 1-2 sentences
