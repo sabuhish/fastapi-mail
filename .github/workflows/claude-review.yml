@@ -49,20 +49,19 @@ jobs:
               print("No reviewable file changes found, skipping review.")
               exit(0)
 
-          prompt = f"""You are reviewing a pull request for fastapi-mail, a Python library for sending emails via FastAPI.
-
-PR title: {pr_title}
-
-Diff (py, yml, toml, jinja, txt files):
-{diff}
-
-Provide a concise code review covering:
-1. **Summary** — what this PR does in 1-2 sentences
-2. **Issues** — bugs, logic errors, breaking changes (if none, say so)
-3. **Security** — credentials handling, injection risks, unsafe defaults (if none, say so)
-4. **Suggestions** — improvements worth considering (keep it brief)
-
-Be direct and specific. Reference line numbers or code snippets where relevant. Skip praise."""
+          prompt = (
+              "You are reviewing a pull request for fastapi-mail, "
+              "a Python library for sending emails via FastAPI.\n\n"
+              f"PR title: {pr_title}\n\n"
+              "Diff (py, yml, toml, jinja, txt files):\n"
+              + diff +
+              "\n\nProvide a concise code review covering:\n"
+              "1. **Summary** — what this PR does in 1-2 sentences\n"
+              "2. **Issues** — bugs, logic errors, breaking changes (if none, say so)\n"
+              "3. **Security** — credentials handling, injection risks, unsafe defaults (if none, say so)\n"
+              "4. **Suggestions** — improvements worth considering (keep it brief)\n\n"
+              "Be direct and specific. Reference line numbers or code snippets where relevant. Skip praise."
+          )
 
           payload = json.dumps({
               "model": "claude-sonnet-4-5",
