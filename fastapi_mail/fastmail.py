@@ -127,6 +127,36 @@ class FastMail(_MailMixin):
         )
         await self.__send_prepared_messages(prepared_messages)
 
+    async def get_message(
+        self,
+        message: Union[MessageSchema, list[MessageSchema]],
+        template_name: Optional[str] = None,
+        html_template: Optional[str] = None,
+        plain_template: Optional[str] = None,
+    ) -> Union[EmailMessage, Message, list[Union[EmailMessage, Message]]]:
+        """
+        Build and return the prepared email message(s) without sending them.
+
+        This runs the exact same preparation pipeline as ``send_message``
+        (template rendering, sender resolution and MIME construction), but
+        returns the resulting ``email.message.Message`` object(s) instead of
+        delivering them. It lets callers sign the message (e.g. S/MIME or DKIM)
+        or otherwise post-process it before sending it through their own
+        transport.
+
+        A single ``MessageSchema`` returns a single message; a list of
+        ``MessageSchema`` returns a list of messages in the same order.
+
+        See https://github.com/sabuhish/fastapi-mail/issues/234
+        """
+        messages = self.__normalize_messages(message)
+        prepared_messages = await self.__prepare_messages_for_sending(
+            messages, template_name, html_template, plain_template
+        )
+        if isinstance(message, list):
+            return prepared_messages
+        return prepared_messages[0]
+
     def __normalize_messages(
         self, message: Union[MessageSchema, list[MessageSchema]]
     ) -> list[MessageSchema]:
