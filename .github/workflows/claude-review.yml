@@ -1,0 +1,104 @@
+name: Claude PR Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get PR diff
+        id: diff
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          DIFF=$(git diff origin/${{ github.base_ref }}...HEAD -- '*.py' '*.yml' '*.toml' '*.jinja' '*.txt' | head -c 20000)
+          echo "diff<<EOF" >> $GITHUB_OUTPUT
+          echo "$DIFF" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Claude review
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          DIFF: ${{ steps.diff.outputs.diff }}
+        run: |
+          python3 - <<'PYEOF'
+          import os, json, urllib.request, urllib.error
+
+          diff = os.environ["DIFF"]
+          pr_title = os.environ["PR_TITLE"]
+          api_key = os.environ["ANTHROPIC_API_KEY"]
+          token = os.environ["GITHUB_TOKEN"]
+          repo = os.environ["REPO"]
+          pr_number = os.environ["PR_NUMBER"]
+
+          if not diff.strip():
+              print("No reviewable file changes found, skipping review.")
+              exit(0)
+
+          prompt = f"""You are reviewing a pull request for fastapi-mail, a Python library for sending emails via FastAPI.
+
+PR title: {pr_title}
+
+Diff (py, yml, toml, jinja, txt files):
+```diff
+{diff}
+```
+
+Provide a concise code review covering:
+1. **Summary** — what this PR does in 1-2 sentences
+2. **Issues** — bugs, logic errors, breaking changes (if none, say so)
+3. **Security** — credentials handling, injection risks, unsafe defaults (if none, say so)
+4. **Suggestions** — improvements worth considering (keep it brief)
+
+Be direct and specific. Reference line numbers or code snippets where relevant. Skip praise."""
+
+          payload = json.dumps({
+              "model": "claude-sonnet-5-20251101",
+              "max_tokens": 1024,
+              "messages": [{"role": "user", "content": prompt}]
+          }).encode()
+
+          req = urllib.request.Request(
+              "https://api.anthropic.com/v1/messages",
+              data=payload,
+              headers={
+                  "x-api-key": api_key,
+                  "anthropic-version": "2023-06-01",
+                  "content-type": "application/json",
+              },
+          )
+
+          with urllib.request.urlopen(req) as resp:
+              result = json.loads(resp.read())
+
+          review_body = result["content"][0]["text"]
+          comment = f"### Claude Review\n\n{review_body}\n\n---\n*Reviewed by [Claude](https://claude.ai) (claude-haiku-4-5)*"
+
+          comment_payload = json.dumps({"body": comment}).encode()
+          comment_req = urllib.request.Request(
+              f"https://api.github.com/repos/{repo}/issues/{pr_number}/comments",
+              data=comment_payload,
+              headers={
+                  "Authorization": f"Bearer {token}",
+                  "Accept": "application/vnd.github+json",
+                  "Content-Type": "application/json",
+              },
+          )
+
+          with urllib.request.urlopen(comment_req) as resp:
+              print(f"Comment posted: {resp.status}")
+          PYEOF
