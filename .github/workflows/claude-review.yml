@@ -67,7 +67,7 @@ Provide a concise code review covering:
 Be direct and specific. Reference line numbers or code snippets where relevant. Skip praise."""
 
           payload = json.dumps({
-              "model": "claude-sonnet-5-20251101",
+              "model": "claude-sonnet-4-5",
               "max_tokens": 1024,
               "messages": [{"role": "user", "content": prompt}]
           }).encode()
@@ -86,7 +86,7 @@ Be direct and specific. Reference line numbers or code snippets where relevant. 
               result = json.loads(resp.read())
 
           review_body = result["content"][0]["text"]
-          comment = f"### Claude Review\n\n{review_body}\n\n---\n*Reviewed by [Claude](https://claude.ai) (claude-haiku-4-5)*"
+          comment = f"### Claude Review\n\n{review_body}\n\n---\n*Reviewed by [Claude](https://claude.ai) (claude-sonnet-4-5)*"
 
           comment_payload = json.dumps({"body": comment}).encode()
           comment_req = urllib.request.Request(

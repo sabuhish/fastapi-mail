@@ -121,3 +121,6 @@ venv.bak/
 # VSCode
 .vscode/
 
+# One-off scripts
+scripts/
+
