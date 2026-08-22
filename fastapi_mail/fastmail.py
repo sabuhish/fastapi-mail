@@ -71,9 +71,8 @@ class FastMail(_MailMixin):
         self, message: MessageSchema, template: Optional[Template] = None
     ) -> Union[EmailMessage, Message]:
         if template and message.template_body is not None:
-            message.template_body = await self._template_message_builder(
-                message, template
-            )
+            rendered = await self._template_message_builder(message, template)
+            message = message.model_copy(update={"template_body": rendered})
         msg = MailMsg(message)
         sender = await self._sender(message)
         return await msg._message(sender)
@@ -88,13 +87,13 @@ class FastMail(_MailMixin):
         html = html_template.render(**template_data)
         plain = plain_template.render(**template_data)
 
-        message.multipart_subtype = MultipartSubtypeEnum.alternative
-        if message.subtype == MessageType.html:
-            message.template_body = html
-            message.alternative_body = plain
-        else:
-            message.template_body = plain
-            message.alternative_body = html
+        template_body = html if message.subtype == MessageType.html else plain
+        alternative_body = plain if message.subtype == MessageType.html else html
+        message = message.model_copy(update={
+            "multipart_subtype": MultipartSubtypeEnum.alternative,
+            "template_body": template_body,
+            "alternative_body": alternative_body,
+        })
 
         msg = MailMsg(message)
         sender = await self._sender(message)
