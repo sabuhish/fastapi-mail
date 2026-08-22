@@ -14,7 +14,11 @@ PY3 = sys.version_info[0] == 3
 
 
 def _format_address(recipient: Any) -> str:
-    return formataddr((recipient.name, str(recipient.email)), charset="utf-8")
+    name = getattr(recipient, "name", None)
+    email = str(getattr(recipient, "email", recipient))
+    if not name or name == email:
+        return email
+    return formataddr((name, email), charset="utf-8")
 
 
 class MailMsg:

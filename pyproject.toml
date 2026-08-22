@@ -58,7 +58,7 @@ profile = "black"
 line_length = 100
 multi_line_output = 3
 include_trailing_comma = true
-py_version=39
+py_version=310
 skip_glob = [".github/*", ".venv/*", "venv/*", ".vscode/*"]
 skip = [".gitignore", ".md", ".yaml", ".yml", ".lock",".toml"]
 
