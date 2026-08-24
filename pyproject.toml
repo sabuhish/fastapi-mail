@@ -24,7 +24,7 @@ dependencies = [
 
 [project.optional-dependencies]
 httpx = ["httpx"]
-redis = ["redis>=7.4.0,<8.0.0"]
+redis = ["redis>=7.4.0,<9.0.0"]
 
 [dependency-groups]
 dev = [
